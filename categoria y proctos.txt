@@ -1,0 +1,1232 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<div class="flex flex-col md:flex-row h-screen bg-white text-gray-700">
+  <!-- Lado izquierdo -->
+ <div class="w-full md:w-1/2 p-4 animate__animated animate__slideInLeft ">
+
+ <fieldset class="border border-black rounded-md p-3 mt-2 relative">
+  <legend class="text-sm font-bold px-2 text-black">Módulo Almacen/ listar/ categoria</legend>
+
+  <!-- Buscador + botón -->
+  <div class="flex justify-between items-center mb-4 gap-2 flex-wrap">
+    <div class="relative flex-1">
+      <i class="fa fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+      <input
+        [(ngModel)]="filtro"
+        (input)="buscarCategoria()"
+        type="text"
+        id="razon"
+        placeholder="Buscar categoría..."
+        class="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-rose-300 text-sm"
+        required
+      />
+    </div>
+    <p-button
+      (click)="showDialog()"
+      label=""
+      icon="pi pi-plus"
+      [style]="{ backgroundColor: '#ec4899', color: 'white', border: 'none' }"
+      styleClass="p-button-sm border-none"
+    />
+  </div>
+
+  <!-- Versión PC (tabla clásica) -->
+  <div class="overflow-x-auto shadow rounded-lg border border-gray-200 hidden md:block">
+    <table class="w-full text-sm text-gray-700">
+      <thead class="bg-pink-200 text-gray-800">
+        <tr>
+          <th class="text-center px-4 py-2">#</th>
+          <th class="text-left px-4 py-2">Categoría</th>
+          <th class="text-left px-4 py-2">Fecha Registro</th>
+          <th class="text-center px-4 py-2">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr
+          *ngFor="let xdat of listaCategoria | paginate: {itemsPerPage:3, currentPage:pag}; let pos=index"
+          class="animate__animated animate__fadeInDown border-t hover:bg-pink-50 transition-all"
+        >
+          <td class="text-center px-4 py-2">
+            <input
+              type="radio"
+              name="cliente"
+              class="accent-pink-500"
+              (click)="vista(xdat)"
+            />
+          </td>
+          <td class="px-4 py-2">{{ xdat.nombre }}</td>
+          <td class="px-4 py-2">{{ xdat.fecha }} {{ xdat.hora }}</td>
+          <td class="text-center px-4 py-2">
+             <p-button
+      (click)="showDialogC()"
+      label="" (click)="vistaCategoria(xdat)"
+      icon="pi pi-pencil"
+      [style]="{  backgroundColor: 'transparent', color: 'black', border: 'none' }"
+      styleClass="p-button-sm border-none"
+    />
+            <button
+              title="Eliminar"
+              (click)="vistaEliminar1(xdat)"
+              (click)="confirm3($event)"
+              class="btn-icon"
+            >
+              <i class="pi pi-trash" style="color: #e71c02; font-size: 1.0rem;"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Versión celular (tarjetas) -->
+<div class="block md:hidden space-y-4">
+  <div
+    *ngFor="let xdat of listaCategoria"
+    class="animate__animated animate__fadeInDown border border-gray-300 rounded-lg p-4 shadow-sm relative bg-white"
+  >
+    <!-- Botón radio arriba a la derecha -->
+    <div class="absolute top-3 right-3">
+      <input
+        type="radio"
+        name="cliente"
+        class="accent-pink-500 scale-125"
+        (click)="vista(xdat)"
+      />
+    </div>
+
+    <p class="text-sm text-gray-800 mb-1"><strong>Categoría:</strong> {{ xdat.nombre }}</p>
+    <p class="text-sm text-gray-800 mb-3"><strong>Fecha:</strong> {{ xdat.fecha }} {{ xdat.hora }}</p>
+
+    <div class="flex justify-end gap-4 mt-2">
+        <p-button
+      (click)="showDialogC()"
+      label="" (click)="vistaCategoria(xdat)"
+      icon="pi pi-pencil"
+      [style]="{  backgroundColor: 'transparent', color: 'black', border: 'none' }"
+      styleClass="p-button-sm border-none"
+    />
+      <button
+        class="text-red-500 hover:text-red-700"
+        title="Eliminar"
+        (click)="vistaEliminar1(xdat)"
+        (click)="confirm3($event)"
+      >
+        <i class="pi pi-trash"></i>
+      </button>
+    </div>
+  </div>
+</div>
+<div id="pag" class="d-flex justify-content-center mt-3">
+  <pagination-controls
+    (pageChange)="pag = $event"
+    previousLabel="Anterior"
+    nextLabel="Siguiente"
+    class="custom-pagination">
+  </pagination-controls>
+</div>
+</fieldset>
+
+
+</div>
+
+
+ <!-- Lado derecho -->
+<div class="w-full md:w-2/3 p-4 flex flex-col justify-between space-y-4 animate__animated animate__slideInRight">
+
+ <fieldset class="border rounded-md p-3 mt-2 relative">
+  <legend class="text-sm font-bold px-2 text-black">Módulo Almacen /listar /productos</legend>
+
+  <div
+  class="relative rounded-lg  transition-all duration-300"
+  [ngClass]="{
+    'p-4 border-rose-700': mostrarFormulario,
+    'p-2 border-rose-700': !mostrarFormulario
+  }"
+>
+    <div *ngIf="mostrarFormulario">
+<div class="empresa-formulario">
+  <form [formGroup]="subcateForm" (ngSubmit)="registrarSubCategoria()">
+    <div class="empresa-form-titulo">Registrar Nuevo Producto</div>
+  <p-message *ngIf="mensajeVisible" severity="error" [life]="3000" [text]="mensajeTexto"></p-message>
+
+    <div class="empresa-form-row">
+       <div class="empresa-form-group-floating">
+        <i class="fa fa-building empresa-icon"></i>
+        <input (input)="validarNombreC()" formControlName="nombre" type="text" id="razon" class="empresa-input" required>
+        <label for="razon" class="empresa-label-flotante">Nombre</label>
+      </div>
+       
+      <div class="empresa-form-group-floating">
+        <i class="fa fa-id-card empresa-icon"></i>
+        <input (input)="validarDescripcionC()" formControlName="descripcion" type="text" id="nit" class="empresa-input" required>
+        <label for="nit" class="empresa-label-flotante">Descripcion</label>
+      </div>
+    </div>
+
+    <button [disabled]="!botonHabilitadoC" type="submit" class="empresa-btn">
+      <i class="fa fa-plus-circle"></i> Adicionar
+    </button>
+    <button class="empresa-btn">
+      <i class="fa fa-eraser"></i> Limpiar
+    </button>
+  </form>
+</div>
+
+    </div>
+
+<button [disabled]="!radioSeleccionado"
+  (click)="mostrarFormulario = !mostrarFormulario"
+  class="absolute bottom-2 left-2 text-sm flex items-center  rounded px-3 py-1.5 text-rose-700 bg-white hover:bg-rose-50 hover:underline hover:text-rose-700 transition"
+>
+  <i class="fa" [ngClass]="mostrarFormulario ? 'fa-minus-circle mr-2' : 'fa-plus-circle mr-2'"></i>
+  <span>{{ mostrarFormulario ? 'Ocultar formulario' : 'Registrar Nuevo Producto' }}</span>
+</button>
+
+  </div> 
+
+
+
+
+<!-- Parte inferior derecha (tabla) -->
+<div class="flex-1 rounded-lg p-4 overflow-hidden ">
+
+  <p class="text-center text-black-700 text-lg font-semibold mb-6">[Lista de productos segun Categoria]</p>
+
+  <!-- Versión PC -->
+  <div class="overflow-x-auto max-h-[320px] overflow-y-auto hidden md:block">
+    <table class="min-w-full text-sm text-left text-gray-700 border border-gray-300 rounded-lg">
+      <thead class="bg-pink-200 text-gray-800 text-sm uppercase tracking-wide">
+        <tr>
+          <th class="px-4 py-3">Nombre</th>
+          <th class="px-4 py-3">Descripción</th>
+          <th class="px-2 py-3 text-center">Editar</th>
+          <th class="px-2 py-3 text-center">Eliminar</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let xdat of listaSubCategoria; let pos = index"
+            class=" animate__animated animate__fadeInLeft hover:bg-pink-50 transition-all border-b border-gray-100">
+          <td class="px-4 py-2">{{ xdat.nombre }}</td>
+          <td class="px-4 py-2">{{ xdat.descripcion }}</td>
+          <td class="px-2 py-2 text-center">
+              <p-button
+      (click)="showDialogSC()"
+      label="" (click)="vistaSubCategoria(xdat)"
+      icon="pi pi-pencil"
+      [style]="{  backgroundColor: 'transparent', color: 'black', border: 'none' }"
+      styleClass="p-button-sm border-none"
+    />
+          </td>
+          <td class="px-2 py-2 text-center">
+            <button title="Eliminar" (click)="vistaEliminar(xdat)" (click)="confirm2($event)" class="text-red-500 hover:text-red-700 transition">
+              <i class="pi pi-trash" style="font-size: 1rem;"></i>
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Versión Móvil -->
+  <div class="block md:hidden space-y-4">
+    <div *ngFor="let xdat of listaSubCategoria"
+         class=" animate__animated animate__fadeInLeft border border-gray-300 rounded-lg p-4 shadow-sm bg-gradient-to-br from-pink-50 to-white">
+      <p class="text-sm text-gray-600"><strong>Nombre:</strong> {{ xdat.nombre }}</p>
+      <p class="text-sm text-gray-600"><strong>Descripción:</strong> {{ xdat.descripcion }}</p>
+      <div class="flex justify-end gap-4 mt-3">
+        <p-button
+      (click)="showDialogSC()"
+      label="" (click)="vistaSubCategoria(xdat)"
+      icon="pi pi-pencil"
+      [style]="{  backgroundColor: 'transparent', color: 'black', border: 'none' }"
+      styleClass="p-button-sm border-none"
+    />
+        <button title="Eliminar" (click)="vistaEliminar(xdat)" (click)="confirm2($event)" class="text-red-500 hover:text-red-700 transition">
+          <i class="pi pi-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</fieldset>
+</div>
+
+</div>
+
+
+<!-- eliminar  -->
+      <p-toast />
+ <p-confirmdialog />
+
+<!-- registrarcategoria -->
+<div class="card flex justify-center">
+ 
+  <p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '20rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="header-dialog">
+        <i class="pi pi-pencil"></i><span>Registrar Nueva Categoría</span>
+      </div>
+    </ng-template>
+   
+    <form [formGroup]="cateForm" (ngSubmit)="registrarCategoria()">
+      <div class="form-group">
+        <label for="nombre">Nombre de la categoría</label>
+        <div  class="input-container">
+          <input  (input)="validarNombre()" formControlName="nombre" id="nombre" type="text" pInputText placeholder="Ingresar nombre de la categoría" />
+        </div>
+      </div>
+      <p-message *ngIf="mensajeVisible" severity="error" [life]="3000" [text]="mensajeTexto"></p-message>
+
+      <div class="button-group" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+        <button  type="button" class="btn-cancelar" (click)="cancelarRegistro()">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+        <button  [disabled]="!botonHabilitado" type="submit" class="btn-guardar" (click)="guardarRegistro()" >
+          <i class="pi pi-check"></i> Aceptar
+        </button>
+      </div>
+    </form>
+ 
+  </p-dialog>
+</div>
+
+<!-- modificar categoria -->
+ <div class="card flex justify-center">
+ 
+  <p-dialog [modal]="true" [(visible)]="visibleC" [style]="{ width: '20rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="header-dialog">
+        <i class="pi pi-pencil"></i><span>Modificar Categoría</span>
+      </div>
+    </ng-template>
+   
+    <form [formGroup]="cateForm" (ngSubmit)="modificarCategoria()">
+      <div class="form-group">
+        <label for="nombre">Nombre de la categoría</label>
+        <div  class="input-container">
+          <input  (input)="validarNombre()" formControlName="nombre" id="nombre" type="text" pInputText placeholder="Ingresar nombre de la categoría" />
+        </div>
+      </div>
+      <p-message *ngIf="mensajeVisible" severity="error" [life]="3000" [text]="mensajeTexto"></p-message>
+
+      <div class="button-group" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+        <button  type="button" class="btn-cancelar" (click)="cancelarRegistroC()">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+        <button  [disabled]="!botonHabilitado" type="submit" class="btn-guardar" (click)="guardarRegistroC()" >
+          <i class="pi pi-check"></i> Guadar Cambios
+        </button>
+      </div>
+    </form>
+ 
+  </p-dialog>
+</div>
+
+<!-- modificar sub categoria -->
+ <div class="card flex justify-center">
+  <p-dialog [modal]="true" [(visible)]="visibleSC" [style]="{ width: '30rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="header-dialog">
+        <i class="pi pi-pencil"></i><span>Modificar Productos</span>
+      </div>
+    </ng-template>
+    <form [formGroup]="subcateForm" (ngSubmit)="modificarSubCategoria()">
+         <!-- aqui formulario -->
+          <p-message *ngIf="mensajeVisible" severity="error" [life]="3000" [text]="mensajeTexto"></p-message>
+
+    <div class="empresa-form-row">
+       <div class="empresa-form-group-floating">
+        <i class="fa fa-building empresa-icon"></i>
+        <input (input)="validarNombreC()" formControlName="nombre" type="text" id="razon" class="empresa-input" required>
+        <label for="razon" class="empresa-label-flotante">Nombre</label>
+      </div>
+       
+      <div class="empresa-form-group-floating">
+        <i class="fa fa-id-card empresa-icon"></i>
+        <input (input)="validarDescripcionC()" formControlName="descripcion" type="text" id="nit" class="empresa-input" required>
+        <label for="nit" class="empresa-label-flotante">Descripcion</label>
+      </div>
+    </div>
+      <div class="button-group" style="display: flex; justify-content: center; gap: 1rem; margin-top: 1rem;">
+        <button  type="button" class="btn-cancelar" (click)="cancelarRegistroSC()">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+        <button  [disabled]="!botonHabilitadoC" type="submit" class="btn-guardar" (click)="guardarRegistroSC()" >
+          <i class="pi pi-check"></i> Guadar Cambios
+        </button>
+      </div>
+    </form>
+ 
+  </p-dialog>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ts:.:::
+import { Component, signal } from '@angular/core';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { CommonModule } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
+import { Dialog, DialogModule } from 'primeng/dialog';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
+import { Categoria } from 'src/app/model/categoria';
+import { FormGroup, FormControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { CategoriaService } from 'src/app/servicio/categoria.service';
+import { ConfirmDialog } from 'primeng/confirmdialog';
+import { Subcategoria } from 'src/app/model/subcategoria';
+import { Message } from 'primeng/message';
+import { MessageModule } from 'primeng/message';
+import { MessagesModule } from 'primeng/messages';
+import { NgxPaginationModule } from 'ngx-pagination';
+
+@Component({
+  selector: 'app-categoria',
+      imports: [NgxPaginationModule, MessageModule,MessagesModule, ConfirmDialog, ReactiveFormsModule, FormsModule, InputTextModule, Dialog, CommonModule, ConfirmPopupModule, ToastModule, ButtonModule],
+    providers: [ConfirmationService, MessageService],
+  templateUrl: './categoria.component.html',
+  styleUrl: './categoria.component.css'
+})
+export class CategoriaComponent {
+  pag=1;
+   mostrarFormulario: boolean = false;
+    Obtenercategoria!: Categoria;
+  vista(fall: Categoria) {
+      this.Obtenercategoria = fall; 
+      this.modelSubCategoria(); 
+       this.radioSeleccionado = true;
+    }
+  xper!: any;
+  xcate!: any
+   listaSubCategoria: Subcategoria[]=[];
+   listaCategoria: Categoria[]=[];
+
+  subcateForm: any = new FormGroup({
+      idsubc: new FormControl(''),
+      nombre: new FormControl(''),
+      descripcion: new FormControl(''),
+      categoria: new FormControl(''),
+    })
+    cateForm: any = new FormGroup({
+      idcategoria: new FormControl(''),
+      nombre: new FormControl(''),
+      hora: new FormControl(''),
+      fecha: new FormControl(''),
+    })
+     
+
+  constructor(private cateService: CategoriaService, private confirmationService: ConfirmationService, private messageService: MessageService) {}
+
+modelCategoria() {
+  this.cateService.ListarCategoria().subscribe((fall) => {
+    this.listaCategoria = fall;
+  });
+}
+modelSubCategoria() {
+  if (this.Obtenercategoria) {
+    this.cateService.ListarSubCategoriaID(this.Obtenercategoria.idcategoria).subscribe((fall) => {
+      this.listaSubCategoria
+     = fall;
+      console.log('negocios obtenidas para el cliente:', this.Obtenercategoria.nombre, fall);
+    });
+  } else {
+    console.warn('No hay cliente seleccionado para cargar negocio');
+  }
+}
+  ngOnInit(): void {
+    this.modelCategoria();
+    this.modelSubCategoria();
+  }
+ filtro: string = ''; 
+  buscarCategoria() {
+    if (this.filtro.trim()) {
+      this.cateService.buscarCategorias(this.filtro).subscribe((result) => {
+        this.listaCategoria = result;
+      });
+    } else {
+      this.modelCategoria(); 
+    }
+
+  }
+ 
+
+registrarCategoria() {
+    const fecha = new Date();
+    const hora = fecha.toTimeString().split(' ')[0];
+    this.xper = {
+      nombre: this.cateForm.get('nombre')?.value,
+      fecha: fecha,
+      hora: hora
+    },
+    this.cateService
+      .RegistrarCategoria(this.xper)
+      .subscribe(() => {
+        this.cateService.ListarCategoria().subscribe((fall) => {
+    this.listaCategoria = fall;
+    console.log("Lista actualizada:", this.listaCategoria);
+  });
+  
+      });
+  }
+
+// modificar categoria
+vistaCategoria(xdat: Categoria) { 
+  this.cateForm.patchValue({
+    idcategoria: xdat.idcategoria,
+    fecha: xdat.fecha,
+    hora: xdat.hora,
+    nombre: xdat.nombre
+  })
+}
+modificarCategoria() {
+    this.xper = {
+      idcategoria: this.cateForm.get('idcategoria')?.value,
+      nombre: this.cateForm.get('nombre')?.value,
+      fecha: this.cateForm.get('fecha')?.value,
+      hora: this.cateForm.get('hora')?.value,
+    },
+    this.cateService
+      .ModificarCategoria(this.xper)
+      .subscribe(() => {
+        this.cateService.ListarCategoria().subscribe((fall) => {
+    this.listaCategoria = fall;
+    console.log("Lista actualizada:", this.listaCategoria);
+  });
+  
+      });
+  }
+//  registrar sub categoria
+  registrarSubCategoria() {
+    const categoria = this.Obtenercategoria;
+    this.xcate = {
+      nombre: this.subcateForm.get('nombre')?.value,
+      descripcion: this.subcateForm.get('descripcion')?.value,
+      categoria: categoria,
+    },
+     console.log("datos de de subcategoria mandando::",this.xcate);
+
+    this.cateService
+      .RegistrarSubCategoria(this.xcate)
+      .subscribe(() => {
+        this.cateService.ListarSubCategoriaID(this.Obtenercategoria.idcategoria).subscribe((fall) => (this.listaSubCategoria=fall))
+        this.subcateForm.reset();
+      });
+  }
+// modificar sub categoria
+vistaSubCategoria(xdat: Subcategoria) { 
+  this.subcateForm.patchValue({
+    idsubc: xdat.idsubc,
+    descripcion: xdat.descripcion,
+    categoria: xdat.categoria,
+    nombre: xdat.nombre
+  })
+}
+modificarSubCategoria() {
+    const categoria = this.Obtenercategoria;
+    this.xcate = {
+      idsubc: this.subcateForm.get('idsubc')?.value,
+      nombre: this.subcateForm.get('nombre')?.value,
+      descripcion: this.subcateForm.get('descripcion')?.value,
+      categoria: this.subcateForm.get('categoria')?.value,
+    },
+     console.log("datos de de subcategoria mandando::",this.xcate);
+
+    this.cateService
+      .ModificarSubCategoria(this.xcate)
+      .subscribe(() => {
+        this.cateService.ListarSubCategoriaID(this.Obtenercategoria.idcategoria).subscribe((fall) => (this.listaSubCategoria=fall))
+        this.subcateForm.reset();
+      });
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+perInfo = '';
+  eliminarNegocio!: Subcategoria;
+  vistaEliminar(fall: Subcategoria ){
+    this.perInfo = fall.nombre;
+    this.eliminarNegocio = fall;
+    
+  }
+  EliminarSubCategoria() {
+    if (this.eliminarNegocio && this.eliminarNegocio.idsubc) {
+      this.cateService.eliminarSubCategoria(this.eliminarNegocio.idsubc).subscribe({
+        next: () => {
+          this.cateService.ListarSubCategoriaID(this.Obtenercategoria.idcategoria).subscribe((fall) => (this.listaSubCategoria=fall));
+          this.messageService.add({
+          severity: 'success',
+          summary: '¡Eliminación exitosa!',
+          detail: `${this.perInfo} fue eliminado correctamente.`,
+          life: 3000
+        });
+        },
+         error: (err) => {
+        console.error('Error al eliminar Producto:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al eliminar',
+          detail: 'No se puede eliminar este producto porque ya está siendo usado.',
+          life: 4000
+        });
+      }
+      });
+    }
+  }
+
+  perInfo1 = '';
+  eliminarCategoria!: Categoria;
+  vistaEliminar1(fall: Categoria ){
+    this.perInfo1 = fall.nombre;
+    this.eliminarCategoria = fall;
+    
+  }
+  EliminarCategoria() {
+    if (this.eliminarCategoria && this.eliminarCategoria.idcategoria) {
+      this.cateService.eliminarCategoria(this.eliminarCategoria.idcategoria).subscribe({
+        next: () => {
+          this.cateService.ListarCategoria().subscribe((fall) => (this.listaCategoria=fall));
+          this.messageService.add({
+          severity: 'success',
+          summary: '¡Eliminación exitosa!',
+          detail: `${this.perInfo1} fue eliminado correctamente.`,
+          life: 3000
+        });
+        },
+         error: (err) => {
+        console.error('Error al eliminar Categoria:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error al eliminar',
+          detail: 'No se puede eliminar esta Categoria porque ya está siendo usado.',
+          life: 4000
+        });
+      }
+      });
+    }
+  }
+
+
+  confirm2(event: Event) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+           message: `¿Estás seguro de eliminar: ${this.perInfo}?`,
+            header: 'Confirmar Eliminacion',
+            icon: 'pi pi-info-circle',
+            rejectLabel: 'Cancel',
+            rejectButtonProps: {
+                label: 'Cancelar',
+                severity: 'secondary',
+                outlined: true,
+            },
+            acceptButtonProps: {
+                label: 'Eliminar',
+                severity: 'danger',
+            },
+
+            accept: () => {
+              this.EliminarSubCategoria(); 
+              
+             },
+           reject: () => {
+              this.messageService.add({severity: 'warn', summary: 'Operación cancelada', detail: `No se eliminó ${this.perInfo}.`,
+           life: 3000
+           });
+            }
+
+        });
+    }
+
+
+    confirm3(event: Event) {
+        this.confirmationService.confirm({
+            target: event.target as EventTarget,
+           message: `¿Estás seguro de eliminar: ${this.perInfo1}?`,
+            header: 'Confirmar Eliminacion',
+            icon: 'pi pi-info-circle',
+            rejectLabel: 'Cancel',
+            rejectButtonProps: {
+                label: 'Cancelar',
+                severity: 'secondary',
+                outlined: true,
+            },
+            acceptButtonProps: {
+                label: 'Eliminar',
+                severity: 'danger',
+            },
+
+            accept: () => {
+              this.EliminarCategoria(); 
+            
+             },
+           reject: () => {
+              this.messageService.add({severity: 'warn', summary: 'Operación cancelada', detail: `No se eliminó ${this.perInfo1}.`,
+           life: 3000
+           });
+            }
+
+        });
+    }
+ visible: boolean = false;
+
+    showDialog() {
+        this.visible = true;
+    }
+
+    guardarRegistro() {
+  this.visible = false;
+  this.messageService.add({
+    severity: 'success',
+    summary: 'Guardado',
+    detail: 'El registro fue guardado exitosamente.',
+    life: 3000
+  });
+}
+
+cancelarRegistro() {
+  this.visible = false;
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Cancelado',
+    detail: 'No se realizó ninguna operación.',
+    life: 3000
+  });
+      
+}
+ 
+ visibleC: boolean = false;
+
+    showDialogC() {
+        this.visibleC = true;
+    }
+
+    guardarRegistroC() {
+  this.visibleC = false;
+  this.messageService.add({
+    severity: 'success',
+    summary: 'Actualizado',
+    detail: 'Datos Actualizado exitosamente.',
+    life: 3000
+  });
+}
+
+cancelarRegistroC() {
+  this.visibleC = false;
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Cancelado',
+    detail: 'No se realizó ninguna operación.',
+    life: 3000
+  });
+      
+}
+
+ visibleSC: boolean = false;
+
+    showDialogSC() {
+        this.visibleSC = true;
+    }
+
+    guardarRegistroSC() {
+  this.visibleSC = false;
+  this.messageService.add({
+    severity: 'success',
+    summary: 'Actualizado',
+    detail: 'Datos Actualizado exitosamente.',
+    life: 3000
+  });
+}
+
+cancelarRegistroSC() {
+  this.visibleSC = false;
+  this.messageService.add({
+    severity: 'info',
+    summary: 'Cancelado',
+    detail: 'No se realizó ninguna operación.',
+    life: 3000
+  });
+      
+}
+radioSeleccionado: boolean = false;
+
+// validacion formulario categoria
+mensajeVisible: boolean = false;
+mensajeTexto: string = ''; // Texto dinámico
+botonHabilitado: boolean = false;
+mostrarMensaje(texto: string): void {
+  this.mensajeTexto = texto;
+  this.mensajeVisible = true;
+
+  // Reiniciar luego de 3 segundos
+  setTimeout(() => {
+    this.mensajeVisible = false;
+    this.mensajeTexto = '';
+  }, 3000);
+}
+validarNombre(): void {
+  const nombreControl = this.cateForm.get('nombre');
+  const valor: string = nombreControl?.value || '';
+// 5. Ya existe una categoría con ese nombre
+const yaExiste = this.listaCategoria.some(cat =>
+  cat.nombre.trim().toLowerCase() === valor.trim().toLowerCase()
+);
+if (yaExiste) {
+  this.mostrarMensaje('El nombre ya fue usado');
+  this.botonHabilitado = false;
+  return;
+}
+
+  // 1. Campo vacío
+  if (!valor.trim()) {
+    this.mostrarMensaje('El campo nombre es requerido');
+    this.botonHabilitado = false;
+    return;
+  }
+
+  // 2. Caracteres inválidos
+  const soloLetrasEspacio = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
+  if (!soloLetrasEspacio.test(valor)) {
+    this.mostrarMensaje('Formato no permitido');
+    this.botonHabilitado = false;
+    return;
+  }
+
+  // 3. Mínimo 3 letras
+  if (valor.trim().length < 3) {
+    this.mostrarMensaje('Debe contener al menos 3 caracteres');
+    this.botonHabilitado = false;
+    return;
+  }
+
+  // 4. Máximo 50 letras
+  if (valor.trim().length > 50) {
+    this.mostrarMensaje('No debe superar los 50 caracteres');
+    this.botonHabilitado = false;
+    return;
+  }
+
+  // ✅ Todo válido
+  this.mensajeVisible = false;
+  this.botonHabilitado = true;
+}
+//  validacion sub categoria
+botonHabilitadoC: boolean = false;
+validarNombreC(): void {
+  const nombreControl = this.subcateForm.get('nombre');
+  const valor: string = nombreControl?.value || '';
+
+  // 1. Campo vacío
+  if (!valor.trim()) {
+    this.mostrarMensaje('El campo nombre es requerido');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // 2. Caracteres inválidos
+  const soloLetrasEspacio = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
+  if (!soloLetrasEspacio.test(valor)) {
+    this.mostrarMensaje('Formato no permitido');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // 3. Mínimo 3 letras
+  if (valor.trim().length < 3) {
+    this.mostrarMensaje('Debe contener al menos 3 caracteres');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // 4. Máximo 50 letras
+  if (valor.trim().length > 40) {
+    this.mostrarMensaje('No debe superar los 40 caracteres');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // ✅ Todo válido
+  this.mensajeVisible = false;
+  this.botonHabilitadoC = true;
+}
+validarDescripcionC(): void {
+  const nombreControl = this.subcateForm.get('descripcion');
+  const valor: string = nombreControl?.value || '';
+
+
+  // 2. Caracteres inválidos
+  const soloLetrasEspacio = /^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$/;
+  if (!soloLetrasEspacio.test(valor)) {
+    this.mostrarMensaje('Formato no permitido');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // 3. Mínimo 3 letras
+  if (valor.trim().length < 3) {
+    this.mostrarMensaje('Debe contener al menos 3 caracteres');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // 4. Máximo 50 letras
+  if (valor.trim().length > 80) {
+    this.mostrarMensaje('No debe superar los 80 caracteres');
+    this.botonHabilitadoC = false;
+    return;
+  }
+
+  // ✅ Todo válido
+  this.mensajeVisible = false;
+  this.botonHabilitadoC = true;
+}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+css::.
+
+  .empresa-form-titulo {
+    position: absolute;
+    top: -14px;
+    left: 25px;
+    background-color: #ffffff;
+    color: #000000;
+
+    padding: 0 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    z-index: 2;
+  }
+  
+  /* Asegura que el formulario tenga posición relativa */
+  .empresa-formulario {
+    position: relative;
+    background-color: #ffffff;
+    padding: 30px 20px 20px;
+    border-radius: 15px;
+    border: 1px solid #d36b9f;
+    margin-bottom: 30px;
+  }
+  
+  
+  
+  .empresa-form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .empresa-form-group-floating {
+    position: relative;
+    flex: 1;
+    margin-top: 10px;
+  }
+  
+  .empresa-icon {
+    position: absolute;
+    top: 14px;
+    left: 10px;
+    color: #c43684;
+    pointer-events: none;
+  }
+  
+  .empresa-input {
+    width: 100%;
+    padding: 12px 12px 12px 35px;
+    border: none;
+    border-bottom: 2px solid #c43684;
+    background-color: transparent;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    outline: none;
+  }
+  
+  .empresa-input:focus {
+    border-color: #ff6fcf;
+  }
+  
+  .empresa-label-flotante {
+    position: absolute;
+    top: 12px;
+    left: 35px;
+    color: #aaa;
+    font-size: 16px;
+    transition: 0.2s ease all;
+    pointer-events: none;
+  }
+  
+  .empresa-input:focus ~ .empresa-label-flotante,
+  .empresa-input:not(:placeholder-shown):not(:focus):valid ~ .empresa-label-flotante {
+    top: -10px;
+    left: 30px;
+    font-size: 13px;
+    color: #ff6fcf;
+    background-color: #ffffff;
+    padding: 0 4px;
+  }
+  
+  .empresa-btn {
+    background-color: #9b3f75;
+    color: rgb(255, 255, 255);
+    border: none;
+    padding: 8px 16px;
+    margin-right: 10px;
+    border-radius: 8px;
+    transition: background-color 0.3s;
+  }
+
+  .empresa-btn:hover {
+    background-color: #8d2659;
+  }
+
+  .empresa-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+
+  .empresa-table th, .empresa-table td {
+    padding: 12px;
+    text-align: center;
+    color: rgb(0, 0, 0);
+  }
+
+  .empresa-table th {
+    background-color: #000000;
+    color: rgb(255, 255, 255);
+  }
+
+  .empresa-table tr:nth-child(even) {
+    background-color: #ffffff;
+  }
+
+  .empresa-icon-btn {
+    background-color: transparent;
+    border: none;
+    color: #964068;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .empresa-icon-btn:hover {
+    color: #ff99bb;
+  }
+  .x1{
+    border: 2px solid #d36b9f;
+  }
+
+  /* Ajustar formularios para pantallas pequeñas */
+@media (max-width: 768px) {
+  .empresa-form-row {
+    display: flex;
+    flex-direction: column; /* Hace que los campos se apilen */
+    gap: 1rem; /* Espaciado entre campos */
+  }
+
+  .empresa-form-group-floating {
+    width: 100% !important; /* Cada input ocupa todo el ancho */
+  }
+
+  .empresa-btn {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+}
+@media (max-width: 768px) {
+  form button + button {
+    margin-top: 0.5rem;
+  }
+}
+
+
+/* Encabezado con icono */
+.header-dialog {
+  display: flex;
+  align-items: center;
+  color: #ec4899; /* rosado */
+  font-weight: bold;
+  font-size: 1rem;
+}
+.header-dialog i {
+  margin-right: 8px;
+}
+
+/* Campo de entrada con línea */
+.input-container {
+  position: relative;
+  margin-top: 10px;
+}
+.input-container input {
+  width: 100%;
+  border: none;
+  border-bottom: 2px solid #f9a8d4; /* rosado claro */
+  padding: 6px 4px;
+  font-size: 14px;
+  background-color: transparent;
+  transition: border-color 0.3s;
+}
+.input-container input:focus {
+  outline: none;
+  border-bottom: 2px solid #ec4899; /* rosado fuerte */
+}
+
+/* Etiqueta */
+.form-group label {
+  font-weight: 600;
+  font-size: 13px;
+  color: #4b5563;
+}
+
+/* Botones */
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.btn-cancelar {
+  background-color: transparent;
+  border: 1px solid #f9a8d4;
+  color: #ec4899;
+  padding: 6px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+.btn-cancelar:hover {
+  border-color: #ec4899;
+}
+
+.btn-guardar {
+  background-color: #ec4899;
+  border: none;
+  color: white;
+  padding: 6px 14px;
+  border-radius: 5px;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.btn-guardar:hover {
+  background-color: #db2777;
+}
+/* modal icono para elimninar */
+.btn-icon {
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  cursor: pointer;
+}
+
+
+/* ------------------------- */
+
+/* Fondo blanco en buscador, tabla y paginado */
+.table-white {
+  background-color: white;
+  color: black;
+}
+
+.table-white tbody tr {
+  border-bottom: 1px solid #ddd;
+}
+
+.table-white tbody tr:hover {
+  background-color: #f8f8f8;
+}
+
+/* Encabezado rosado */
+.table-white thead {
+  background-color: white !important;
+  color: #ec4899 !important; /* rosado */
+  font-weight: bold;
+}
+
+/* Input buscador fondo blanco */
+.form-control {
+  background-color: white;
+  border: 1px solid #ccc;
+  color: black;
+}
+
+.form-control::placeholder {
+  color: #999;
+}
+
+/* Paginado fondo blanco, texto rosado */
+.pagination .page-link {
+  background-color: white;
+  border: 1px solid #ec4899;
+  color: #ec4899;
+}
+
+.pagination .page-link:hover {
+  background-color: #ec4899;
+  color: white;
+}
+.thead-rosado th {
+  color: #ec4899 !important;  /* rosado */
+  font-weight: bold;
+  font-size: 15px;
+}

@@ -1,0 +1,272 @@
+  <!-- Encabezado fijo -->
+<div *ngIf="!mostrarLogin" class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+            
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-4 pt-7 
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    
+    <!-- Icono de volver atrás usando PrimeIcons -->
+<i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Carrito
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+
+<!-- Mostrar solo si hay productos en el carrito -->
+ <div *ngIf="!mostrarLogin " class="max-w-3xl mx-auto overflow-y-auto scrollbar-none max-h-screen">
+<ng-container  *ngIf="carrito.length > 0; else vacio">
+
+  <!-- Badge superior con total de productos -->
+  <div class=" mt-[86px] flex items-center justify-between mb-4">
+    <h2 class="text-xl font-semibold text-gray-800 dark:text-white"></h2>
+    <button 
+  class="ml-40 text-indigo-500 dark:text-indigo-400 hover:underline flex items-center justify-center gap-1 text-sm font-semibold"
+  routerLink="/main/listar/catalogos"
+>
+  <i class="pi pi-plus"></i>
+  <span>Agregar</span>
+</button>
+
+    <span class="bg-green-600 text-white text-sm font-semibold px-3 py-1 rounded-full">
+      {{ carrito.length }} producto{{ carrito.length > 1 ? 's' : '' }}
+    </span>
+  </div>
+
+  <!-- Lista de productos en tarjeta -->
+  <div class="space-y-3 px-2">
+   <div *ngFor="let item of carrito" class="bg-white dark:bg-neutral-800 rounded-xl shadow p-4">
+  <div class="flex justify-between items-center">
+    <!-- Parte izquierda en columna -->
+    <div class="space-y-1">
+      <h3 class="font-semibold text-gray-800 dark:text-white text-base">producto: {{ item.nombre }}</h3>
+      <p class="text-sm text-gray-500 dark:text-gray-300">Cantidad: {{ item.cantidad }} Unidades</p>
+      <p class="text-sm font-semibold text-green-600">Sub Total: {{ item.precio * item.cantidad }} Bs.</p>
+    </div>
+
+    <!-- Parte derecha: Botón quitar -->
+    <div>
+      <button (click)="eliminarDelCarrito(item.idcatalogo)" class="text-red-600 hover:text-red-800 text-sm">
+        <i class="fas fa-minus-circle"></i> Quitar
+      </button>
+    </div>
+  </div>
+</div>
+
+  </div>
+
+  <!-- Total calculado -->
+  <div class="mt-6 px-4 border-t pt-4 flex justify-between items-center text-lg font-semibold">
+    <span class="text-gray-700 dark:text-white">Total a pagar:</span>
+    <span class="text-green-600">{{ calcularTotal() }} .Bs.</span>
+  </div>
+<!-- 🟢 Mensaje emergente (Toast) -->
+<div 
+  *ngIf="mensajeEmergente"
+  class="fixed bottom-10 left-1/2 transform -translate-x-1/2 
+         bg-indigo-600 dark:bg-indigo-500 
+         text-white dark:text-gray-100 
+         px-6 py-3 rounded-xl shadow-lg z-50 
+         animate__animated animate__fadeInUp"
+>
+  {{ mensajeEmergente }}
+</div>
+
+
+  <!-- Botones -->
+  <div class="mt-6 px-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <button (click)="vaciarCarrito()" class="w-full bg-red-600 hover:bg-red-700 text-white py-3 rounded-lg shadow transition">
+        Vaciar carrito
+      </button>
+      <button (click)="mostrarConfirmacionEnvio()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-lg shadow transition">
+        Enviar pedido
+      </button>
+    </div>
+  </div>
+<div style="height: 100px;"> </div>
+</ng-container>
+
+<ng-template #vacio>
+  <div 
+  *ngIf="mensajeEmergente"
+  class="fixed bottom-10 left-1/2 transform -translate-x-1/2 
+         bg-indigo-600 dark:bg-indigo-500 
+         text-white dark:text-gray-100 
+         px-6 py-3 rounded-xl shadow-lg z-50 
+         animate__animated animate__fadeInUp"
+>
+  {{ mensajeEmergente }}
+</div>
+
+
+  <div class="text-center mt-40 animate__animated animate__zoomInUp">
+   <p class="text-gray-900 dark:text-gray-100">Tu carrito está vacío</p>
+    <div class="text-center mt-2">
+  <button 
+    class="mx-auto text-indigo-500 dark:text-indigo-400 hover:underline flex items-center justify-center gap-1 text-sm font-semibold"
+    routerLink="/main/listar/catalogos"
+  >
+    <i class="pi pi-plus"></i>
+    <span>Agregar</span>
+  </button>
+</div>
+
+  </div>
+</ng-template>
+
+</div>
+
+
+<!-- Modal de confirmación -->
+<div *ngIf="confirmarEnvio" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+  <div class="relative bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg w-11/12 md:w-1/3 text-center">
+
+    <!-- 🔥 Mensaje si la librería NO está verificada -->
+    <div *ngIf="negocioSeleccionado?.estado === 0"
+         class="absolute inset-0 bg-red-600 bg-opacity-120 text-white font-semibold rounded-xl flex flex-col justify-center items-center px-6 text-center">
+
+      <p class="text-lg mb-3">⚠ Librería aún no está verificada</p>
+      <p class="text-sm mb-4">
+        No puedes realizar pedidos hasta que sea aprobada.
+      </p>
+
+      <a href="https://wa.me/59172448749" target="_blank"
+         class="flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg shadow">
+        📱 Contactar vía WhatsApp
+      </a>
+       <button (click)="cancelarEnvio()" class=" text-white px-6 py-2 rounded-lg shadow">
+        Salir
+      </button>
+    </div>
+
+    <h2 class="text-lg font-semibold text-gray-800 dark:text-white mb-4">
+      ¿Estás seguro de enviar este pedido?
+    </h2>
+
+    <!-- Select negocios -->
+    <div class="mb-6 text-left">
+      <select id="libreria" [(ngModel)]="negocioSeleccionado"
+        class="w-full rounded-lg border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 px-4 py-2">
+        <option value="" disabled [selected]="!negocioSeleccionado">-- Elige una opción --</option>
+        <option *ngFor="let n of negocios" [ngValue]="n">{{ n.razon_social }}</option>
+      </select>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-center gap-4">
+      <button (click)="cancelarEnvio()" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg shadow">
+        Cancelar
+      </button>
+
+      <button *ngIf="negocioSeleccionado?.estado === 1" [disabled]="!negocioSeleccionado || negocioSeleccionado?.estado === 0"
+              (click)="enviarPedido()" 
+              class="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow disabled:opacity-50 disabled:cursor-not-allowed">
+        Confirmar
+      </button>
+    </div>
+
+    <p class="mt-3 text-xs text-gray-500 dark:text-gray-400">
+      para registrar la fecha de entrega, el personal se comunicará con usted.
+    </p>
+  </div>
+</div>
+
+
+
+
+<!-- login -->
+ <div *ngIf="mostrarLogin" class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+            
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-5 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Iniciar sesion
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+
+<div *ngIf="mostrarLogin" class="animate__animated animate__zoomIn min-h-screen  flex items-start justify-center pt-20 px-4">
+  <div class="w-full max-w-sm  p-8 relative z-10">
+    
+    <!-- Logo animado -->
+    <div class="flex justify-center mb-6">
+      <div class="w-16 h-16 bg-purple-100 text-purple-500 flex items-center justify-center rounded-full shadow-lg animate-bounce">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M5.121 17.804A13.937 13.937 0 0112 15c2.486 0 4.797.676 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Mensaje de respuesta -->
+    <div *ngIf="mensaje" class="text-center mb-4" [ngClass]="exito ? 'text-green-600' : 'text-red-500'">
+      {{ mensaje }}
+    </div>
+
+    <form (submit)="iniciarSesion(); $event.preventDefault()">
+      <!-- Usuario -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.usuario"
+          name="usuario"
+          id="usuario"
+          type="text"
+          placeholder="Usuario"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Contraseña -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.contrasena"
+          name="contrasena"
+          id="contrasena"
+          type="password"
+          placeholder="Contraseña"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full py-3 border-b-2 border-gray-400 dark:border-gray-600 text-gray-900 dark:text-gray-100 font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+      >
+        <!-- Texto + icono cuando NO está cargando -->
+        <span *ngIf="!cargando; else loading" class="flex items-center gap-2">
+          <i class="pi pi-sign-in text-lg"></i>
+          <span>Ingresar</span>
+        </span>
+
+        <!-- Loader -->
+        <ng-template #loading>
+          <svg class="animate-spin h-5 w-5 text-gray-900 dark:text-gray-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+            </path>
+          </svg>
+        </ng-template>
+      </button>
+        <!-- Texto de registro -->
+<div class="mt-6 text-center">
+  <span class="text-sm text-gray-700 dark:text-gray-300">¿No tienes cuenta?</span>
+  <a routerLink="/main/registrarse" class="text-purple-600 dark:text-purple-400 font-semibold hover:underline ml-1">
+    Regístrate ahora
+  </a>
+</div>
+    </form>
+  </div>
+</div>

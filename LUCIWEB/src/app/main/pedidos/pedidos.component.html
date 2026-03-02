@@ -1,0 +1,565 @@
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Cargando pedidos...</span>
+</div>
+
+<div *ngIf="!loading">
+  <!-- Lista de pedidos -->
+  <div *ngIf="!vistaDetalleActiva">
+
+   <!-- Encabezado moderno -->
+<div class="animate__animated animate__fadeInLeft flex items-center justify-between px-3 py-2 border-b border-gray-200 dark:border-gray-700 mb-4">
+  
+  <!-- Título e ícono -->
+  <div class="flex items-center gap-3">
+    <p-avatar 
+      icon="pi pi-shopping-cart" 
+      shape="circle" 
+      styleClass="bg-pink-200 dark:bg-pink-700 text-pink-800 dark:text-pink-200"
+    />
+    <span class="hidden md:inline font-extrabold text-xl text-gray-700 dark:text-gray-200">
+      Módulo Pedidos / Lista
+    </span>
+  </div>
+
+  <!-- Botón Filtros alineado a la derecha -->
+  <button (click)="toggleFiltros()"
+    class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+           hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+    <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+  </button>
+
+</div>
+
+
+    <div class="flex flex-col gap-3">
+
+      <!-- Buscador -->
+       <div *ngIf="mostrarFiltros">
+      <div class="flex items-center justify-center px-2">
+        <input [(ngModel)]="filtro"
+               (input)="buscarPedido()"
+               type="text"
+               class="form-control input-underline w-full max-w-md ps-5 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-300"
+               placeholder="Buscar por cliente" />
+      </div>
+
+      <!-- Botones de filtro responsive -->
+      <div class="animate__animated animate__fadeInDown grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 sm:gap-3 mt-3 px-2">
+        <button (click)="filtrarPedidos('todos')" class="tab-button active w-full text-sm sm:text-base"> 
+          <i class="fa fa-list me-1"></i>Todos
+        </button>
+        <button (click)="filtrarPedidos('cancelados')" class="tab-button w-full text-sm sm:text-base">
+          <i class="fa fa-ban me-1"></i>Cancelados
+        </button>
+        <button (click)="filtrarPedidos('pendientes')" class="tab-button w-full text-sm sm:text-base">
+          <i class="fa fa-hourglass-half me-1"></i>Pendientes
+        </button>
+        <button (click)="filtrarPedidos('proceso')" class="tab-button w-full text-sm sm:text-base">
+          <i class="fa fa-spinner me-1"></i>En proceso
+        </button>
+        <button (click)="filtrarPedidos('completado')" class="tab-button w-full text-sm sm:text-base">
+          <i class="fa fa-check-circle me-1"></i>Completados
+        </button>
+        <button (click)="filtrarPedidos('entregados')" class="tab-button w-full text-sm sm:text-base">
+          <i class="fa fa-truck me-1"></i>Entregados
+        </button>
+      </div>
+      </div>
+
+      <!-- Tarjetas de pedidos -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 animate__animated animate__fadeIn px-4">
+  <div *ngFor="let xdat of listaPedido | paginate: { itemsPerPage: 3, currentPage: pag }; let pos = index"
+       class="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-all duration-300 overflow-hidden text-sm max-w-[380px] w-full mx-auto">
+
+    <!-- Cabecera con número + estado -->
+    <div class="flex items-start justify-between p-0 m-0">
+      <p class="bg-pink-100 dark:bg-pink-700 text-black dark:text-pink-200 font-semibold text-sm uppercase tracking-wide px-2 py-1 rounded-br-lg rounded-tl-xl w-fit"
+         style="margin: 0; border-top-left-radius: 0.75rem; border-bottom-right-radius: 0.5rem;">
+        Pedido #{{ pos + 1 }}
+      </p>
+
+      <span [ngClass]="{
+            'bg-red-100 dark:bg-red-700 text-red-700 dark:text-red-200': xdat.estado === 0,
+            'bg-yellow-100 dark:bg-yellow-700 text-yellow-700 dark:text-yellow-200': xdat.estado === 1,
+            'bg-blue-100 dark:bg-blue-700 text-blue-700 dark:text-blue-200': xdat.estado === 2,
+            'bg-green-100 dark:bg-green-700 text-green-700 dark:text-green-200': xdat.estado === 3,
+            'bg-purple-100 dark:bg-purple-700 text-purple-700 dark:text-purple-200': xdat.estado === 4
+          }"
+          class="text-xs font-semibold px-3 py-1 rounded-bl-lg rounded-tr-xl border shadow-sm"
+          style="margin: 0;">
+        {{
+          xdat.estado === 0 ? 'Cancelado' :
+          xdat.estado === 1 ? 'Pendiente' :
+          xdat.estado === 2 ? 'En Proceso' :
+          xdat.estado === 3 ? 'Completado' :
+          xdat.estado === 4 ? 'Entregado' : 'Desconocido'
+        }}
+      </span>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="p-2 space-y-3 text-gray-600 dark:text-gray-300">
+      <p class="flex items-center gap-2">
+        <i class="pi pi-user text-indigo-500 dark:text-indigo-300"></i>
+        {{ xdat.libreria?.razon_social }} - {{ xdat.libreria?.persona?.nombre }} {{ xdat.libreria?.persona?.ap_paterno }}
+      </p>
+      <p class="flex items-center gap-2">
+        <i class="pi pi-phone text-emerald-500 dark:text-emerald-400"></i>
+        {{ xdat.libreria?.persona?.telefono }}
+      </p>
+      <p class="flex items-center gap-2">
+        <i class="pi pi-calendar text-pink-500 dark:text-pink-300"></i>
+        Entrega: {{ xdat.fecha_entrega ? (xdat.fecha_entrega | date:'d \'de\' MMMM \'de\' y') : 'Sin fecha de entrega' }}
+      </p>
+      <p class="flex items-center gap-2">
+        <i class="pi pi-dollar text-yellow-600 dark:text-yellow-400"></i>
+        <span>{{ xdat.precio_total }} Bs.</span>
+      </p>
+    </div>
+
+    <!-- Acciones (flex-wrap para que no se salga) -->
+    <div class="flex flex-wrap justify-between items-center pt-2 border-t border-gray-100 dark:border-gray-700 gap-2">
+      <!-- Botones -->
+      <div class="flex gap-2 flex-wrap">
+        <p-button [disabled]="xdat.estado !== 1"
+                  (click)="showDialogC(xdat); vistaPedido(xdat)"
+                  icon="pi pi-file-edit"
+                  title="Editar"
+                  styleClass="p-button-sm border-none"
+                  [style]="{ backgroundColor: 'transparent', color: '#0ea5e9' }" />
+
+        <p-button [disabled]="xdat.estado !== 1"
+                  (click)="showDialog(xdat)"
+                  icon="pi pi-shopping-cart"
+                  title="Añadir"
+                  styleClass="p-button-sm border-none"
+                  [style]="{ backgroundColor: 'transparent', color: '#0ea5e9' }" />
+      </div>
+
+      <!-- Switch -->
+      <div class="pt-2">
+        <p-inputSwitch
+          title="Habilitar y/o Cancelar"
+          [ngModel]="[1,2,3,4].includes(xdat.estado)"
+          [disabled]="xdat.estado !== 0 && xdat.estado !== 1"
+          (ngModelChange)="cambiarEstadoSwitchPedido($event, xdat)"
+          class="scale-90">
+        </p-inputSwitch>
+      </div>
+    </div>
+
+    <!-- Ver detalle -->
+    <div class="pt-1 border-t border-gray-100 dark:border-gray-700 text-right">
+      <button (click)="verDetalleSeparado(xdat)"
+              class="text-xs text-blue-600 dark:text-blue-300 hover:underline font-medium mt-2">
+        Ver Detalles
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+      <!-- Paginación -->
+      <div class="flex justify-center mt-1">
+        <pagination-controls
+          (pageChange)="pag = $event"
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          class="custom-pagination">
+        </pagination-controls>
+      </div>
+
+      <!-- Línea decorativa -->
+      <div class="w-3/4 mx-auto mt-0 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 dark:from-pink-700 dark:via-purple-700 dark:to-pink-800 animate-fade-in"></div>
+
+      <!-- Footer -->
+      <div class="text-center text-sm md:text-base text-pink-600 dark:text-pink-400 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+        <div class="flex items-center space-x-2">
+          <i class="pi pi-star-fill text-yellow-400 dark:text-yellow-300"></i>
+          <span>Sistema de Gestión de Personal – <span class="text-purple-600 dark:text-purple-400">LUCIWEB</span></span>
+        </div>
+        <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+          <i class="pi pi-shield text-pink-400 dark:text-pink-300"></i>
+          <span>Todos los derechos reservados © 2025</span>
+        </div>
+        <div class="flex items-center space-x-2 text-xs text-gray-400 dark:text-gray-300">
+          <i class="pi pi-cog text-indigo-400 dark:text-indigo-300"></i>
+          <span>Versión 1.0</span>
+        </div>
+        <div class="flex items-center space-x-2 text-xs italic text-teal-500 dark:text-teal-300">
+          <i class="pi pi-heart-fill text-red-400 dark:text-red-300"></i>
+          <span>“Trabajamos con pasión y compromiso”</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Tabla refinada y minimalista -->
+<div *ngIf="vistaDetalleActiva" class="filtro-opcion p-8 space-y-8 dark:bg-gray-900 dark:text-gray-200">
+
+  <!-- Encabezado -->
+  <div class="flex items-center gap-4">
+    <div class="bg-blue-100 dark:bg-blue-700 text-blue-700 dark:text-blue-200 rounded-full w-14 h-14 flex items-center justify-center">
+      <i class="pi pi-shopping-cart text-xl"></i>
+    </div>
+    <div>
+      <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-200">Detalles del Pedido</h2>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Resumen del pedido actual</p>
+    </div>
+  </div>
+
+  <!-- Botón volver -->
+  <div>
+    <button (click)="cerrarDetalle()"
+      class="flex items-center gap-2 text-sm px-5 py-2 bg-blue-100 dark:bg-blue-700 text-blue-700 dark:text-blue-200 font-medium rounded-full hover:bg-blue-200 dark:hover:bg-blue-600 transition">
+      <i class="pi pi-arrow-left"></i> Volver a pedidos
+    </button>
+  </div>
+
+  <!-- Tabla limpia y moderna -->
+  <div class="animate__animated animate__zoomIn animate__slow overflow-x-auto">
+    <table class="min-w-full text-sm text-gray-700 dark:text-gray-200">
+      <thead>
+        <tr class="text-left text-xs text-gray-500 dark:text-gray-400 uppercase border-b border-gray-200 dark:border-gray-700">
+          <th class="py-3 px-4">#</th>
+          <th class="py-3 px-4"><i class="pi pi-box mr-1 text-blue-500 dark:text-blue-300"></i>Nombre</th>
+          <th class="py-3 px-4"><i class="pi pi-clone mr-1 text-gray-400 dark:text-gray-500"></i>Cantidad x Precio</th>
+          <th class="py-3 px-4"><i class="pi pi-wallet mr-1 text-green-500 dark:text-green-400"></i>Subtotal</th>
+          <th class="py-3 px-4 text-center">Estado</th>
+          <th class="py-3 px-4 text-center">Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let det of listaDetallePedido; let i = index"
+            class="border-b border-gray-100 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors">
+
+          <td class="py-3 px-4 text-blue-700 dark:text-blue-300 font-semibold">{{ i + 1 }}</td>
+          <td class="py-3 px-4">{{ det.catalogo?.nombre }}</td>
+          <td class="py-3 px-4">{{ det.cantidad /12 }} doc x {{ det.catalogo?.precio }} Bs.</td>
+          <td class="py-3 px-4 text-green-600 dark:text-green-400 font-medium">{{ det.precio_subtotal }} Bs.</td>
+
+          <!-- Estado -->
+          <td class="py-3 px-4 text-center">
+            <p-inputSwitch
+              [ngModel]="det.estado === 1"
+              [disabled]="det.estado === 1"
+              (ngModelChange)="cambiarEstadoSwitch($event, det)"
+              class="scale-90"
+              title="Completar">
+            </p-inputSwitch>
+          </td>
+
+          <!-- Acciones -->
+          <td class="py-3 px-4 flex items-center justify-center gap-2">
+            <button (click)="vistaDetPedido(det); showDialogDC(det)"
+              [disabled]="det.estado === 1"
+              class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 transition"
+              title="Editar detalle">
+              <i class="pi pi-pencil"></i>
+            </button>
+
+            <button (click)="vistaEliminar(det); confirm2($event)"
+              [disabled]="det.estado === 1"
+              class="text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition"
+              title="Eliminar detalle">
+              <i class="pi pi-trash"></i>
+            </button>
+          </td>
+
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Línea decorativa con degradado -->
+  <div class="w-3/4 mx-auto mt-0 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 dark:from-pink-700 dark:via-purple-700 dark:to-pink-800 animate-fade-in"></div>
+
+  <!-- Footer -->
+  <div class="text-center text-sm md:text-base text-pink-600 dark:text-pink-400 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+    <div class="flex items-center space-x-2">
+      <i class="pi pi-star-fill text-yellow-400 dark:text-yellow-300"></i>
+      <span>Sistema de Gestión de Personal – <span class="text-purple-600 dark:text-purple-400">LUCIWEB</span></span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+      <i class="pi pi-shield text-pink-400 dark:text-pink-300"></i>
+      <span>Todos los derechos reservados © 2025</span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-gray-400 dark:text-gray-300">
+      <i class="pi pi-cog text-indigo-400 dark:text-indigo-300"></i>
+      <span>Versión 1.0</span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs italic text-teal-500 dark:text-teal-300">
+      <i class="pi pi-heart-fill text-red-400 dark:text-red-300"></i>
+      <span>“Trabajamos con pasión y compromiso”</span>
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast -->
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>
+
+<!-- ConfirmDialog -->
+<p-confirmdialog 
+  styleClass="bg-white text-gray-800 border border-gray-300 
+              dark:bg-gray-900 dark:text-white dark:border-gray-700 
+              shadow-lg rounded-lg"
+/>
+
+
+<!-- Diálogo: Añadir más pedidos -->
+<div class=" justify-center">
+  <p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '45rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-600 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-500"></i>
+        <span>Añadir Nuevo Catalogo</span>
+      </div>
+    </ng-template>
+
+    <!-- ... sigue igual hasta el form -->
+
+<form [formGroup]="detpedidoForm" (ngSubmit)="registrarDetallePedido()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+   <!-- Producto -->
+<div>
+  <label for="producto" class="label-modern">Catalogo</label>
+  <p-dropdown
+    id="producto"
+    formControlName="catalogo"
+    [options]="listaCatalogo"
+    optionLabel="nombre"
+    placeholder="Seleccione Catalogo"
+    [showClear]="true"
+    [filter]="true"
+    filterPlaceholder="Buscar catalogo..."
+    styleClass="input-underline w-full"
+    [panelStyle]="{ 'max-height': '250px' }"
+    [style]="{ 'padding-top': '0.25rem', 'padding-bottom': '0.25rem', 'line-height': '1.5rem' }"
+  >
+  </p-dropdown>
+
+  <small
+    class="text-red-500"
+    *ngIf="detpedidoForm.get('catalogo')?.touched && detpedidoForm.get('catalogo')?.hasError('required')"
+  >
+    El catalogo es requerido.
+  </small>
+  <small
+    class="text-red-500"
+    *ngIf="catalogoYaUsado() && detpedidoForm.get('catalogo')?.touched"
+  >
+    Catalogo ya fue registrado.
+  </small>
+</div>
+
+
+  <div>
+  <label for="empaque" class="label-modern">Cantidad</label>
+
+  <div class="flex items-center gap-2 w-full lg:w-auto">
+    <button
+      type="button"
+      class="text-gray-500 hover:text-red-600 p-2 rounded hover:bg-red-50 transition"
+      (click)="adjustCantidadForm('restar')">
+      −
+    </button>
+
+    <input
+      id="empaque"
+      type="number"
+      class="input-underline text-center w-20"
+      formControlName="cantidad"
+      min="6"
+      step="6"
+      readonly
+    />
+
+    <button
+      type="button"
+      class="text-gray-500 hover:text-green-600 p-2 rounded hover:bg-green-50 transition"
+      (click)="adjustCantidadForm('sumar')">
+      +
+    </button>
+  </div>
+</div>
+ 
+  </div>
+
+
+  <!-- Botones -->
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarRegistro()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button [disabled]="detpedidoForm.invalid || catalogoYaUsado()" type="submit" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 flex items-center gap-2 transition" (click)="guardarRegistro()" >
+      <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Aceptar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando
+  </ng-container>
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+
+ <!-- Diálogo: modificar pedido -->
+<div class=" justify-center">
+  <p-dialog [modal]="true" [(visible)]="visibleC" [style]="{ width: '45rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-500 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-500"></i>
+        <span>Modificar Pedido</span>
+      </div>
+    </ng-template>
+
+<form [formGroup]="pedidoForm" (ngSubmit)="ModificarPedido()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- Producto -->
+    <div>
+      <label for="producto" class="label-modern">Cliente</label>
+      <select formControlName="negocio" id="producto" class="input-underline">
+        <option disabled value="">Seleccione Cliente</option>
+        <option *ngFor="let libreria of listaNegocio" [ngValue]="libreria">
+          {{ libreria.razon_social }} - {{libreria.persona?.nombre}} {{libreria.persona?.ap_paterno}}
+        </option>
+      </select>
+    </div>
+
+    <div class="md:col-span-2">
+  <div class="flex gap-4">
+    <div class="flex-1">
+      <label for="cantidad" class="label-modern">Fecha Registro</label>
+      <input [readonly]="true" formControlName="fecha" id="cantidad" type="text" pInputText placeholder="" class="input-underline" />
+    
+    </div>
+
+    <div class="flex-1">
+      <label for="fecha_entrega" class="label-modern">Definir Fecha Entrega</label>
+      <input formControlName="fecha_entrega" id="fecha_entrega" type="date" pInputText placeholder="" class="input-underline" />
+     <small class="text-red-500" *ngIf="fechaMayor() && pedidoForm.get('fecha_entrega')?.touched">
+    La entrega no puede ser antes del registro.
+  </small>
+    </div>
+  </div>
+</div>
+
+  </div>
+  <!-- Botones -->
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarPedido()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button type="submit" [disabled]="pedidoForm.invalid || fechaMayor()" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 flex items-center gap-2 transition" >
+     <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Guardar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando
+  </ng-container>
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+
+ <!-- Diálogo: modificar detalle pedido -->
+<div class=" justify-center">
+  <p-dialog [modal]="true" [(visible)]="visibleDC" [style]="{ width: '45rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-600 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-500"></i>
+        <span>Modificar Detalle Pedido</span>
+      </div>
+    </ng-template>
+<form [formGroup]="detpedidoForm" (ngSubmit)="ModificarDetallePedido()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- Producto -->
+    <div>
+      <label for="producto" class="label-modern">Catalogo</label>
+      <select formControlName="catalogo" id="producto" class="input-underline">
+        <option disabled value="">Seleccione catalogo</option>
+        <option  disabled *ngFor="let catalogo of listaCatalogo" [ngValue]="catalogo">
+          {{ catalogo.nombre }}
+        </option>
+      </select>
+    </div>
+    <!-- cantidad -->
+     <div>
+  <label for="empaque" class="label-modern">Cantidad</label>
+
+  <div class="flex items-center gap-2 w-full lg:w-auto">
+    <button
+      type="button"
+      class="text-gray-500 hover:text-red-600 p-2 rounded hover:bg-red-50 transition"
+      (click)="adjustCantidadForm('restar')">
+      −
+    </button>
+
+    <input
+      id="empaque"
+      type="number"
+      class="input-underline text-center w-20"
+      formControlName="cantidad"
+      min="6"
+      step="6"
+      readonly
+    />
+
+    <button
+      type="button"
+      class="text-gray-500 hover:text-green-600 p-2 rounded hover:bg-green-50 transition"
+      (click)="adjustCantidadForm('sumar')">
+      +
+    </button>
+  </div>
+</div>
+  </div>
+
+
+
+  <!-- Botones -->
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarDPedido()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button  type="submit" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 flex items-center gap-2 transition" (click)="guardarDPedido()">
+      <i class="pi pi-check"></i> Guardar Cambios
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>

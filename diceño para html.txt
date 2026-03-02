@@ -1,0 +1,18 @@
+<div class="card">
+<p-fieldset>
+<ng-template #header>
+    <div class=" animate__animated animate__fadeInLeft flex items-center gap-2 px-2">
+         <p-avatar 
+      icon="pi pi-user" 
+      shape="circle" 
+      styleClass="bg-pink-200 text-pink-800" 
+    />
+        <span class="font-bold ">Modulo Proveedor / Lista</span>
+    </div>
+</ng-template>
+<div class="flex flex-col lg:flex-row gap-1">
+  <!-- aqui contenido -->
+   
+</div>
+</p-fieldset>
+</div>

@@ -1,0 +1,165 @@
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+    Módulo Ventas / Reporte / Ventas
+  </span>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+
+
+<!-- Filtros -->
+<div *ngIf="mostrarFiltros"  id="infoFiltros" class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 animate__animated animate__fadeInUp text-sm">
+
+  <!-- Rol -->
+  <!-- <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Pago</label>
+    <select [(ngModel)]="rolFiltro" (change)="modelFactura()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option value="1">Efectivo</option>
+    </select>
+  </div> -->
+
+  <!-- Nombre -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+    <input [(ngModel)]="nombreFiltro" (input)="modelFactura()" type="text" placeholder="Ej. Juan Pérez"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Estado -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Estado</label>
+    <select [(ngModel)]="estadoFiltro" (change)="modelFactura()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option value="1">Activo</option>
+      <option value="0">Anulado</option>
+    </select>
+  </div>
+
+  <!-- Fecha desde -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+    <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelFactura()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Fecha hasta -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+    <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelFactura()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+</div>
+
+
+<!-- Botones Exportar -->
+<div *ngIf="mostrarFiltros1" class="flex justify-end gap-2 mb-4 animate__animated animate__fadeInUp text-sm">
+  <button (click)="exportarExcel()"
+    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-excel text-xs"></i>
+    Excel
+  </button>
+  <button (click)="exportarPDF()"
+    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-pdf text-xs"></i>
+    PDF
+  </button>
+</div>
+
+
+
+<div class="overflow-x-auto" #idDescarga>
+  <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+    <thead class="bg-white dark:bg-gray-900">
+      <tr class="bg-white dark:bg-gray-900">
+        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Nro</th>
+        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Cliente</th>
+       
+        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Fecha</th>
+        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Hora</th>
+        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Registrado</th>
+         <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Precio Bs.</th>
+        <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Descargar</th>
+      </tr>
+    </thead>
+
+    <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+
+      <!-- 🔹 Grupos -->
+      <ng-container *ngFor="let grupo of listaFacturaAgrupada">
+        <!-- Método de Pago -->
+       
+
+        <!-- Estados -->
+        <ng-container *ngFor="let subgrupo of grupo.estados">
+          <tr *ngIf="subgrupo.estado !== 'Activo'" class="bg-gray-200 dark:bg-gray-600">
+            <td colspan="8" class="px-4 py-1 font-medium text-gray-700 dark:text-gray-100">
+              Venta: {{ subgrupo.estado }}
+            </td>
+          </tr>
+
+          <!-- Facturas -->
+          <tr *ngFor="let xdat of subgrupo.facturas; let pos = index" class="hover:bg-gray-100 dark:hover:bg-gray-600">
+            <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ pos + 1 }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">
+              {{ xdat.pedido?.libreria?.razon_social }} -
+              {{ xdat.pedido?.libreria?.persona?.nombre }} {{ xdat.pedido?.libreria?.persona?.ap_paterno }}
+              {{ xdat.pedido?.libreria?.persona?.ap_materno }}
+            </td>
+            
+            <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ xdat.fecha | date:'dd/MM/yyyy'  }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ xdat.hora }}</td>
+            <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200">{{ xdat.persona?.nombre }} {{ xdat.persona?.ap_paterno}}</td>
+            <td class="px-4 py-2 text-sm text-gray-700 dark:text-gray-200 text-right">{{ xdat.precio_total }}</td>
+
+            <td class="px-4 py-2 text-sm text-blue-500 cursor-pointer hover:underline"
+                (click)="descargarVenta(xdat)">
+              Boleta
+            </td>
+          </tr>
+        </ng-container>
+      </ng-container>
+
+      <!-- 🧾 Fila combinada: Total Ventas (en NRO) + Total Ganancias -->
+      <tr class="bg-gray-100 dark:bg-gray-700 font-bold border-t-2 border-gray-300 dark:border-gray-600">
+        <!-- Total de ventas en la columna NRO -->
+        <td class="px-4 py-3 text-left text-gray-700 dark:text-gray-200">
+          {{contarTotalVentas(listaFacturaAgrupada) }}
+        </td>
+
+        <!-- Celdas vacías para mantener el orden -->
+        <td colspan="4"></td>
+
+        <!-- Total de ganancias -->
+        <td class="px-4 py-3 text-right text-gray-700 dark:text-gray-200">
+          Bs. {{ calcularTotalPrecio(listaFacturaAgrupada) }}
+        </td>
+
+        <!-- Celdas vacías para las demás columnas -->
+        <td colspan="3"></td>
+      </tr>
+
+    </tbody>
+  </table>
+</div>

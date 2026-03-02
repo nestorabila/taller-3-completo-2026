@@ -1,0 +1,197 @@
+const generarPDFVenta = async (factura) => {
+    const carpeta = path.join(__dirname, '..', 'facturas_xml');
+    if (!fs.existsSync(carpeta)) fs.mkdirSync(carpeta);
+
+    const pedido = await factura.getPedido({ 
+         include: [
+            { 
+                model: factura.sequelize.models.libreria, as: "libreria",
+                include: ['persona', factura.sequelize.models.ciudad] 
+            },
+            { 
+                model: factura.sequelize.models.detalle_pedido, 
+                include: [factura.sequelize.models.catalogo] 
+            },
+        ]
+    
+    });
+   
+    const libreria = pedido.libreria;
+    const cliente = libreria.persona;
+    const ciudad = libreria.ciudad
+    const detalles = pedido.detalle_pedidos || [];
+
+    const nombreArchivoPDF = `factura_${factura.idventa}.pdf`;
+    const rutaArchivoPDF = path.join(carpeta, nombreArchivoPDF);
+
+    const doc = new PDFDocument({ size: 'A4', margin: 50 });
+    doc.pipe(fs.createWriteStream(rutaArchivoPDF));
+
+    const colorTexto = 'black';  
+    const yEncabezado = 50;
+
+    // ===== Encabezado: 3 columnas =====
+    const xIzquierda = 50;
+    const xCentro = 200;
+    const xDerecha = 400;
+
+    // Columna izquierda: Casa matriz
+    doc.fontSize(8).fillColor(colorTexto);
+    doc.text('CREACIONES LUCIANITA', xIzquierda, yEncabezado + 12);
+    doc.text(`Calle actualizar`, xIzquierda, yEncabezado + 24);
+    doc.text(`Teléfono: 72448749`, xIzquierda, yEncabezado + 36);
+    doc.text('Tarija - Bolivia', xIzquierda, yEncabezado + 48);
+
+    // Columna central: Título centrado
+    doc.fillColor(colorTexto).fontSize(10).text('BOLETA DE VENTA', xCentro, yEncabezado + 57, {
+        width: 150,
+        align: 'center',
+        underline: true
+    });
+    doc.fontSize(7).text('', xCentro, yEncabezado + 71, {
+        width: 150,
+        align: 'center'
+    });
+
+    // Columna derecha: NIT, Factura y CUF
+    const xEtiqueta = xDerecha;
+    const xValor = xDerecha + 100;
+    let yInicio = yEncabezado;
+
+    doc.fontSize(8).fillColor(colorTexto);
+    doc.text('BOLETA NRO:', xEtiqueta, yInicio);
+    doc.text('---------------:', xEtiqueta, yInicio + 12);
+
+    doc.fillColor(colorTexto);
+    
+    doc.text(`${factura.idventa}`, xValor, yInicio + 12);
+    doc.text(cuf, xValor, yInicio + 24);
+
+    // ===== Datos del Cliente y del Negocio en 3 columnas =====
+const yDatosCliente = yEncabezado + 90;
+
+// Columnas
+const xCol1 = 50;   // izquierda
+const xCol2 = 220;  // centro
+const xCol3 = 390;  // derecha
+const espacioFila1 = 12; // espacio vertical más compacto
+
+doc.fontSize(8).fillColor(colorTexto);
+
+// Columna 1: Cliente
+doc.text(`Cód. Cliente: ${cliente.idpersona}`, xCol1, yDatosCliente);
+
+// Fecha al lado derecho del código del cliente
+const anchoCodigo = doc.widthOfString(`Cód. Cliente: ${cliente.idpersona}`) + 10; 
+doc.text(`Fecha: ${cliente.fecha} ${cliente.hora}`, xCol1 + anchoCodigo, yDatosCliente);
+
+doc.text(`Nombre: ${cliente.nombre} ${cliente.ap_paterno} ${cliente.ap_materno || ''}`, xCol1, yDatosCliente + espacioFila1);
+doc.text(`NIT/CI/CEX: ${cliente.cedula}`, xCol1, yDatosCliente + 2 * espacioFila1);
+
+// Columna 2: Teléfono y negocio
+doc.text(`Teléfono: ${cliente.telefono} - ${libreria.telefono}`, xCol2, yDatosCliente);
+doc.text(`Cod.RZ: ${libreria.idlibreria}`, xCol2, yDatosCliente + espacioFila1);
+doc.text(`Razón Social: ${libreria.razon_social}`, xCol2, yDatosCliente + 2 * espacioFila1);
+
+// Columna 3: Dirección y ciudad
+doc.text(`Dirección: ${libreria.direccion} - ${ciudad.nombre || ''}`, xCol3, yDatosCliente);
+
+
+ // ===== tabla de productos vendidos =====
+    const yTabla = yEncabezado + 130;
+    const xNro = 50;
+    const xNombre = 80;
+    const xCantidad = 250;
+    const xPrecioU = 300;
+    const xSubTotal = 420;
+    const espacioFila = 20;
+
+    // Encabezado tabla
+    doc.fontSize(8).fillColor(colorTexto)
+       .text('Nro', xNro, yTabla)
+       .text('Nombre', xNombre, yTabla)
+       .text('Cantidad', xCantidad, yTabla)
+       .text('Precio U', xPrecioU, yTabla)
+       .text('Sub Total', xSubTotal, yTabla);
+
+    doc.moveTo(xNro, yTabla + 12).lineTo(xSubTotal + 60, yTabla + 12).stroke();
+
+    // 🔹 Dibujamos los productos reales
+    let yFila = yTabla + 20;
+    let nro = 1;
+    let subtotal = 0;
+    
+
+    for (const det of detalles) {
+        const producto = det.catalogo;
+        const cantidad = det.cantidad;
+        const precioUnit = producto.precio;
+       
+        const sub = cantidad * precioUnit - desc;
+
+        // Pintar fila
+        doc.text(nro, xNro, yFila);
+        doc.text(producto.nombre, xNombre, yFila);
+        doc.text(cantidad.toString(), xCantidad, yFila);
+        doc.text(precioUnit.toFixed(2), xPrecioU, yFila);
+        doc.text(sub.toFixed(2), xSubTotal, yFila);
+
+        subtotal += cantidad * precioUnit;
+        descuentoTotal += desc;
+
+        nro++;
+        yFila += espacioFila;
+    }
+
+    // ===== Totales debajo de la tabla =====
+    const yTotales = yFila + 10;
+    const xLabel = 300;
+    const xValue = 420;
+
+    const total = subtotal - descuentoTotal;
+    const tasas = 0;
+    const montoPagar = total - tasas;
+
+    doc.text('Total Bs:.', xLabel, yTotales);
+    doc.text(subtotal.toFixed(2), xValue, yTotales);
+    
+    // precio literal
+ const yLiteral = yTotales + 100;
+let montoLiteral = num.NumerosALetras(montoPagar);
+montoLiteral = montoLiteral.replace(/Pesos/gi, 'Bolivianos');
+
+doc.fontSize(8).text(`Son: ${montoLiteral}`, xNro, yLiteral);
+
+ // Posición debajo del monto literal
+const ySimulado = yLiteral + 25; // ajusta según espacio disponible
+const fechaActual = new Date();
+
+// Mensaje de agradecimiento
+const mensajeGracias = `
+Gracias por su compra. 
+Apreciamos su confianza en nuestro trabajo y esperamos volver a atenderle pronto.
+
+Creaciones Lucianita • Atención personalizada • Calidad garantizada
+`;
+
+// Información de transacción (queda)
+const mensajeTransaccion = `Fecha: ${fechaActual.toLocaleDateString()} | Hora: ${fechaActual.toLocaleTimeString()} | Tipo de pago: Efectivo | Generado por LuciWeb`;
+
+// Coordenadas para el párrafo
+const xTexto = 50;
+const yTexto = yLiteral + 30;
+
+// Agregar mensaje principal
+doc.fontSize(9)
+   .fillColor('black')
+   .text(mensajeGracias.trim(), xTexto, yTexto, { width: 500, lineGap: 3 });
+
+// Agregar la línea con la fecha y datos
+doc.fontSize(8)
+   .fillColor('gray')
+   .text(mensajeTransaccion, xTexto, yTexto + 55, { width: 500 });
+
+// aqui debe terminad pie de pagina
+    doc.end();
+    return rutaArchivoPDF;
+};

@@ -1,0 +1,144 @@
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+   Módulo Ventas /Reporte /Pago
+  </span>
+
+  <!-- Botones alineados a la derecha: filtros y exportación -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros (aquí solo visual) -->
+    <span class="text-sm text-gray-600 dark:text-gray-300">Filtros</span>
+
+    <!-- Botones de exportación rápidos -->
+    <button (click)="exportarExcel()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-none flex items-center gap-2">
+      <i class="pi pi-file-excel text-xs"></i>
+      Excel
+    </button>
+    <button (click)="exportarPDF()"
+      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-none flex items-center gap-2">
+      <i class="pi pi-file-pdf text-xs"></i>
+      PDF
+    </button>
+  </div>
+
+</div>
+<!-- Tarjeta principal sin colores, sombras ni bordes redondeados -->
+<div class="bg-transparent dark:bg-transparent  rounded-none mb-3 animate__animated animate__fadeIn">
+
+  <!-- Espacio para filtros simples (sin gráficos ni paneles) -->
+  <div class="mb-4"></div>
+
+  <div>
+  <div class="my-2">
+    <hr class="border-t border-gray-300 dark:border-gray-600">
+    Use los filtros para generar un reporte detallado de los pagos según estado o fechas.
+    <hr class="border-t border-gray-200 dark:border-gray-700 mt-1">
+  </div>
+
+  <!-- Filtros -->
+  <div  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm mb-1">
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Estado</label>
+      <select [(ngModel)]="estadoFiltro" (change)="modelPago()" class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
+        <option value="">Todos</option>
+        <option value="0">Anulado</option>
+        <option value="1">Activo</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+      <input [(ngModel)]="nombreFiltro" (input)="modelPago()" type="text" placeholder="Ej. Nombre cliente"
+        class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" />
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+      <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelPago()"
+        class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" />
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+      <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelPago()"
+        class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" />
+    </div>
+
+    <!-- placeholder to keep layout consistent -->
+    <div></div>
+  </div>
+  </div>
+  <!-- Los botones de exportación están en el encabezado -->
+</div>
+
+
+<!-- Tabla principal -->
+<div id="reportePagos"  class="max-w-full overflow-x-auto animate__animated animate__fadeIn">
+  <table class="min-w-full text-[12px] text-left text-gray-700 dark:text-gray-200">
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <ng-container *ngFor="let grupo of ListaAgrupada | keyvalue">
+        <!-- Cabecera de estado -->
+        <tr class="text-sm font-bold">
+          <td colspan="8" class="px-3 py-2 text-center text-gray-800 dark:text-gray-200">
+  <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+  <span class="px-4">Pedido: {{ grupo.key }}</span>
+  <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+</td>
+
+        </tr>
+
+        <!-- Encabezados -->
+        <tr class="bg-gray-50 dark:bg-gray-800 text-[11px] uppercase tracking-wider text-gray-700 dark:text-gray-300">
+          <th class="px-3 py-2">#</th>
+          <th class="px-3 py-2">Nombre Cliente</th>
+          <th class="px-3 py-2 text-right">Monto Bs</th>
+          <th class="px-3 py-2">Fecha Hora</th>
+          <th class="px-3 py-2">Estado</th>
+          <th class="px-3 py-2">Recibido por</th>
+          <th class="px-3 py-2">Descargar</th>
+        </tr>
+
+       
+
+        <!-- Datos -->
+        <ng-container *ngFor="let pago of grupo.value.pagos; let i = index">
+          <!-- Fila principal del pago -->
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-3 py-2">{{ i + 1 }}</td>
+            <td class="px-3 py-2">
+              {{ pago.pedido?.libreria?.razon_social}} - {{pago.pedido?.libreria?.persona?.nombre}} {{pago.pedido?.libreria?.persona?.ap_paterno }}
+            </td>
+           <td class="px-3 py-2 text-right">{{ pago.monto }}</td>
+           
+
+            <td class="px-3 py-2">{{ pago.fecha | date:'dd/MM/yyyy'  }} {{ pago.hora }}</td>
+            <td class="px-3 py-2">{{ pago.estado===1 ? 'Activo' : 'Anulado' }}</td>
+            <td class="px-3 py-2">{{ pago.persona?.nombre }} {{ pago.persona?.ap_paterno }}</td>
+           <td class="px-3 py-2"><a href="" (click)="descargarComprobante(pago)" class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer">
+                Comprobante
+           </a>
+</td>
+
+
+          </tr>
+          
+          <!-- sin detalles: los pagos no tienen detalle separado -->
+        </ng-container>
+ <!-- Fila colapsada: total por pedido -->
+        <tr class="bg-gray-100 font-semibold">
+          <td class="px-3 py-2"></td>
+          <td class="px-3 py-2"></td>
+          <td class="px-3 py-2 text-right">{{ grupo.value.total }}</td>
+          <td class="px-3 py-2 text-right">Total Pagar: {{ grupo.value.subtotal != null ? (grupo.value.subtotal + ' Bs') : '-' }}</td>
+          <td class="px-3 py-2 text-right">Restante: {{ grupo.value.faltante != null ? (grupo.value.faltante + ' Bs') : '-' }}</td>
+          <td class="px-3 py-2"></td>
+          <td class="px-3 py-2"></td>
+          <td class="px-3 py-2"></td>
+        </tr>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+

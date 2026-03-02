@@ -1,0 +1,24 @@
+<div class="relative min-h-screen bg-white dark:bg-gray-900 overflow-hidden transition-colors duration-300">
+  <!-- Burbujas elegantes -->
+  <div class="absolute inset-0 z-0">
+    <ng-container *ngFor="let b of burbujas">
+      <div
+        class="absolute rounded-full animate-bubble-elegante"
+        [ngStyle]="{
+          width: b.size + 'px',
+          height: b.size + 'px',
+          backgroundColor: b.color,
+          left: b.left + '%',
+          top: b.top + 'vh',
+          animationDelay: b.delay + 's',
+          animationDuration: b.duration + 's'
+        }">
+      </div>
+    </ng-container>
+  </div>
+
+  <!-- Contenido principal -->
+  <div class="relative z-10">
+    <router-outlet></router-outlet>
+  </div>
+</div>

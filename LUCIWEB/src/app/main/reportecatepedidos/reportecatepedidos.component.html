@@ -1,0 +1,268 @@
+
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+   Módulo Ventas /Reporte /Pedido 
+  </span>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <button (click)="resumen()"
+  class="flex items-center gap-2 px-4 py-2 text-blue-500 rounded-full font-medium text-sm
+         hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-700 transition-colors duration-200">
+  <i class="pi pi-chart-bar text-blue-500 text-lg"></i> Resumen
+</button>
+
+<button (click)="seguimiento()"
+  class="flex items-center gap-2 px-4 py-2 text-purple-600 rounded-full font-medium text-sm
+         hover:text-purple-700 hover:bg-purple-100 dark:hover:bg-purple-800 transition-colors duration-200">
+  <i class="pi pi-eye text-purple-600 text-lg"></i> Seguimiento
+</button>
+
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+<!-- Tarjeta principal sin colores, sombras ni bordes redondeados -->
+<div class="bg-transparent dark:bg-transparent  rounded-none mb-3 animate__animated animate__fadeIn">
+
+  <!-- Gráfico + resumen al costado -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <!-- Panel lateral izquierdo: resumen -->
+    <div *ngIf="mostrarFiltros3" class="p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md flex flex-col gap-4">
+      <h3 class="text-base font-semibold text-gray-800 dark:text-gray-100 flex items-center gap-2">
+        <i class="pi pi-chart-bar text-blue-600"></i> Resumen
+      </h3>
+
+      <div class="text-sm text-gray-700 dark:text-gray-300 space-y-1">
+        <p class="flex items-center gap-2" title="Cantidad total de pedidos registrados">
+          <i class="pi pi-file text-indigo-500"></i>
+          <strong>Total Pedidos:</strong> {{ totalPedidos }}
+        </p>
+        <p class="flex items-center gap-2" title="Pedidos aún no procesados">
+          <i class="pi pi-clock text-yellow-500"></i>
+          <strong>Pendientes:</strong> {{ totalPendientes }}
+        </p>
+        <p class="flex items-center gap-2" title="Pedidos actualmente en curso">
+          <i class="pi pi-cog text-orange-500"></i>
+          <strong>En proceso:</strong> {{ totalEnProceso }}
+        </p>
+        <p class="flex items-center gap-2" title="Porcentaje de efectividad general">
+          <i class="pi pi-percent text-green-500"></i>
+          <strong>Efectividad:</strong>
+          <span 
+            [ngClass]="{
+              'text-red-600': efectividad < 50,
+              'text-yellow-600': efectividad >= 50 && efectividad < 80,
+              'text-green-600 font-semibold': efectividad >= 80
+            }"
+          >
+            {{ efectividad }} %
+          </span>
+        </p>
+      </div>
+
+      <div class="pt-3">
+        <button 
+          (click)="generarInformePDF()" 
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md text-sm transition-colors duration-150"
+          title="Descargar un informe detallado en PDF"
+        >
+          <i class="pi pi-download mr-2"></i> Generar informe
+        </button>
+      </div>
+    </div>
+
+    <!-- Gráfico alineado a la derecha -->
+    <div *ngIf="mostrarFiltros2" class="md:col-span-2">
+      <div class="p-4 bg-transparent dark:bg-transparent rounded-none h-full">
+        <h3 class="text-center text-base font-semibold mb-3 text-gray-700 dark:text-gray-100">
+          Pedidos próximos a entregar
+        </h3>
+        <div class="relative w-full h-52">
+          <canvas #graficoPedidos baseChart
+            [data]="chartData"
+            [type]="'bar'"
+            [options]="chartOptions"
+            class="!w-full !h-full">
+          </canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarFiltros">
+  <div class="my-2">
+    <hr class="border-t border-gray-300 dark:border-gray-600">
+    Use los filtros para generar un reporte detallado de los pedidos según estado, fechas o tipo de informe.
+    <hr class="border-t border-gray-200 dark:border-gray-700 mt-1">
+  </div>
+
+  <!-- Filtros -->
+  <div  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 text-sm mb-1">
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Pedido</label>
+      <select [(ngModel)]="estadoFiltro" (change)="modelPedido()" class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100">
+        <option value="">Todos</option>
+        <option value="0">Cancelado</option>
+        <option value="1">Pendiente</option>
+        <option value="2">En proceso</option>
+        <option value="3">Completado</option>
+        <option value="4">Entregado</option>
+      </select>
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+      <input [(ngModel)]="nombreFiltro" (input)="modelPedido()" type="text" placeholder="Ej. Tus deseos"
+        class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" />
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+      <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelPedido()"
+        class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" />
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+      <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelPedido()"
+        class="w-full rounded-none border-gray-300 dark:bg-gray-900 dark:border-gray-600 dark:text-gray-100" />
+    </div>
+
+    <div>
+      <label class="block text-gray-600 dark:text-gray-300 mb-1">Tipo de informe</label>
+      <div class="flex flex-col gap-1 mt-1 text-gray-700 dark:text-gray-200">
+        <label class="flex items-center gap-2">
+          <input type="radio" [(ngModel)]="modoDetalle" [value]="false" (change)="modelPedido()" />
+          General
+        </label>
+        <label class="flex items-center gap-2">
+          <input type="radio" [(ngModel)]="modoDetalle" [value]="true" (change)="modelPedido()" />
+          +Detalles
+        </label>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  <!-- Botones de exportación -->
+  <div *ngIf="mostrarFiltros1" class="flex flex-wrap justify-end gap-3">
+    <button (click)="exportarExcel()"
+      class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-none flex items-center gap-2">
+      <i class="pi pi-file-excel text-xs"></i>
+      Excel
+    </button>
+    <button (click)="exportarPDF()"
+      class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-none flex items-center gap-2">
+      <i class="pi pi-file-pdf text-xs"></i>
+      PDF
+    </button>
+  </div>
+</div>
+
+
+<!-- Tabla principal -->
+<div id="reportePedidos"  class="max-w-full overflow-x-auto animate__animated animate__fadeIn">
+  <table class="min-w-full text-[12px] text-left text-gray-700 dark:text-gray-200">
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <ng-container *ngFor="let grupo of ListaAgrupada | keyvalue">
+        <!-- Cabecera de estado -->
+        <tr class="text-sm font-bold">
+          <td colspan="10" class="px-3 py-2 text-center text-gray-800 dark:text-gray-200">
+  <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+  <span class="px-4">Pedido: {{ grupo.key | uppercase }}</span>
+  <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+</td>
+
+        </tr>
+
+        <!-- Encabezados -->
+        <tr class="bg-gray-50 dark:bg-gray-800 text-[11px] uppercase tracking-wider text-gray-700 dark:text-gray-300">
+          <th class="px-3 py-2">IDPedido</th>
+          <th class="px-3 py-2">Cliente</th>
+          <th class="px-3 py-2">C-Total</th>
+          <th class="px-3 py-2">P-Total</th>
+          <th class="px-3 py-2">P-Registrado</th>
+          <th class="px-3 py-2">F-Registro</th>
+          <th class="px-3 py-2">F-Entrega</th>
+          <th class="px-3 py-2">T-R</th>
+          <th class="px-3 py-2">Avance</th>
+        </tr>
+
+        <!-- Datos -->
+        <ng-container *ngFor="let xdat of grupo.value; let i = index">
+          <!-- Fila principal del pedido -->
+          <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+            <td class="px-3 py-2">{{ xdat.idpedido }}</td>
+            <td class="px-3 py-2">
+              {{ xdat.libreria?.razon_social }} - {{ xdat.libreria?.persona?.nombre }} {{ xdat.libreria?.persona?.ap_paterno }}
+              {{ xdat.libreria?.persona?.ap_materno }} 
+            </td>
+           <td class="px-3 py-2">{{ xdat.cantidad_total! / 12 }} docenas</td>
+
+            <td class="px-3 py-2">{{ xdat.precio_total }} Bs</td>
+             <td class="px-3 py-2">{{ xdat.persona?.nombre }} {{ xdat.persona?.ap_paterno }}</td>
+            <td class="px-3 py-2">{{ xdat.fecha | date:'dd/MM/yyyy'  }} {{ xdat.hora }}</td>
+            <td class="px-3 py-2">{{ xdat.fecha_entrega }}</td>
+            <td class="px-3 py-2">
+  {{ xdat.fecha_entrega ? getDiasRestantes(xdat.fecha_entrega) + ' días' : 'Sin fecha' }}
+</td>
+
+           <td class="px-3 py-2">
+  {{ modoDetalle && todosDetalles[xdat.idpedido!] ? getAvancePedido(xdat.idpedido!) + ' %' : '---' }}
+</td>
+
+          </tr>
+
+          <!-- Detalles del pedido -->
+          <tr *ngIf="modoDetalle && todosDetalles[xdat.idpedido!]" class="animate__animated animate__fadeIn">
+            <td colspan="10" class="px-3 py-2 bg-gray-10 dark:bg-gray-900">
+              <p class="font-semibold text-sm mb-1">Detalles del pedido:</p>
+              <table class="w-full text-xs border rounded overflow-hidden">
+                <thead class="bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-100">
+                  <tr>
+                    <th class="px-2 py-1">#</th>
+                    <th class="px-2 py-1">Nombre</th>
+                    <th class="px-2 py-1">Descripcion</th>
+                    <th class="px-2 py-1">Cantidad(U)</th>
+                    <th class="px-2 py-1">Precio(U)</th>
+                    <th class="px-2 py-1">Subtotal</th>
+                    <th class="px-2 py-1">Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let det of todosDetalles[xdat.idpedido!]; let i = index">
+                    <td class="px-2 py-1">{{i+1 }}</td>
+                    <td class="px-2 py-1">{{ det.catalogo?.nombre }}</td>
+                    <td class="px-2 py-1">{{ det.catalogo?.descripcion }}</td>
+                    <td class="px-2 py-1">{{ det.cantidad}}</td>
+                    <td class="px-2 py-1">{{ det.catalogo?.precio }} Bs</td>
+                    <td class="px-2 py-1">{{ det.precio_subtotal }} Bs</td>
+                    <td class="px-2 py-1">{{ det.estado===1?'completado':'pendiente'}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </ng-container>
+
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+

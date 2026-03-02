@@ -1,0 +1,60 @@
+-----------Crear xpress.js-------------
+---------------------------------------
+inicializar
+    npm init -y
+
+instalar express 
+     npm install express
+ 
+sequelize
+     npm install --save sequelize 
+
+postgres
+    npm install --save pg pg-hstore 
+
+para generar modelo
+    npm install sequelize-auto
+
+cambios
+    npm install dotenv@16.4.5
+
+para actulizar cambios
+     npm install --save-dev nodemon
+
+instalar cors para permisos
+     npm install cors
+
+token jwt
+    npm install jsonwebtoken
+
+Incriptar Contraseña
+   npm install bcryptjs
+
+generar modelos: 
+    npx sequelize-auto -o "./src/modelos" -d bdluci -h localhost -u postgres -p 5432 -x admin -e postgres
+
+en package.json: "scripts": {
+    "start": "node app.js",
+    "dev": "nodemon app.js",
+  },
+
+compilar back end:
+     npm run dev
+
+
+------------Angular---------------------
+---------------------------------------
+----------------
+animaciones:
+     npm install animate.css@^4.1.1
+
+compartir angular (https): 
+       npx tunnelmole 4200
+
+instalar talwind
+   npm install -D tailwindcss@^3.4.3 \
+   @tailwindcss/forms@^0.5.10 \
+   @tailwindcss/typography@^0.5.16 \
+   @tailwindcss/aspect-ratio@^0.4.2 \
+   autoprefixer@^10.4.21 \
+    postcss@^8.5.3

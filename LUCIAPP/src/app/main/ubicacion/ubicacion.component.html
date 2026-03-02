@@ -1,0 +1,48 @@
+<div  class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+            
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-4 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Ubicacion
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+<div class="animate__animated animate__fadeInBottomRight min-h-screen flex flex-col items-center justify-center  px-0 py-0 overflow-y-auto">
+
+  <div class="max-w-2xl w-full  text-black dark:text-white p-2 space-y-6 
+              transform hover:scale-105 transition duration-300">
+
+    <!-- Mapa -->
+    <div class="rounded-xl overflow-hidden shadow-lg mt-2">
+      <div id="map" style="width: 100%; height: 400px;"></div>
+    </div>
+
+    <!-- Dirección -->
+    <div class="text-center text-sm text-gray-800 dark:text-gray-300">
+      <ng-container *ngIf="listaUbicacion.length > 0">
+        <p><strong>Dirección:</strong> {{ listaUbicacion[0].direccion }}</p>
+        <p><strong>Ciudad:</strong> {{ listaUbicacion[0].ciudad?.nombre }}, Bolivia</p>
+        <p><strong>Contáctanos al teléfono:</strong> {{ listaUbicacion[0].telefono }}</p>
+      </ng-container>
+    </div>
+
+    <!-- WhatsApp -->
+    <div class="text-center mt-6">
+     
+      <a [href]="'https://wa.me/591' + listaUbicacion[0].telefono"
+   target="_blank"
+   class="inline-flex items-center justify-center px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-full text-sm transition duration-300">
+  <i class="pi pi-whatsapp text-white text-lg mr-2"></i>
+  Enviar mensaje por WhatsApp
+</a>
+
+    </div>
+
+  </div>
+
+</div>

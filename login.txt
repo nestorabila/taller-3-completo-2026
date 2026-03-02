@@ -1,0 +1,65 @@
+
+<div class="animate__animated animate__zoomIn flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <img class="mx-auto h-10 w-auto" src="assets/logo1.png" alt="Your Company" />
+    <h2 class="mt-10 text-center text-2xl/9 font-bold tracking-tight text-gray-900">Inicia sesion con tu cuenta</h2>
+  </div>
+<div *ngIf="mostrarMensaje"
+     class="fixed top-20 left-1/2 z-50 w-auto max-w-md px-6 py-3 rounded-md shadow-md text-center text-base font-medium pointer-events-none transition-opacity duration-500"
+     [ngClass]="[
+       tipoMensaje === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700',
+       desapareciendo ? 'opacity-0' : 'opacity-100'
+     ]"
+     style="transform: translateX(-50%);">
+  {{ mensaje }}
+</div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <form class="space-y-6" action="#" method="POST" id="loginForm">
+    
+      <div>
+        <label for="email" class="block text-sm/6 font-medium text-gray-900">Nombre Usuario</label>
+        <div class="mt-2">
+          <input placeholder="ingrese su nombre se usuario" [(ngModel)]="credenciales.usuario" type="text" name="text" id="text" autocomplete="usuario" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700 sm:text-sm/6" />
+        </div>
+      </div>
+
+      <div>
+        <div class="flex items-center justify-between">
+          <label for="password" class="block text-sm/6 font-medium text-gray-900">Contraseña</label>
+          <div class="flex items-center">
+            <input id="remember" name="remember" type="checkbox" class="h-4 w-4 text-pink-700 focus:ring-pink-700 border-gray-300 rounded" />
+            <label for="remember" class="ml-2 block text-sm text-gray-900">Recuérdame</label>
+          </div>
+        </div>
+        <div class="mt-2">
+          <input placeholder="ingrese su contraseña" [(ngModel)]="credenciales.contrasena" type="password" name="password" id="password" autocomplete="current-password" required class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-pink-700 sm:text-sm/6" />
+        </div>
+      </div>
+<div>
+  <div> 
+  <button
+  [disabled]="!credenciales.usuario || !credenciales.contrasena"
+  (click)="ingresar()"
+  type="submit"
+  class="flex w-full justify-center items-center gap-8 rounded-md bg-pink-700 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-pink-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-pink-700"
+  id="loginBtn">
+  <span id="loginText">Iniciar sesión </span>
+  <span *ngIf="cargando" class="loader mostrar"></span>
+</button>
+
+</div>
+
+
+      </div>
+    </form>
+
+   <p class="mt-5 text-center text-sm/6 text-gray-500">
+  ¡Bienvenido a <span class="font-semibold text-pink-700">LUCIWEB</span>!<br>
+  Tu espacio digital para organizar, crecer y avanzar.
+</p>
+
+  </div>
+</div>
+
+

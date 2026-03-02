@@ -1,0 +1,254 @@
+<div *ngIf="!mostrarLogin" class="rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+           
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-4 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Editar Libreria
+  </div>
+  
+</div>
+
+
+<div *ngIf="!mostrarLogin" class=" max-w-3xl mx-auto p-6 space-y-15 text-gray-800 overflow-y-auto scrollbar-none max-h-screen">
+ 
+   <div 
+  *ngIf="mensajeEmergente"
+  class="fixed bottom-30 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 z-50 animate__animated animate__fadeInUp"
+>
+  {{ mensajeEmergente }}
+</div>
+  <div class="flex items-center justify-between mt-20">
+    <h2 class="text-2xl font-semibold text-pink-600 dark:text-pink-400 flex items-center gap-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.824.755 6.879 2.045M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      Datos del librería
+    </h2>
+
+    <!-- Switch estilo toggle con texto debajo -->
+    <label class="flex flex-col items-center cursor-pointer space-y-1">
+      <div class="relative">
+        <input type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full peer-checked:bg-pink-500 transition-colors"></div>
+        <div
+          class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-5">
+        </div>
+      </div>
+      <span class="text-sm text-gray-700 dark:text-gray-300">Editar</span>
+    </label>
+  </div>
+ <form [formGroup]="negocioForm" (ngSubmit)="modificarNegocio()">
+  <!-- Campos de formulario -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 animate__animated animate__slideInRight">
+    <!-- Campo NIT -->
+      <small class="text-red-500" *ngIf="negocioForm.get('nit')?.touched && negocioForm.get('nit')?.invalid">
+  <span *ngIf="negocioForm.get('nit')?.errors?.['minlength']">Mínimo 5 dígitos.</span>
+  <span *ngIf="negocioForm.get('nit')?.errors?.['maxlength']">Máximo 20 dígitos.</span>
+  <span *ngIf="negocioForm.get('nit')?.errors?.['pattern']">formato no valido.</span>
+</small>
+    <div class="relative">
+      
+      <input formControlName="nit" type="text" placeholder="NIT"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <!-- Icono de documento -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 12h6m-6 4h6M12 4v4m0 0H8m4 0h4M5 6a2 2 0 012-2h10a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2z" />
+        </svg>
+      </span>
+    </div>
+
+    <!-- Campo Razón Social -->
+       <small class="text-red-500" *ngIf="negocioForm.get('razon_social')?.touched && negocioForm.get('razon_social')?.invalid">
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['required']">Nombre es obligatorio.</span>
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['maxlength']">Máximo 50 caracteres.</span>
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['pattern']">Formato no valido.</span>
+</small>
+    <div class="relative">
+      <input formControlName="razon_social" type="text" placeholder="Razón Social"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <!-- Icono de edificio -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 21h18M9 8h6m-6 4h6m-6 4h6M4 21V4a1 1 0 011-1h14a1 1 0 011 1v17" />
+        </svg>
+      </span>
+    </div>
+
+
+    <small class="text-red-500" *ngIf="negocioForm.get('telefono')?.touched && negocioForm.get('telefono')?.invalid">
+  <span *ngIf="negocioForm.get('telefono')?.errors?.['minlength']">Mínimo 7 dígitos.</span>
+  <span *ngIf="negocioForm.get('telefono')?.errors?.['maxlength']">Máximo 20 dígitos.</span>
+  <span *ngIf="negocioForm.get('telefono')?.errors?.['pattern']">por fabor, ingrese telefono valido.</span>
+</small>
+    <div class="relative">
+      <input formControlName="telefono" type="text" placeholder="ingrese telefono (opcional)"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <!-- Icono de edificio -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 21h18M9 8h6m-6 4h6m-6 4h6M4 21V4a1 1 0 011-1h14a1 1 0 011 1v17" />
+        </svg>
+      </span>
+    </div>
+
+    <!-- Campo Dirección -->
+      <small class="text-red-500" *ngIf="negocioForm.get('direccion')?.touched && negocioForm.get('direccion')?.invalid">
+  <span *ngIf="negocioForm.get('direccion')?.errors?.['required']">direccion es obligatorio.</span>
+  <span *ngIf="negocioForm.get('direccion')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="negocioForm.get('direccion')?.errors?.['maxlength']">Máximo 255 caracteres.</span>
+</small>
+    <div class="relative">
+      <input formControlName="direccion" type="text" placeholder="Dirección"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <!-- Icono de ubicación -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 11c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 8c-4-4-6-7-6-10a6 6 0 1112 0c0 3-2 6-6 10z" />
+        </svg>
+      </span>
+    </div>
+
+    <!-- Campo Ciudad/Provincia (Select) -->
+    <div class="relative">
+      <select formControlName="ciudad"
+        class="w-full appearance-none pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm">
+        <option *ngFor="let ciudad of listaCiudad" [ngValue]="ciudad">{{ciudad.nombre}} </option>
+       
+      </select>
+      <span class="absolute left-4 top-3.5 text-pink-500 pointer-events-none">
+        <!-- Icono de mapa -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9 20l-5.447-2.724A2 2 0 013 15.382V5.618a2 2 0 011.553-1.947L9 2m0 18V2m0 18l6-3m0 0V2m0 18l5.447-2.724A2 2 0 0021 15.382V5.618a2 2 0 00-1.553-1.947L15 2" />
+        </svg>
+      </span>
+    </div>
+  </div>
+
+  <!-- Botón guardar -->
+  <div class="flex justify-center">
+    <button type="submit" [disabled]="!negocioForm.valid"
+      class="animate__animated animate__slideInRight mt-6 px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 text-white font-semibold rounded-full shadow-lg hover:from-pink-600 hover:to-pink-700 transition-all duration-300">
+      Guardar Cambios
+    </button>
+  </div>
+</form>
+</div>
+
+
+
+
+ <div *ngIf="mostrarLogin" class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+            
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-4 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Iniciar sesion
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+<div 
+  *ngIf="loading"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  
+  <div class="flex flex-col items-center gap-3">
+    <!-- Spinner -->
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+    
+    <!-- Texto -->
+    <p class="text-white text-lg font-semibold animate__animated animate__fadeInUp">
+      Cargando..
+    </p>
+  </div>
+</div>
+<div *ngIf="mostrarLogin" class="animate__animated animate__zoomIn min-h-screen  flex items-start justify-center pt-20 px-4">
+  <div class="w-full max-w-sm  p-8 relative z-10">
+    
+    <!-- Logo animado -->
+    <div class="flex justify-center mb-6">
+      <div class="w-16 h-16 bg-purple-100 text-purple-500 flex items-center justify-center rounded-full shadow-lg animate-bounce">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M5.121 17.804A13.937 13.937 0 0112 15c2.486 0 4.797.676 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+    </div>
+    <!-- Mensaje de respuesta -->
+    <div *ngIf="mensaje" class="text-center mb-4" [ngClass]="exito ? 'text-green-600' : 'text-red-500'">
+      {{ mensaje }}
+    </div>
+
+    <form (submit)="iniciarSesion(); $event.preventDefault()">
+      <!-- Usuario -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.usuario"
+          name="usuario"
+          id="usuario"
+          type="text"
+          placeholder="Usuario"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Contraseña -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.contrasena"
+          name="contrasena"
+          id="contrasena"
+          type="password"
+          placeholder="Contraseña"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full py-3 border-b-2 border-gray-400 dark:border-gray-600 text-gray-900 dark:text-gray-100 font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+      >
+        <!-- Texto + icono cuando NO está cargando -->
+        <span *ngIf="!cargando; else loading" class="flex items-center gap-2">
+          <i class="pi pi-sign-in text-lg"></i>
+          <span>Ingresar</span>
+        </span>
+
+        <!-- Loader -->
+        <ng-template #loading>
+          <svg class="animate-spin h-5 w-5 text-gray-900 dark:text-gray-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+            </path>
+          </svg>
+        </ng-template>
+      </button>
+        <!-- Texto de registro -->
+<div class="mt-6 text-center">
+  <span class="text-sm text-gray-700 dark:text-gray-300">¿No tienes cuenta?</span>
+  <a routerLink="/main/registrarse" class="text-purple-600 dark:text-purple-400 font-semibold hover:underline ml-1">
+    Regístrate ahora
+  </a>
+</div>
+    </form>
+  </div>
+</div>

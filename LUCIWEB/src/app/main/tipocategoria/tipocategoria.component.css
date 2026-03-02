@@ -1,0 +1,71 @@
+
+/* Estilo moderno para inputs y selects */
+.input-underline {
+  @apply w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:border-sky-500 transition duration-200;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+/* Label moderno */
+.label-modern {
+  @apply block text-sm font-medium text-gray-500 mb-1;
+}
+
+/* Select PrimeNG personalizado para eliminar bordes */
+.p-inputtext {
+  background-color: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #d1d5db !important; /* gray-300 */
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  transition: border-color 0.3s ease;
+}
+
+.p-inputtext:focus {
+  border-bottom-color: #e5e90e !important; /* sky-500 */
+}
+
+::placeholder {
+  color: #9ca3af; /* text-gray-400 */
+}
+
+form {
+  animation: slideFadeIn 0.8s ease-in-out;
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+button {
+  transition: all 0.25s ease;
+  transform-origin: center;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+/* Esto se aplica al <p-dialog> al cerrarse */
+::ng-deep .p-dialog.cerrando-animacion {
+  animation: zoomFadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes zoomFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}

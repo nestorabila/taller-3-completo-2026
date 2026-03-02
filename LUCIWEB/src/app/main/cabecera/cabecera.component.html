@@ -1,0 +1,114 @@
+
+<div class="cabecera-flotante flex justify-end items-center px-6 py-2 bg-white dark:bg-gray-900 rounded-bl-xl w-full"
+     style="box-shadow: 0 4px 6px rgba(224, 159, 214, 0.4);">
+  <div class="flex items-center space-x-4">
+
+    <!-- Saludo y rol -->
+    <div class="hidden md:flex items-center space-x-2 pr-3 border-r border-gray-300 dark:border-gray-700 text-sm md:text-base text-gray-700 dark:text-gray-200 font-medium">
+      <span class="flex items-center space-x-1 text-green-600 dark:text-green-400">
+        <i class="pi pi-sun text-sm dark:text-yellow-300"></i>
+        <span>{{ saludo }}</span>
+      </span>
+
+      <span class="hidden md:flex items-center bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-2 py-0.5 rounded-full text-xs font-semibold space-x-1">
+        <i class="pi pi-user text-gray-500 dark:text-gray-300 text-sm"></i>
+        <span>{{ rol }}</span>
+      </span>
+    </div>
+
+    <!-- Icono inicio -->
+    <button routerLink="/luciweb/home" class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200">
+      <i class="pi pi-home text-xl"></i>
+    </button>
+
+    <!-- Notificaciones -->
+    <div class="relative notif-container">
+      <button (click)="$event.stopPropagation(); mostrarNotificaciones = !mostrarNotificaciones"
+              class="relative text-yellow-600 dark:text-yellow-400 hover:text-yellow-800 dark:hover:text-yellow-200 focus:outline-none">
+        <i class="pi pi-bell text-2xl"></i>
+        <span *ngIf="notificaciones.length > 0"
+              class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center ring-2 ring-white shadow">
+          {{ notificaciones.length }}
+        </span>
+      </button>
+
+      <div *ngIf="mostrarNotificaciones"
+           class="fixed left-4 right-4 top-16 max-h-[70vh] overflow-y-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg z-50 animate__animated animate__fadeInDown
+                  sm:absolute sm:right-0 sm:top-auto sm:left-auto sm:mt-3 sm:w-80 sm:max-h-96">
+        <!-- Botón cerrar -->
+        <button (click)="mostrarNotificaciones=false;$event.stopPropagation()"
+                class="absolute top-2 right-2 text-gray-400 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white text-sm">
+          <i class="pi pi-times"></i>
+        </button>
+
+        <!-- Triángulo -->
+        <div class="hidden sm:block absolute -top-2 right-3 w-4 h-4 bg-white dark:bg-gray-800 transform rotate-45 border-l border-t border-gray-200 dark:border-gray-700"></div>
+
+        <!-- Contenido -->
+        <div *ngIf="notificaciones.length > 0; else sinNotif">
+          <div *ngFor="let notif of notificaciones" class="flex items-start p-3 border-b last:border-none hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+            <div class="text-xl mr-3">
+              <i class="{{ notif.icono || 'pi pi-bell' }} text-yellow-500 dark:text-yellow-300"></i>
+            </div>
+            <div class="text-sm break-words">
+              <div class="text-[13px] font-light text-black dark:text-gray-200 tracking-wide leading-snug">{{ notif.mensaje }}</div>
+              <div class="text-gray-400 dark:text-gray-400 text-xs">{{ notif.fecha }} - {{ notif.hora }}</div>
+            </div>
+          </div>
+        </div>
+
+        <ng-template #sinNotif>
+          <div class="p-4 text-gray-400 dark:text-gray-400 text-sm text-center">Sin notificaciones nuevas</div>
+        </ng-template>
+      </div>
+    </div>
+
+    <!-- Botón alternar tema -->
+    <button class="hidden md:flex items-center px-3 py-2 rounded hover:bg-blue-100 dark:hover:bg-gray-700 text-blue-600 dark:text-blue-400 transition"
+            (click)="toggleTheme()">
+      <i [ngClass]="isDarkMode ? 'pi pi-sun text-lg' : 'pi pi-moon text-lg'"></i>
+    </button>
+
+    <!-- Foto usuario -->
+    <div class="hidden md:flex items-center space-x-3">
+      <img src="assets/usuario.png" alt="Perfil" class="w-9 h-9 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm" />
+      <div class="hidden md:block text-sm leading-tight">
+        <div class="text-gray-800 dark:text-gray-200 font-semibold">{{ nombreCompleto }}</div>
+        <div class="text-gray-500 dark:text-gray-400 text-xs">{{ correo }}</div>
+      </div>
+    </div>
+
+    <!-- Menú desplegable -->
+    <div class="relative inline-block text-left menu-container">
+      <button (click)="toggleMenu()" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition transform translate-x-2 -translate-y-1">
+        <svg class="w-6 h-6 text-black dark:text-gray-200" fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="6" r="1.5" />
+          <circle cx="12" cy="12" r="1.5" />
+          <circle cx="12" cy="18" r="1.5" />
+        </svg>
+      </button>
+
+      <div *ngIf="menuVisible"
+           class="animate__animated animate__fadeInDown absolute right-0 mt-2 w-40 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-md shadow-lg z-40 animate-fade-in">
+        <ul class="py-1">
+          <li>
+            <button (click)="salir()"
+                    class="w-full text-left px-4 py-1 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-gray-700 hover:text-red-700 dark:hover:text-red-200 flex items-center">
+              <i class="pi pi-sign-out mr-2"></i> Cerrar sesión
+            </button>
+          </li>
+          <li *ngIf="!esResponsableVentas()">
+            <button routerLink="/luciweb/configuracion"
+                    class="w-full text-left px-4 py-1 text-sm text-green-600 dark:text-green-400 hover:bg-green-50 dark:hover:bg-gray-700 hover:text-green-700 dark:hover:text-green-200 flex items-center">
+              <i class="pi pi-cog mr-2"></i> Configuración
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+

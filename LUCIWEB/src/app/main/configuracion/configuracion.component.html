@@ -1,0 +1,313 @@
+<!-- Asegúrate de incluir PrimeIcons en tu proyecto -->
+<link href="https://unpkg.com/primeicons/primeicons.css" rel="stylesheet" />
+
+<div class="min-h-screen  p-6">
+  <div class="max-w-6xl mx-auto rounded-lg overflow-hidden">
+    <!-- Tabs simulados con soporte dark -->
+<div class="flex border-b px-6 py-3 text-sm font-semibold
+            bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300">
+  
+  <!-- Tab Perfil -->
+  <button
+    (click)="activeTab = 'perfil'"
+    [ngClass]="{
+      'border-yellow-600 text-yellow-600 dark:text-yellow-400': activeTab === 'perfil',
+      'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100': activeTab !== 'perfil'
+    }"
+    class="px-4 py-2 border-b-2 transition-colors duration-200"
+  >
+    Perfil
+  </button>
+
+  <!-- Tab Información -->
+  <button
+    (click)="activeTab = 'informacion'"
+    [ngClass]="{
+      'border-yellow-600 text-yellow-600 dark:text-yellow-400': activeTab === 'informacion',
+      'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100': activeTab !== 'informacion'
+    }"
+    class="px-4 py-2 border-b-2 ml-4 transition-colors duration-200"
+  >
+    Información
+  </button>
+
+   <button
+    (click)="activeTab = 'auditoria'"
+    [ngClass]="{
+      'border-yellow-600 text-yellow-600 dark:text-yellow-400': activeTab === 'auditoria',
+      'border-transparent text-gray-600 dark:text-gray-300 hover:text-gray-800 dark:hover:text-gray-100': activeTab !== 'auditoria'
+    }"
+    class="px-4 py-2 border-b-2 ml-4 transition-colors duration-200"
+  >
+    Auditoria
+  </button>
+</div>
+
+
+<!-- datos personales -->
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Por fabor espere un momento...</span>
+</div>
+
+<div *ngIf="!loading">
+  <!-- datos personales y contraseña -->
+    <div *ngIf="activeTab === 'perfil'" class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 text-sm">
+      <!-- Panel de perfil -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Información Personal</h3>
+      <form [formGroup]="PersonaForm" (ngSubmit)="modificarPersona()">
+        <!-- Foto -->
+        <div class="flex items-center mb-6 gap-4">
+          <div class="w-20 h-20 rounded-full overflow-hidden bg-gray-200">
+            <img src="assets/usuario.png" alt="Foto de perfil" class="w-full h-full object-cover" />
+          </div>
+          <div>
+            <p class="text-sm text-gray-700 font-medium">Cambiar Foto</p>
+            <button class="text-xs text-blue-500 hover:underline">Seleccionar imagen</button>
+          </div>
+            <button type="submit" [disabled]="!PersonaForm.valid" (click)="guardarPersona()" class="ml-7 text-white bg-yellow-600 hover:bg-yellow-700 py-2 px-8 rounded-md font-medium transition">
+             <i class="pi pi-refresh"></i> Actualizar
+           </button>
+
+        </div>
+
+        <!-- Formulario -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="relative">
+            <i class="pi pi-user absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input formControlName="nombre" type="text" placeholder="Nombre" class="input-line pl-7" />
+         <span *ngIf="PersonaForm.get('nombre')?.errors?.['required']">Nombre es obligatorio.</span>
+          </div>
+
+          <div class="relative">
+            <i class="pi pi-user-plus absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input formControlName="ap_paterno" type="text" placeholder="Apellido paterno" class="input-line pl-7" />
+          <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['required']">Apellido Pat. es obligatorio.</span>
+          </div>
+
+          <div class="relative">
+            <i class="pi pi-user-minus absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" formControlName="ap_materno" placeholder="Apellido materno" class="input-line pl-7" />
+          </div>
+
+          <div class="relative">
+            <i class="pi pi-id-card absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" formControlName="cedula" placeholder="Cédula" class="input-line pl-7" />
+         <span *ngIf="PersonaForm.get('cedula')?.errors?.['required']">Cedula es obligatorio.</span>
+          </div>
+
+          <div class="relative">
+            <i class="pi pi-phone absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" formControlName="telefono" placeholder="Teléfono" class="input-line pl-7" />
+          <span *ngIf="PersonaForm.get('telefono')?.errors?.['required']">Telefono es obligatorio.</span>
+          </div>
+
+          <div class="relative">
+            <i class="pi pi-envelope absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="email" formControlName="correo" placeholder="Correo" class="input-line pl-7" />
+         <span *ngIf="PersonaForm.get('correo')?.errors?.['required']">Correo es obligatorio.</span>
+          </div>
+ 
+        </div>
+
+       <!-- Género -->
+<div class="flex items-center gap-4 mt-3">
+  <i class="pi pi-users text-gray-500"></i>
+  <span class="text-gray-700">Género:</span>
+
+  <select
+    formControlName="genero"
+    name="genero"
+    class="border border-gray-300 rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-sky-400 text-gray-700 bg-white"
+  >
+    <option *ngFor="let genero of listaGenero" [ngValue]="genero" >{{genero.nombre}}</option>
+  </select>
+</div>
+
+       
+      </form>
+      </div>
+
+      <!-- Panel de cambiar contraseña -->
+      <div>
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">Cambiar Contraseña</h3>
+<form [formGroup]="credeForm" (ngSubmit)="registrarCredencial()">
+        <div class="space-y-4">
+          <div class="relative">
+            <i class="pi pi-lock-open absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="password" placeholder="ingrese la Contraseña actual" class="input-line pl-7" />
+          </div>
+<!-- 
+          <div class="relative">
+            <i class="pi pi-user absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="text" formControlName="usuario" placeholder="Usuario" class="input-line pl-7" />
+          </div> -->
+
+          <div class="relative">
+            <i class="pi pi-lock absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="password"  placeholder="ingrese nueva contraseña" class="input-line pl-7" />
+          </div>
+
+          <div class="relative">
+            <i class="pi pi-lock absolute top-1/2 left-2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <input type="password" placeholder="Confirmar nueva contraseña" class="input-line pl-7" />
+          </div>
+        </div>
+
+        <!-- Botón -->
+        <div class="mt-6">
+          <button  class="w-full text-white bg-yellow-600 hover:bg-yellow-700 py-2 rounded-md font-medium transition">Actualizar contraseña</button>
+        </div>
+</form>
+      </div>
+
+
+    </div>
+</div>
+    
+<!-- iformacion -->
+ <div *ngIf="loading1" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Por fabor espere un momento...</span>
+</div>
+
+<div *ngIf="!loading1">
+<div *ngIf="activeTab === 'informacion'" class="flex items-center justify-center py-0">
+  <div class="w-full max-w-6xl p-2 ">
+    <form [formGroup]="sisForm" (ngSubmit)="modificarSistema()">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        
+      
+
+        <!-- Teléfono -->
+        <div class="flex flex-col">
+          <label class="text-sm font-semibold text-gray-700 mb-2">Teléfono</label>
+          <input formControlName="telefono" type="text" placeholder="Ej: 72100000"
+            class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <span *ngIf="sisForm.get('telefono')?.errors?.['required']">Telefono es obligatorio.</span>
+          </div>
+
+        <!-- Botón Guardar -->
+        <div class="flex items-end justify-end">
+          <button type="submit" [disabled]="!sisForm.valid"  (click)="guardarPersona()" 
+            class="bg-yellow-600 hover:bg-yellow-700 text-white font-semibold py-2 px-6 rounded-lg flex items-center gap-2 shadow-md">
+            <i class="pi pi-refresh"></i> Actualizar
+          </button>
+        </div>
+
+        <!-- Ciudad -->
+        <div class="flex flex-col">
+          <label class="text-sm font-semibold text-gray-700 mb-2">Ciudad</label>
+          <select formControlName="ciudad"
+            class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            <option *ngFor="let ciudad of listaCiudad" [ngValue]="ciudad">
+              {{ ciudad.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Dirección -->
+        <div class="flex flex-col md:col-span-2">
+          <label class="text-sm font-semibold text-gray-700 mb-2">Dirección</label>
+          <input formControlName="direccion" type="text" placeholder="Ej: Av. Las Moras #123"
+            class="w-full bg-gray-50 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+        <span *ngIf="sisForm.get('direccion')?.errors?.['required']">Direccion es obligatorio.</span>
+          </div>
+      </div>
+
+      <!-- Mapa -->
+      <div class="mt-10">
+        <label class="block text-sm font-semibold text-gray-700 mb-2">Ubicación en el Mapa</label>
+        <div #mapContainer id="map" class="w-full h-64 rounded-lg border-2 border-blue-400"></div>
+      </div>
+    </form>
+  </div>
+</div>  
+</div>
+
+
+<!-- auditoria -->
+
+
+<div *ngIf="!loading">
+  <div *ngIf="activeTab === 'auditoria'" class="flex items-center justify-center py-0">
+    <div class="w-full max-w-6xl p-2">
+
+     
+
+      <!-- Tabla Responsiva -->
+      <div class="overflow-x-auto rounded-xl shadow-sm border border-gray-200 ">
+        <table class="min-w-full text-sm">
+          <thead>
+            <tr class=" text-gray-600 uppercase text-xs tracking-wider">
+              <th class="px-4 py-3 text-left">ID</th>
+              <th class="px-4 py-3 text-left">Acción</th>
+              <th class="px-4 py-3 text-left">Usuario</th>
+              <th class="px-4 py-3 text-left">Fecha</th>
+              <th class="px-4 py-3 text-left">Original</th>
+              <th class="px-4 py-3 text-left">Nuevo</th>
+            </tr>
+          </thead>
+
+          <tbody class="text-gray-700">
+            <tr *ngFor="let a of listaAuditoria"
+                class="border-b border-gray-200  transition">
+
+              <td class="px-4 py-3 text-gray-500">{{ a.id_aud }}</td>
+              <td class="px-4 py-3">
+                <span 
+                  class="px-2 py-1 rounded text-xs font-medium"
+                  [ngClass]="{
+                    'bg-green-200 text-green-700': a.accion==='INSERT',
+                    'bg-yellow-200 text-yellow-700': a.accion==='UPDATE',
+                    'bg-red-200 text-red-700': a.accion==='DELETE'
+                  }">
+                  {{ a.accion }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-gray-600">{{ a.persona?.nombre }} {{ a.persona?.ap_paterno }} {{ a.persona?.ap_materno}}</td>
+
+              <td class="px-4 py-3 text-gray-500">
+                {{ a.fecha | date:'yyyy-MM-dd' }} {{ a.hora }}
+              </td>
+
+
+              <!-- JSON Original -->
+              <td class="px-4 py-3">
+                <pre class="text-xs  p-2 rounded max-w-[180px] overflow-x-auto text-gray-600">
+{{ a.datos_original | json }}
+                </pre>
+              </td>
+
+              <!-- JSON Nuevo -->
+              <td class="px-4 py-3">
+                <pre class="text-xs  p-2 rounded max-w-[180px] overflow-x-auto text-gray-600">
+{{ a.datos_nuevo | json }}
+                </pre>
+              </td>
+
+            </tr>
+          </tbody>
+
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  </div>
+</div>
+
+
+
+
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>

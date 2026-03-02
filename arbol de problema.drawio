@@ -1,0 +1,151 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36 Edg/142.0.0.0" version="28.2.7">
+  <diagram name="Página-1" id="wGt908QwHxoCjs5VIJgY">
+    <mxGraphModel dx="864" dy="452" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="uapEKZCkfL6jCJq4AIT8-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="bmXEqFNcgdpoZIo7gRC6-1" target="bmXEqFNcgdpoZIo7gRC6-5">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="471" y="183" />
+              <mxPoint x="753" y="183" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uapEKZCkfL6jCJq4AIT8-3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="bmXEqFNcgdpoZIo7gRC6-1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="470.5" y="156" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-1" value="Ineficiencia en los procesos y control de compras, ventas y pedidos en Creaciones Lucianita." style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" parent="1" vertex="1">
+          <mxGeometry x="307" y="231" width="327" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-3" value="Retrasos en atención y entrega de pedidos" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="165" y="93" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-4" value="Pérdida de competitividad" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="419" y="91" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-5" value="Insatisfacción de los clientes" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="693" y="93" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-22" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-7" target="bmXEqFNcgdpoZIo7gRC6-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="181" y="326" />
+              <mxPoint x="471" y="326" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-7" value="Procesos morosos y poco eficientes en la toma pedidos" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="102" y="354" width="157" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-8" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="471" y="294" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="563" y="327" />
+              <mxPoint x="471" y="327" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-8" value="Control ineficiente de Compra de Insumos" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="492" y="354" width="142" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-9" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="471" y="293" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="762" y="327" />
+              <mxPoint x="471" y="327" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-9" value="Procesos ineficientes de servicio a clientes" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="685" y="356" width="153" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-10" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="762" y="417" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="846" y="601" />
+              <mxPoint x="846" y="439" />
+              <mxPoint x="762" y="439" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-10" value="Pedidos confusos por WhatsApp" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="697" y="571" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-11" value="kardex inexistente" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="511" y="446" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-12" target="bmXEqFNcgdpoZIo7gRC6-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-12" value="&#xa;Procesos inadecuados en publicación de catálogos&#xa;&#xa;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="688" y="461" width="139" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-13" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="572" y="414" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="474" y="596" />
+              <mxPoint x="474" y="431" />
+              <mxPoint x="572" y="431" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-13" value="control de inventario Produccion inadecuado" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="492" y="566" width="139" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-14" value="Pedidos manuales en papel o en paquete ofimático como ser word y excel" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="99" y="459" width="132" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-25" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-15" target="bmXEqFNcgdpoZIo7gRC6-1" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="369" y="327" />
+              <mxPoint x="471" y="327" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-15" value="procesos inadecuados en la entrega de pedidos" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="298" y="354" width="142" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-16" value="control inadecuado de seguimiento de pedidos" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="303" y="457" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-17" value="boleta de comprobante venta o facturacion electronica inexistente&amp;nbsp;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="283" y="560" width="134" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-26" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.401;entryY=1.05;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-14" target="bmXEqFNcgdpoZIo7gRC6-7" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-27" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.458;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-16" target="bmXEqFNcgdpoZIo7gRC6-15" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.556;entryY=0.967;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-11" target="bmXEqFNcgdpoZIo7gRC6-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="bmXEqFNcgdpoZIo7gRC6-33" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.458;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" parent="1" source="bmXEqFNcgdpoZIo7gRC6-17" target="bmXEqFNcgdpoZIo7gRC6-15" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="272" y="590" />
+              <mxPoint x="272" y="447" />
+              <mxPoint x="363" y="447" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="uapEKZCkfL6jCJq4AIT8-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.408;entryY=1.017;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="bmXEqFNcgdpoZIo7gRC6-1" target="bmXEqFNcgdpoZIo7gRC6-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="471" y="184" />
+              <mxPoint x="214" y="184" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

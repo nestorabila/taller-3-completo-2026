@@ -1,0 +1,495 @@
+<div class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+            
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-5 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Crear cuenta
+  </div>
+  
+</div>
+
+
+<div class=" mt-[66px]    flex items-center justify-center">
+  <div class="max-w-3xl mx-auto p-6 md:p-10 overflow-y-auto scrollbar-none max-h-screen">
+
+    <!-- Stepper moderno -->
+    <div class="flex justify-between items-center mb-10">
+      <ng-container *ngFor="let paso of pasos; let i = index">
+        <div class="flex flex-col items-center transition-all duration-300"
+             [ngClass]="i === currentStep ? 'text-purple-600 font-bold' : 'text-gray-400'">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center mb-1 transition-all"
+               [ngClass]="i === currentStep ? 'bg-purple-200 shadow-md' : 'bg-gray-300'">
+            <svg *ngIf="i === 0" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+                 viewBox="0 0 24 24"><path d="M5 13l4 4L19 7" /></svg>
+            <span *ngIf="i !== 0">{{ i + 1 }}</span>
+          </div>
+          <span class="text-xs">{{ paso }}</span>
+        </div>
+      </ng-container>
+    </div>
+
+   <!-- Paso 1 -->
+
+<div *ngIf="currentStep === 0" class="space-y-8">
+  <form [formGroup]="PersonaForm" (ngSubmit)="registrarPersona()">  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+
+    <!-- Campo flotante con ícono -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </div>
+      <input formControlName="nombre" type="text" placeholder=" "
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-purple-600 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+        Nombres
+      </label>
+        <small class="text-red-500" *ngIf="PersonaForm.get('nombre')?.touched && PersonaForm.get('nombre')?.invalid">
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['required']">El nombre es requerido.</span>
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['maxlength']">Máximo 40 caracteres.</span>
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['pattern']">Ingrese nombre verdadero.</span>
+</small>
+    </div>
+
+    <!-- Apellido Paterno -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+      </div>
+      <input formControlName="ap_paterno" type="text" placeholder=" "
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-purple-600 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+        Apellido Paterno 
+      </label>
+       <small class="text-red-500" *ngIf="PersonaForm.get('ap_paterno')?.touched && PersonaForm.get('ap_paterno')?.invalid">
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['required']">Apellido paterno requerido.</span>
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['maxlength']">Máximo 40 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['pattern']">Solo letras y espacios.</span>
+</small>
+    </div>
+
+    <!-- Apellido Materno -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 12H8" />
+        </svg>
+      </div>
+      <input formControlName="ap_materno" type="text" placeholder=" "
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-purple-600 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+        Apellido Materno (opcional)
+      </label>
+  <small class="text-red-500" *ngIf="PersonaForm.get('ap_materno')?.touched && PersonaForm.get('ap_materno')?.invalid">
+  <span *ngIf="PersonaForm.get('ap_materno')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_materno')?.errors?.['maxlength']">Máximo 30 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_materno')?.errors?.['pattern']">Solo letras y espacios.</span>
+</small>
+    </div>
+
+    <!-- Cédula de Identidad -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 11c0 1.1-.9 2-2 2s-2-.9-2-2 0-2 .9-2 2 .9 2 2zm6 0h.01M6 16h12M3 20h18" />
+        </svg>
+      </div>
+      <input formControlName="cedula" type="text" placeholder=" "
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-purple-600 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+        Cédula de Identidad (opcional)
+      </label>
+       <small class="text-red-500" *ngIf="PersonaForm.get('cedula')?.touched && PersonaForm.get('cedula')?.invalid">
+  <span *ngIf="PersonaForm.get('cedula')?.errors?.['minlength']">Mínimo 6 dígitos.</span>
+  <span *ngIf="PersonaForm.get('cedula')?.errors?.['maxlength']">Máximo 11 dígitos.</span>
+  <span *ngIf="PersonaForm.get('cedula')?.errors?.['pattern']">Solo números.</span>
+</small>
+<small class="text-red-500" *ngIf="cedulaYaRegistrada()">
+  cédula ya está registrada.
+</small>
+    </div>
+
+    <!-- Teléfono -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 5h2l3 7-1.5 1.5a11 11 0 006.5 6.5L15 19l7 3v-2a1 1 0 00-1-1h-3a10.978 10.978 0 01-9-9V6a1 1 0 00-1-1H3z" />
+        </svg>
+      </div>
+      <input formControlName="telefono" type="text" placeholder=" "
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-purple-600 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+        Teléfono
+      </label>
+            <small class="text-red-500" *ngIf="PersonaForm.get('telefono')?.touched && PersonaForm.get('telefono')?.invalid">
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['minlength']">Deber ser Mínimo 7 dígitos.</span>
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['maxlength']">Debe ser Máximo 20 dígitos.</span>
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['required']">Nro de telefono es obligatorio.</span>
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['pattern']">Por fabor, ingresa telefono valido.</span>
+</small>
+<small class="text-red-500" *ngIf="telefonoYaRegistrada()">
+  telefono ya está registrado.
+</small>
+    </div>
+
+    <!-- Correo Electrónico -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M16 12H8m0 0H5m3 0h3m-4 6h4m0 0H5m4 0h5m-2-12h.01M12 12v1.5a2.5 2.5 0 002.5 2.5h3A2.5 2.5 0 0020 13.5V12" />
+        </svg>
+      </div>
+      <input formControlName="correo" type="text" placeholder=" "
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-purple-600 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+        Correo Electrónico (opcional)
+      </label>
+           <small class="text-red-500" *ngIf="PersonaForm.get('correo')?.touched && PersonaForm.get('correo')?.invalid">
+  <span *ngIf="PersonaForm.get('correo')?.errors?.['email']">Correo no válido.</span>
+</small>
+<small class="text-red-500" *ngIf="correoYaRegistrada()">
+  Correo ya está registrado.
+</small>
+    </div>
+  </div>
+
+<!-- Género -->
+<!-- Género -->
+<div class="relative group mt-6">
+  <!-- Icono de género -->
+  <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M20 4h-3V2h-2v2h-3v2h3v2h2V6h3V4zm-9 8a4 4 0 11-8 0 4 4 0 018 0zm-7.5 5.5A6.5 6.5 0 0112 12h0a6.5 6.5 0 016.5 6.5v.5h-15v-.5z" />
+    </svg>
+  </div>
+
+  <!-- Select -->
+  <select
+    id="genero"
+    formControlName="genero"
+    name="genero"
+    class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white appearance-none focus:outline-none focus:border-purple-600 transition"
+  >
+    <option value="" disabled selected hidden></option>
+    <option *ngFor="let genero of listaGenero" [ngValue]="genero">{{ genero.nombre }}</option>
+  </select>
+
+  <!-- Label flotante -->
+  <label
+    for="genero"
+    class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all
+           peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base
+           peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500
+           peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-purple-600">
+    ---Seleccione genero---
+  </label>
+
+  <!-- Icono de flecha del select -->
+  <div class="absolute right-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M6 9l6 6 6-6" />
+    </svg>
+  </div>
+
+  <!-- Validación -->
+  <small class="text-red-500" *ngIf="PersonaForm.get('genero')?.touched && PersonaForm.get('genero')?.invalid">
+    <span *ngIf="PersonaForm.get('genero')?.errors?.['required']">Por favor seleccione su género.</span>
+  </small>
+</div>
+
+
+
+  <!-- Foto -->
+  <div class="mt-6">
+    <label class="block text-gray-700 dark:text-gray-200 mb-2 font-medium">Subir Fotografía (opcional)</label>
+    <input (change)="onFileSelected($event)" type="file"
+      class="block w-full text-sm text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg p-3 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-purple-100 dark:file:bg-purple-200 file:text-purple-700 hover:file:bg-purple-200 transition" />
+  </div>
+<div class="flex justify-center mt-6">
+    <button type="submit" [disabled]="PersonaForm.invalid ||telefonoYaRegistrada() ||cedulaYaRegistrada() ||correoYaRegistrada()"
+            class="bg-purple-600 text-white px-6 py-2 rounded-xl hover:bg-purple-700 shadow-md transition">
+      Siguente...
+    </button>
+  </div>
+   </form>
+  <div style="height: 40px;"></div>
+</div>
+ 
+<!-- part 2 -->
+
+ <div *ngIf="currentStep === 1" class="space-y-8">
+  <form [formGroup]="negocioForm" (ngSubmit)="registrarNegocio()">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-12">
+    
+   <!-- NIT -->
+<div class="relative group">
+  <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h11M9 21V3" />
+    </svg>
+  </div>
+  <input formControlName="nit" type="text" placeholder=" "
+    class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100 placeholder-transparent focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition" />
+  <label
+    class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600 dark:peer-focus:text-cyan-400">
+    .NIT(opcional)
+  </label>
+    <small class="text-red-500" *ngIf="negocioForm.get('nit')?.touched && negocioForm.get('nit')?.invalid">
+  <span *ngIf="negocioForm.get('nit')?.errors?.['minlength']">Mínimo 5 dígitos.</span>
+  <span *ngIf="negocioForm.get('nit')?.errors?.['maxlength']">Máximo 20 dígitos.</span>
+  <span *ngIf="negocioForm.get('nit')?.errors?.['pattern']">Por fabor, ingrese NIT valido.</span>
+</small>
+<small class="text-red-500" *ngIf="NITYaRegistrada()">
+  NIT ya fue registrada.
+</small>
+</div>
+
+<!-- Razon Social -->
+<div class="relative group">
+  <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M20 21V7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v14l8-4 8 4z" />
+    </svg>
+  </div>
+  <input formControlName="razon_social" type="text" placeholder=" "
+    class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100 placeholder-transparent focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition" />
+  <label
+    class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600 dark:peer-focus:text-cyan-400">
+    Razón Social
+  </label>
+    <small class="text-red-500" *ngIf="negocioForm.get('razon_social')?.touched && negocioForm.get('razon_social')?.invalid">
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['required']">nombre es obligatorio.</span>
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['minlength']">Debe tener al menos 3 caracteres.</span>
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['maxlength']">Máximo 50 caracteres.</span>
+  <span *ngIf="negocioForm.get('razon_social')?.errors?.['pattern']">Tipo de Caracter no valido.</span>
+</small>
+<small class="text-red-500" *ngIf="nombreYaRegistrada1()">
+  Nombre ya registrado.
+</small>
+</div>
+
+<!-- Dirección -->
+<div class="relative group">
+  <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 12h18M3 6h18M3 18h18" />
+    </svg>
+  </div>
+  <input formControlName="direccion" type="text" placeholder=" "
+    class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100 placeholder-transparent focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition" />
+  <label
+    class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600 dark:peer-focus:text-cyan-400">
+    Dirección
+  </label>
+  <small class="text-red-500" *ngIf="negocioForm.get('direccion')?.touched && negocioForm.get('direccion')?.invalid">
+  <span *ngIf="negocioForm.get('direccion')?.errors?.['required']">La dirección es requerida.</span>
+  <span *ngIf="negocioForm.get('direccion')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="negocioForm.get('direccion')?.errors?.['maxlength']">Máximo 255 caracteres.</span>
+</small>
+</div>
+
+<!-- Ciudad / Provincia -->
+<div class="relative group">
+  <div class="absolute left-2 top-3 text-gray-400 dark:text-gray-500 pointer-events-none">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 7v4l3 3M12 19a9 9 0 1 0 0-18 9 9 0 0 0 0 18z" />
+    </svg>
+  </div>
+  <div class="pointer-events-none absolute right-2 top-3 text-gray-400 dark:text-gray-500">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+    </svg>
+  </div>
+  <select formControlName="ciudad"
+    class="peer pl-10 pr-8 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-gray-100 appearance-none focus:outline-none focus:border-cyan-600 dark:focus:border-cyan-400 transition">
+    <option value="" disabled selected hidden>--- seleccione ---</option>
+    <option *ngFor="let ciudad of listaCiudad" [ngValue]="ciudad">{{ciudad.nombre}} </option>
+  </select>
+  <label
+    class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-400 text-sm transition-all peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600 dark:peer-focus:text-cyan-400">
+    Ciudad
+  </label>
+   <small class="text-red-500" *ngIf="negocioForm.get('ciudad')?.touched && negocioForm.get('ciudad')?.invalid">
+  Ciudad es requerida.
+</small>
+</div>
+
+
+
+  </div>
+   <div class="flex justify-center mt-6">
+    <button type="submit" [disabled]="!negocioForm.valid || NITYaRegistrada() || nombreYaRegistrada1() "
+            class="bg-cyan-600 text-white px-6 py-2 rounded-xl hover:bg-cyan-700 shadow-md transition">
+      Siguiente...
+    </button>
+  </div>
+  </form>
+  <div style="height: 84px;"></div>
+</div>
+
+<!-- parte 3 -->
+<div *ngIf="currentStep === 2" class="space-y-8">
+
+  <form [formGroup]="credeForm" (ngSubmit)="registrarCredencial()">
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-9">
+
+    <!-- Usuario -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 pointer-events-none">
+        <!-- Ícono de usuario -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M5.121 17.804A9 9 0 1 1 18.88 6.197M15 11a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+        </svg>
+      </div>
+     <input formControlName="usuario" type="text" placeholder=" " 
+  class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition" />
+
+<label
+  class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-300 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600 dark:peer-focus:text-cyan-400">
+  Ingrese usuario de acceso
+</label>
+
+       <small class="text-red-500" *ngIf="credeForm.get('usuario')?.touched && credeForm.get('usuario')?.invalid">
+      <span *ngIf="credeForm.get('usuario')?.errors?.['required']">El usuario es requerido. </span>
+      <span *ngIf="credeForm.get('usuario')?.errors?.['minlength']">Mínimo 5 caracteres. </span>
+      <span *ngIf="credeForm.get('usuario')?.errors?.['maxlength']">Máximo 30 caracteres. </span>
+    </small>
+  
+    </div>
+
+    <!-- Contraseña -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 pointer-events-none">
+        <!-- Ícono de candado -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 11c1.657 0 3 1.343 3 3v1H9v-1c0-1.657 1.343-3 3-3zm0-7a4 4 0 0 1 4 4v2H8V8a4 4 0 0 1 4-4zM5 11h14v10H5z" />
+        </svg>
+      </div>
+     <input formControlName="contrasena" type="password" placeholder=" " 
+  class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-800 dark:text-white placeholder-transparent focus:outline-none focus:border-cyan-500 dark:focus:border-cyan-400 transition" />
+
+<label
+  class="absolute left-10 top-1.5 text-gray-500 dark:text-gray-300 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 dark:peer-placeholder-shown:text-gray-500 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600 dark:peer-focus:text-cyan-400">
+  Contraseña
+</label>
+
+        <small class="text-red-500" *ngIf="credeForm.get('contrasena')?.touched && credeForm.get('contrasena')?.invalid">
+    
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['required']">
+      La contraseña es obligatoria.
+    </span>
+
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['minlength']">
+      La contraseña debe tener al menos 8 caracteres.
+    </span>
+
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['maxlength']">
+      no debe exceder 50 caracteres.
+    </span>
+
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['pattern']">
+      debe contener al menos una letra mayúscula, una minúscula y un número.
+    </span>
+
+  </small>
+    </div>
+
+    <!-- Confirmar contraseña -->
+    <div class="relative group">
+      <div class="absolute left-2 top-3 text-gray-400 pointer-events-none">
+        <!-- Ícono de candado con check -->
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 11c1.657 0 3 1.343 3 3v1H9v-1c0-1.657 1.343-3 3-3zm0-7a4 4 0 0 1 4 4v2H8V8a4 4 0 0 1 4-4zM5 11h14v10H5zM9 16l2 2 4-4" />
+        </svg>
+      </div>
+      <input formControlName="confirmar_contrasena" type="text" placeholder=" " 
+        class="peer pl-10 pt-4 pb-1 w-full border-b-2 border-gray-300 bg-transparent text-gray-800 placeholder-transparent focus:outline-none focus:border-cyan-500 transition" />
+      <label
+        class="absolute left-10 top-1.5 text-gray-500 text-sm transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-base peer-placeholder-shown:text-gray-400 peer-focus:top-1.5 peer-focus:text-sm peer-focus:text-cyan-600">
+        Confirmar contraseña
+      </label>
+      <small class="text-red-500" *ngIf="credeForm.errors?.['passwordsNoCoinciden'] && credeForm.get('confirmar_contrasena')?.touched">
+    Las contraseñas no coinciden.
+  </small>
+    </div>
+
+  </div>
+
+  <!-- Política de privacidad y términos -->
+  <div class="flex items-start mt-2">
+  <input type="checkbox" formControlName="terminos" id="terms"
+    class="mt-1 text-cyan-600 focus:ring-cyan-500 border-gray-300 rounded-sm" />
+  <label for="terms" class="ml-2 text-sm text-gray-600 leading-tight dark:text-gray-300">
+    Acepto la <a  class="text-cyan-600 underline">política de privacidad</a> y <a  class="text-cyan-600 underline">términos y condiciones</a>.
+  </label>
+</div>
+<small class="text-red-500" *ngIf="credeForm.get('terminos')?.touched && credeForm.get('terminos')?.invalid">
+  Debes aceptar los términos y condiciones.
+</small>
+
+  <div 
+  *ngIf="mensajeEmergente"
+  class="fixed bottom-30 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate__animated animate__fadeInUp"
+>
+  {{ mensajeEmergente }}
+</div>
+  <div class="flex justify-center mt-6">
+    <button type="submit" [disabled]="credeForm.invalid" 
+            class="bg-pink-600 text-white px-6 py-2 rounded-xl hover:bg-pink-700 shadow-md transition">
+      <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> finalizar Registro
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando...
+  </ng-container>
+    </button>
+  </div>
+  </form>
+  <div style="height: 120px;"></div>  
+</div>
+<!-- termina aqui -->
+
+
+
+
+
+
+
+  </div>
+</div>
+
+
+
+
+<!-- modal de verificar:: -->
+

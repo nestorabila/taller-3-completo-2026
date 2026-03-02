@@ -1,0 +1,242 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Por fabor espere un momento...</span>
+</div>
+
+<div *ngIf="!loading">
+  
+<body class="  max-h-[520px] m-0 p-2 font-['Roboto'] h-screen overflow-hidden">
+  <div class="flex flex-col lg:flex-row h-full w-full gap-2">
+    <!-- Columna Izquierda -->
+    <div class="w-full lg:w-1/2 flex flex-col h-1/2 lg:h-full gap-2">
+<!-- Panel 1 minimalista compatible con modo oscuro -->
+<div class="flex-[1] rounded-lg border border-gray-300  p-2 bg-white dark:bg-gray-800 dark:border-gray-700 overflow-auto">
+  <div class="overflow-y-auto max-h-[160px]">
+    <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-2">Lista de Proveedores</h2>
+    
+    <ul class="space-y-1">
+      <li *ngFor="let xdat of listaProveedor" class="flex items-center justify-between p-1 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-all animate__animated animate__fadeInDown">
+        
+        <!-- Radio -->
+        <input 
+          type="radio" 
+          name="proveedor" 
+          [(ngModel)]="proveedorSeleccionado" 
+          [value]="xdat" 
+          class="accent-pink-600 w-4 h-4 mr-2" 
+        />
+        
+        <!-- Encargado + Razón Social -->
+        <div class="flex-1 text-sm text-gray-700 dark:text-gray-300">
+          <span class="font-medium">{{ xdat.persona?.nombre }} {{ xdat.persona?.ap_paterno }}</span>
+          <span class="text-gray-500 dark:text-gray-400"> – {{ xdat.razon_social }}</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+<!-- panel 2 compatible con modo oscuro -->
+<div class="flex-[2] rounded-lg border border-gray-300 dark:border-gray-700 p-2 bg-white dark:bg-gray-800">
+  <div class="overflow-y-auto max-h-[200px]">
+
+    <!-- buscador -->
+    <div class="relative max-w-lg mx-auto mb-2">
+      <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-pink-400 w-5 h-5 pointer-events-none transition-colors duration-300"
+           fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z" />
+      </svg>
+      <input
+        type="text"
+        placeholder="Buscar categoría..."
+        class="peer w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full shadow-sm text-sm bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500
+               focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-pink-500 focus:text-pink-600 focus:placeholder-pink-400 transition duration-300"
+      />
+    </div>
+
+    <!-- lista minimalista de categorías -->
+    <ul class="space-y-1">
+      <li *ngFor="let xdat of listaCategoria" class="flex items-center gap-3 p-2 rounded hover:bg-gray-50 dark:hover:bg-gray-700 transition-all animate__animated animate__fadeInDown">
+        <input 
+          type="radio" 
+          name="cate" 
+          class="accent-pink-600 w-4 h-4" 
+          (click)="vista(xdat)"
+        />
+        <span class="text-sm text-gray-700 dark:text-gray-300">{{ xdat.nombre }}</span>
+      </li>
+    </ul>
+  </div>
+</div>
+
+
+
+    </div>
+
+    <!-- Columna Derecha -->
+    <div class="w-full lg:w-2/2 flex flex-col h-1/2 lg:h-full gap-2">
+<div class="flex-[1] rounded-lg border border-gray-300 dark:border-gray-700 p-2 bg-white dark:bg-gray-800 overflow-auto">
+  <div class="overflow-y-auto max-h-[220px] divide-y divide-gray-200 dark:divide-gray-600">
+
+    <h2 class="text-sm font-semibold text-gray-800 dark:text-gray-200 mb-1">Seleccionar los productos a registrar</h2>
+
+    <div *ngFor="let xdat of listaProducto" class="flex items-center gap-2 py-1 px-1 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all animate__animated animate__fadeInDown">
+
+      <!-- Checkbox -->
+      <input
+        type="checkbox"
+        [checked]="idsProductosSeleccionados.includes(xdat.idproducto)"
+        (change)="toggleProductoSeleccionado($event, xdat)"
+        class="accent-pink-500"
+      />
+
+      <!-- Info del producto en línea -->
+      <div class="flex items-center flex-wrap text-sm text-gray-700 dark:text-gray-300 gap-x-4">
+
+        <div class="flex items-center gap-1">
+          <i class="pi pi-box text-pink-500 text-xs"></i>
+          <span class="font-medium">{{ xdat.nombre }}</span>
+        </div>
+
+        <div class="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+          <i class="pi pi-tags text-xs"></i>
+          <span>{{ xdat.categoria?.nombre }}</span>
+        </div>
+
+        <div class="flex items-center gap-1 text-gray-400 dark:text-gray-500 text-xs">
+          <i class="pi pi-info-circle text-xs"></i>
+          <span>{{ xdat.descripcion }}</span>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+
+
+     <!-- panel 4 compatible con modo oscuro -->
+<div class="animate__animated animate__fadeIn overflow-y-auto max-h-[400px] pr-1 flex-[2] rounded-lg border border-gray-300 dark:border-gray-700 shadow-md p-4 bg-white dark:bg-gray-800">
+  <h6 class="text-sm font-semibold text-pink-600 mb-4 flex items-center gap-2">
+    <svg class="w-5 h-5 text-pink-600" fill="none" stroke="currentColor" stroke-width="2"
+         viewBox="0 0 24 24">
+      <path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2 6h14M10 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"
+            stroke-linecap="round" stroke-linejoin="round" />
+    </svg>
+    Registrar Nueva Compra
+  </h6>
+
+  <div
+    *ngFor="let prod of productosSeleccionados; let i = index"
+    class="animate__animated animate__fadeIn border-b border-gray-200 dark:border-gray-600 py-2 text-xs text-gray-700 dark:text-gray-300 flex flex-wrap items-center gap-2"
+  >
+
+  <!-- Nombre -->
+  <div class="font-semibold min-w-[120px] text-sm truncate">{{ prod.nombre }}</div>
+
+ <!-- Empaque -->
+<select
+  [(ngModel)]="detalleCompraData[i].empaque"
+  (change)="actualizarEmpaque(i)"
+  required
+  class="border rounded-md px-1 py-1 text-xs w-24 focus:outline-blue-500"
+>
+  <option [ngValue]="null" disabled selected>Empaque</option>
+  <option *ngFor="let empaque of listaEmpaque" [ngValue]="empaque">
+    {{ empaque.nombre }}
+  </option>
+</select>
+
+
+<!-- Cant. Empaque -->
+<input
+  [(ngModel)]="detalleCompraData[i].cantidad_e"
+  (input)="limpiarNumero($event)"
+  type="number"
+  required
+  placeholder="Cant. Empaq."
+  class="border rounded-md px-1 py-1 text-xs w-20 focus:outline-blue-500"
+/>
+
+
+  <!-- Cant. Unitario -->
+  <input
+    [(ngModel)]="detalleCompraData[i].cantidad_u"
+    (input)="limpiarNumero($event)"
+    type="number"
+    [disabled]="detalleCompraData[i].empaque?.nombre?.toLowerCase() === 'unidad'"
+    required
+    placeholder="Cant. Unit."
+    class="border rounded-md px-1 py-1 text-xs w-16 focus:outline-blue-500"
+  />
+
+  <!-- Precio Unitario -->
+  <input
+    [(ngModel)]="detalleCompraData[i].precio_u"
+    (input)="limpiarNumeroDecimal($event)"
+    type="text"
+    step="0.01"
+    min="0"
+    required
+    placeholder="Precio(Bs)"
+    class="border rounded-md px-1 py-1 text-xs w-20 focus:outline-blue-500"
+  />
+
+  <!-- Observación -->
+  <input
+    [(ngModel)]="detalleCompraData[i].observacion"
+    (input)="limpiarLetra($event)"
+    type="text"
+    placeholder="Obs.(opcional)"
+    class="border rounded-md px-1 py-1 text-xs w-28 focus:outline-blue-500"
+  />
+</div>
+
+
+
+<div class="flex justify-center mt-4">
+  <button (click)="verificarYRegistrar()"
+    
+    class="flex items-center gap-2 border border-pink-600 text-pink-600 hover:bg-pink-50 text-sm font-medium px-4 py-2 rounded transition duration-300">
+     <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Guardar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando...
+  </ng-container>
+  </button>
+</div>
+
+   </div>
+
+
+    
+    </div>
+
+  </div>
+</body>
+
+</div>
+
+
+<!-- Toast -->
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>
+
+
+
+
+
+
+
+

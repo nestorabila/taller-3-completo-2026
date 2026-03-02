@@ -1,0 +1,482 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Cargando compras...</span>
+</div>
+
+<div *ngIf="!loading">
+ 
+<div class="bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 p-3 shadow-sm rounded-b mb-3 border-b-2 border-blue-500">
+  <div class="flex items-center justify-between">
+    <div>
+      <h5 class="mb-1 flex items-center gap-2">
+        <i class="pi pi-shopping-cart text-blue-500"></i>
+        <span class="hidden md:inline ">Módulo Almacén / Lista / Compras</span> 
+      </h5>
+      <small class="hidden md:inline text-gray-500 dark:text-gray-400">Administra tus compras fácilmente</small>
+    </div>
+
+    <!-- Botón de filtros alineado a la derecha, mismo tamaño de letras -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Buscar
+    </button>
+  </div>
+</div>
+
+
+
+<div class="container-fluid mt-0 text-white animate__animated animate__fadeIn" style="font-family: 'Roboto', sans-serif;">
+
+<!-- Filtro de búsqueda y fecha compatible con Tailwind y modo oscuro -->
+<div *ngIf="mostrarFiltros"  
+     class="flex flex-col md:flex-row gap-2 items-center mb-4"> <!-- mb-4 agrega espacio debajo -->
+  
+  <!-- Input de búsqueda -->
+  <input 
+    type="text" 
+    placeholder="Buscar por nombre de proveedor..."
+    class="w-full md:w-[600px]  px-20 py-2 rounded shadow-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition"
+  />
+</div>
+
+
+
+ <div class="overflow-x-auto">
+
+ <div class="space-y-4 animate__animated animate__zoomInDown">
+
+  <!-- Tarjeta de compra -->
+  <ng-container *ngFor="let xdat of listaCompra | paginate: {itemsPerPage:1, currentPage:pag}">
+    <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700  p-5 hover:shadow-2xl transition cursor-pointer"
+        >
+
+     <!-- Encabezado de la tarjeta -->
+<div class="flex flex-col md:flex-row md:items-center gap-3">
+
+  <!-- Info principal (crece para ocupar espacio) -->
+  <div class="flex-1 flex flex-col md:flex-row md:items-center md:gap-6 text-gray-800 dark:text-gray-200 text-sm">
+
+    <span><strong>Proveedor:</strong> {{ xdat.proveedor?.razon_social }}</span>
+    <span><strong>Registrado:</strong> Norma Maizares.</span>
+    <span><strong>Fecha:</strong> {{ xdat.fecha | date:'d MMM y' }} {{ xdat.hora }}</span>
+
+    <!-- Total y botones -->
+    <span class="flex items-center gap-4 ml-4">
+      <strong>Total:</strong> Bs. {{xdat.precio_total}}
+
+      <!-- Botones elegantes -->
+      <div class="flex gap-2">
+        <button (click)="toggleDetalleCompra(xdat.idcompra!)"
+                class="bg-blue-50 dark:bg-gray-700 text-blue-600 hover:bg-blue-100 dark:hover:bg-gray-600 px-3 py-1 rounded-lg font-medium shadow-sm transition">
+          Ver Detalles
+        </button>
+
+        <button (click)="showDialogC(xdat); vistaCompra(xdat)"
+                class="bg-green-50 dark:bg-gray-700 text-green-600 hover:bg-green-100 dark:hover:bg-gray-600 px-3 py-1 rounded-lg font-medium shadow-sm transition">
+          Editar
+        </button>
+
+        <button (click)="showDialog(xdat)"
+                class="bg-pink-50 dark:bg-gray-700 text-pink-600 hover:bg-pink-100 dark:hover:bg-gray-600 px-3 py-1 rounded-lg font-medium shadow-sm transition">
+          Añadir
+        </button>
+      </div>
+    </span>
+  </div>
+</div>
+
+
+      <!-- Detalle de productos -->
+      <div *ngIf="detalleVisibleId === xdat.idcompra" class="mt-4 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl p-4 space-y-3 animate__animated animate__fadeIn">
+        
+        <ng-container *ngFor="let det of listaDetalleCompra; let i = index">
+          <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-sm p-3 flex flex-col md:flex-row md:items-center md:justify-between gap-2 hover:shadow-md transition">
+            <div class="flex-1 text-sm text-gray-700 dark:text-gray-200">
+              <div class="font-semibold text-pink-600">{{ det.producto?.nombre }}</div>
+              <div class="text-gray-500 dark:text-gray-400">{{ det.producto?.categoria?.nombre }}</div>
+              <div class="text-gray-400 dark:text-gray-500 text-xs italic">{{ det.observacion || 'Sin observación' }}</div>
+            </div>
+            <div class="flex gap-3 text-sm text-gray-700 dark:text-gray-300">
+              <span>{{ det.cantidad_e }} {{ det.empaque?.nombre }}</span>
+              <span>{{ det.cantidad_u }} uds x empaq</span>
+              <span>Total: {{ det.cantidad_t }} uds</span>
+              <span>Precio U.: {{ det.precio_u }} Bs</span>
+              <span>Subtotal: {{ det.precio_t }} Bs</span>
+            </div>
+            <div class="flex gap-2">
+              <button (click)="vistaDetCompra(det); showDialogDC(det)" class="text-cyan-500 hover:text-cyan-700"><i class="pi pi-pencil"></i></button>
+              <button (click)="vistaEliminar(det); confirm2($event)" class="text-red-500 hover:text-red-700"><i class="pi pi-trash"></i></button>
+            </div>
+          </div>
+        </ng-container>
+
+      </div>
+    </div>
+  </ng-container>
+
+</div>
+
+
+  <!-- Paginador -->
+  <div class="flex justify-center mt-2">
+    <pagination-controls
+      (pageChange)="pag = $event"
+      previousLabel="Anterior"
+      nextLabel="Siguiente"
+      class="custom-pagination">
+    </pagination-controls>
+  </div>
+
+  <!-- Línea decorativa -->
+  <div class="w-3/4 mx-auto mt-2 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 animate-fade-in"></div>
+
+  <!-- Footer informativo -->
+  <div class="text-center text-sm md:text-base text-pink-600 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+    <div class="flex items-center space-x-2">
+      <i class="pi pi-star-fill text-yellow-400"></i>
+      <span>Sistema de Gestión de Personal – <span class="text-purple-600">LUCIWEB</span></span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+      <i class="pi pi-shield text-pink-400"></i>
+      <span>Todos los derechos reservados © 2025</span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-gray-400">
+      <i class="pi pi-cog text-indigo-400"></i>
+      <span>Versión 1.0</span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs italic text-teal-500">
+      <i class="pi pi-heart-fill text-red-400"></i>
+      <span>“Trabajamos con pasión y compromiso”</span>
+    </div>
+  </div>
+</div>
+
+
+
+
+</div>
+
+</div>
+
+
+
+<!-- Toast -->
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>
+
+<!-- ConfirmDialog -->
+<p-confirmdialog 
+  styleClass="bg-white text-gray-800 border border-gray-300 
+              dark:bg-gray-900 dark:text-white dark:border-gray-700 
+              shadow-lg rounded-lg"
+/>
+
+ <!-- Diálogo: modificar compra -->
+<div class=" justify-center">
+  <p-dialog [modal]="true" [(visible)]="visibleC" [style]="{ width: '45rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-600 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-500"></i>
+        <span>Modificar Compras</span>
+      </div>
+    </ng-template>
+
+    <!-- ... sigue igual hasta el form -->
+
+<form [formGroup]="compraForm" (ngSubmit)="ModificarCompra()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- Producto -->
+    <div>
+      <label for="producto" class="label-modern">Proveedor</label>
+      <select formControlName="proveedor" id="producto" class="input-underline">
+        <option disabled value="">Seleccione Proveedor</option>
+        <option *ngFor="let proveedor of listaProveedor" [ngValue]="proveedor">
+          {{ proveedor.razon_social }}
+        </option>
+      </select>
+    </div>
+
+    <div>
+      <label  for="cantidad" class="label-modern">Fecha</label>
+      <input [readonly]="true" formControlName="fecha" id="cantidad" type="text" pInputText placeholder="" class="input-underline" />
+    </div>
+    <div>
+      <label for="hora" class="label-modern">Hora</label>
+      <input [readonly]="true" formControlName="hora" id="hora" type="time" pInputText placeholder="" class="input-underline" />
+    </div>
+  </div>
+  <!-- Botones -->
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarCompra()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button type="submit" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 flex items-center gap-2 transition" (click)="guardarCompra()">
+      <i class="pi pi-check"></i> Guardar Cambios
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+<!-- Diálogo: Añadir más compras -->
+<div class=" justify-center">
+  <p-dialog [modal]="true" [(visible)]="visible" [style]="{ width: '45rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-600 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-500"></i>
+        <span>Añadir Compras</span>
+      </div>
+    </ng-template>
+
+    <!-- ... sigue igual hasta el form -->
+
+<form [formGroup]="detcompraForm" (ngSubmit)="registrarDetalleCompra()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- Producto -->
+    <div>
+      <label for="producto" class="label-modern">Producto</label>
+      <select formControlName="producto" id="producto" class="input-underline">
+        <option value="">Seleccione Producto</option>
+        <option *ngFor="let producto of listaProducto" [ngValue]="producto">
+          {{producto.nombre }}
+        </option>
+      </select>
+       <small class="text-red-500" *ngIf="detcompraForm.get('producto')?.touched && detcompraForm.get('producto')?.hasError('required')">
+    El producto es requerido.
+  </small>
+  <small class="text-red-500" *ngIf="productoYaUsado() && detcompraForm.get('producto')?.touched">
+    Producto ya fue registrado.
+  </small>
+    </div>
+
+      <!-- Empaque -->
+    <div>
+      <label for="empaque" class="label-modern">Empaque</label>
+      <select (change)="onSeleccionarEmpaque($event)" formControlName="empaque" id="empaque" class="input-underline">
+        <option value="">Seleccione Empaque</option>
+        <option *ngFor="let empaque of listaEmpaque" [ngValue]="empaque">
+          {{ empaque.nombre }}
+        </option>
+      </select>
+      <small class="text-red-500" *ngIf="detcompraForm.get('empaque')?.touched && detcompraForm.get('empaque')?.hasError('required')">
+    El empaque es requerido.
+  </small>
+    </div>
+
+    <!-- Cantidad empaque-->
+    <div>
+      <label for="cantidad" class="label-modern">Cantidad Empaque</label>
+      <input formControlName="cantidad_e" id="cantidad" type="text" pInputText placeholder="Ingrese cantidad empaque" class="input-underline" />
+   <small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.touched && detcompraForm.get('cantidad_e')?.hasError('required')">
+  La cantidad es requerida.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.hasError('minlength')">
+  Mínimo 1 dígito.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.hasError('maxlength')">
+  Máximo 4 dígitos permitidos.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.hasError('pattern')">
+  Formato no valido
+</small>
+    </div>
+
+     <!-- Cantidad unitario-->
+    <div>
+      <label for="cantidad_u" class="label-modern">Cantidad Unitario</label>
+      <input formControlName="cantidad_u" id="cantidad_u" type="text" pInputText placeholder="Ingrese cantidad unitario por cada empaque" class="input-underline" />
+   <small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.touched && detcompraForm.get('cantidad_u')?.hasError('required')">
+  La cantidad es requerida.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.hasError('minlength')">
+  Mínimo 1 dígito.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.hasError('maxlength')">
+  Máximo 4 dígitos permitidos.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.hasError('pattern')">
+  Formato no valido
+</small>
+    </div>
+
+    <!-- Precio -->
+    <div>
+      <label for="precio_u" class="label-modern">Precio Unitario (Bs)</label>
+      <input formControlName="precio_u" id="precio_u" type="text" pInputText placeholder="Ingrese el precio por empaque" class="input-underline" />
+    <small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.touched && detcompraForm.get('precio_u')?.hasError('required')">
+  El precio es requerido.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.hasError('minlength')">
+  El precio debe mayor a 1.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.hasError('maxlength')">
+  Máximo 5 dígitos permitidos.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.hasError('pattern')">
+  Formato no valido
+</small>
+    </div>
+  <!-- Observación -->
+   
+  <div>
+    <label for="observacion" class="label-modern">Observación</label>
+    <input formControlName="observacion" id="observacion" type="text" pInputText placeholder="Observación (opcional)" class="input-underline" />
+   <small class="text-red-500" *ngIf="detcompraForm.get('observacion')?.touched && detcompraForm.get('observacion')?.invalid">
+    <span *ngIf="detcompraForm.get('observacion')?.hasError('minlength')">Debe tener al menos 4 caracteres.</span>
+    <span *ngIf="detcompraForm.get('observacion')?.hasError('maxlength')">Debe tener máximo 80 caracteres.</span>
+  </small>
+  </div>
+
+  </div>
+
+  <!-- Botones -->
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarRegistro()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button [disabled]="detcompraForm.invalid || productoYaUsado()" type="submit" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 flex items-center gap-2 transition" (click)="guardarRegistro()">
+      <i class="pi pi-check"></i> Aceptar
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+
+<!-- Diálogo: modificar detalle compra -->
+<div class=" justify-center">
+  <p-dialog [modal]="true" [(visible)]="visibleDC" [style]="{ width: '45rem' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-600 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-500"></i>
+        <span>Modificar Detalle Compras</span>
+      </div>
+    </ng-template>
+
+<form [formGroup]="detcompraForm" (ngSubmit)="ModificarDetalleCompra()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+
+    <!-- Producto -->
+    <div>
+      <label for="producto" class="label-modern">Producto</label>
+      <select formControlName="producto" id="producto" class="input-underline">
+        <option disabled value="">Seleccione Producto</option>
+        <option  disabled *ngFor="let producto of listaProducto" [ngValue]="producto">
+          {{ producto.nombre }}
+        </option>
+      </select>
+    </div>
+
+    <!-- Precio -->
+    <div>
+      <label for="precio" class="label-modern">Precio (Bs)</label>
+      <input formControlName="precio_u" id="precio" type="text" pInputText placeholder="Ingrese el precio unitario" class="input-underline" />
+   <small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.touched && detcompraForm.get('precio_u')?.hasError('required')">
+  El precio es requerido.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.hasError('minlength')">
+  El precio debe mayor a 1.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.hasError('maxlength')">
+  Máximo 5 dígitos permitidos.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('precio_u')?.hasError('pattern')">
+  Formato no valido
+</small>
+    </div>
+
+
+   <!-- Cantidad -->
+    <div>
+      <label for="cantidad" class="label-modern">Cantidad Empaque</label>
+      <input formControlName="cantidad_e" id="cantidad" type="text" pInputText placeholder="Ingrese cantidad por empaque" class="input-underline" />
+      <small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.touched && detcompraForm.get('cantidad_e')?.hasError('required')">
+  La cantidad es requerida.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.hasError('minlength')">
+  Mínimo 1 dígito.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.hasError('maxlength')">
+  Máximo 4 dígitos permitidos.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_e')?.hasError('pattern')">
+  Formato no valido
+</small>
+    </div>
+
+     <!-- Cantidad unitario -->
+    <div>
+      <label for="cantidad_u" class="label-modern">Cantidad Unitario</label>
+      <input formControlName="cantidad_u" id="cantidad_u" type="text" pInputText placeholder="Ingrese cantidadn unitario" class="input-underline" />
+      <small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.touched && detcompraForm.get('cantidad_u')?.hasError('required')">
+  La cantidad es requerida.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.hasError('minlength')">
+  Mínimo 1 dígito.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.hasError('maxlength')">
+  Máximo 4 dígitos permitidos.
+</small>
+
+<small class="text-red-500" *ngIf="detcompraForm.get('cantidad_u')?.hasError('pattern')">
+  Formato no valido
+</small>
+    </div>
+
+  </div>
+
+  <!-- Observación -->
+  <div class="mb-4">
+    <label for="observacion" class="label-modern">Observación</label>
+    <input formControlName="observacion" id="observacion" type="text" pInputText placeholder="Observación (opcional)" class="input-underline" />
+  <small class="text-red-500" *ngIf="detcompraForm.get('observacion')?.touched && detcompraForm.get('observacion')?.invalid">
+    <span *ngIf="detcompraForm.get('observacion')?.hasError('minlength')">Debe tener al menos 4 caracteres.</span>
+    <span *ngIf="detcompraForm.get('observacion')?.hasError('maxlength')">Debe tener máximo 80 caracteres.</span>
+  </small>
+  </div>
+
+  <!-- Botones -->
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-600 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarDCompra()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button [disabled]="detcompraForm.invalid" type="submit" class="px-4 py-2 bg-sky-500 text-white rounded hover:bg-sky-600 flex items-center gap-2 transition" (click)="guardarDCompra()">
+      <i class="pi pi-check"></i> Guardar Cambios
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+
+

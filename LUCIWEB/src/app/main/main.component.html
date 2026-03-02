@@ -1,0 +1,715 @@
+<!-- Contenedor del encabezado -->
+<div (click)="handleContainerClick($event)" 
+     [ngClass]="menuCollapsed ? 'left-20' : 'left-56'">
+  <app-cabecera class="cabecera-flotante"></app-cabecera>
+</div>
+
+<!-- Botón de hamburguesa -->
+<button 
+  (click)="toggleMenu(); $event.stopPropagation()"
+  [ngStyle]="{left: menuCollapsed ? '10px' : '230px'}"
+  class="fixed top-0 p-2 rounded-md cursor-pointer transition-all duration-500 
+         bg-white text-black hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+  style="z-index: 9999;">
+  <svg class="w-6 h-6 stroke-current" fill="none" stroke="currentColor" stroke-width="2"
+       viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 6h16M4 12h16M4 18h16" />
+  </svg>
+</button>
+
+
+<!-- Menú lateral -->
+<div id="main-menu"
+  [ngStyle]="{ width: menuCollapsed ? '0px' : '230px' }"
+  class="animate__animated animate__fadeInLeft transition-all duration-500
+         fixed top-0 left-0 h-full 
+         bg-white text-black border-r border-gray-300
+         dark:bg-gray-900 dark:text-white dark:border-gray-700
+          flex flex-col z-50 overflow-hidden pointer-events-auto">
+
+<!-- Mostrar solo si NO está colapsado -->
+<ng-container *ngIf="!menuCollapsed">
+  <!-- Sección superior fija (Logo y nombre) -->
+  <div class="flex items-center px-3 pt-2 pb-1 shrink-0 gap-2">
+    <img src="assets/luci.png" 
+         alt="Logo" 
+         class="w-14 h-14 transition-all duration-500 border border-gray-300 dark:border-gray-700 rounded-full" />
+    <h1 class="text-black dark:text-white text-lg font-semibold tracking-wide uppercase font-serif">
+      LUCIWEB
+    </h1>
+  </div>
+
+  <!-- Input de búsqueda con icono SVG -->
+  <div class="w-11/12 mx-auto mt-2">
+    <div class="relative">
+      <!-- Ícono de lupa -->
+      <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+        <svg class="w-5 h-5 text-gray-500 dark:text-gray-400" 
+             fill="none" stroke="currentColor" stroke-width="2"
+             viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 21l-4.35-4.35M16.65 16.65A7.5 7.5 0 1 0 3 10.5a7.5 7.5 0 0 0 13.65 6.15z" />
+        </svg>
+      </div>
+
+      <!-- Campo de búsqueda -->
+      <input
+        type="text"
+        placeholder="Buscar..."
+        class="w-full pl-12 pr-4 py-1 rounded-full 
+               border border-gray-300 dark:border-gray-700 
+               bg-white dark:bg-gray-800 
+               shadow-sm 
+               focus:outline-none focus:ring-2 focus:ring-gray-400 dark:focus:ring-gray-600 
+               focus:border-gray-400 dark:focus:border-gray-600 
+               text-sm text-gray-700 dark:text-gray-200 
+               placeholder-gray-400 dark:placeholder-gray-500 
+               transition"
+      />
+    </div>
+  </div>
+
+  <!-- Línea separadora más cercana al logo -->
+  <div class="w-11/12 h-[2px] mt-1 mb-1 
+              bg-gradient-to-r from-gray-300 via-gray-500 to-gray-300 
+              dark:from-gray-700 dark:via-gray-500 dark:to-gray-700 
+              rounded-lg shadow mx-auto">
+  </div>
+    <!-- Navegación -->
+    <!-- Body -->
+     <nav 
+  class="h-full overflow-y-auto 
+         [&::-webkit-scrollbar]:w-2 
+         [&::-webkit-scrollbar-thumb]:rounded-full 
+         [&::-webkit-scrollbar-track]:bg-gray-100 dark:[&::-webkit-scrollbar-track]:bg-neutral-800
+         [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-neutral-600">
+         
+  <div class="hs-accordion-group pb-0 px-2 w-full flex flex-col flex-wrap" data-hs-accordion-always-open>
+    <ul class="space-y-1">
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" 
+           routerLink="/luciweb/dashboard"
+           class="flex items-center gap-x-3.5 py-2 px-2.5 
+                  bg-gray-100 hover:bg-gray-200 focus:bg-gray-200 
+                  dark:bg-neutral-700 dark:hover:bg-neutral-600 dark:focus:bg-neutral-600 
+                  text-sm text-gray-800 dark:text-gray-200 
+                  rounded-lg transition-colors duration-200">
+          <svg class="size-4 text-pink-500 dark:text-pink-400" 
+               xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+               viewBox="0 0 24 24" fill="none" stroke="currentColor" 
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Panel de Control
+        </a>
+      </li>
+    
+<!-- modulo persona -->
+<li class="hs-accordion animate__animated animate__slideInDown" id="account-accordion">
+  <button type="button"
+    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm 
+           text-gray-800 dark:text-neutral-200
+           rounded-lg 
+           hover:bg-gray-100 dark:hover:bg-neutral-700
+           focus:outline-hidden focus:bg-gray-100 dark:focus:bg-neutral-700
+           transition-colors duration-200"
+    aria-expanded="true" aria-controls="account-accordion-sub-1-collapse-1">
+    
+    <svg class="size-4 text-pink-500 dark:text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="15" r="3"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M10 15H6a4 4 0 0 0-4 4v2"/>
+    </svg>
+    Módulo Persona
+
+    <!-- Ícono abrir/cerrar -->
+    <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400"
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m18 15-6-6-6 6"/>
+    </svg>
+
+    <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400"
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6"/>
+    </svg>
+  </button>
+
+  <div id="account-accordion-sub-1-collapse-1"
+       class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+       role="region" aria-labelledby="account-accordion">
+    <ul class="pt-1 ps-7 space-y-1 animate__animated animate__slideInDown">
+
+      <!-- Lista Persona -->
+      <li>
+        <a routerLink="/luciweb/gestionar/persona" (click)="collapseMenuIfSmallScreen()"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                 text-gray-800 dark:text-neutral-200
+                 rounded-lg
+                 hover:bg-gray-100 dark:hover:bg-neutral-700
+                 hover:text-pink-600 dark:hover:text-pink-400
+                 transition-colors duration-200">
+          <svg class="size-4 text-pink-500 dark:text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M5.5 21a7.5 7.5 0 0 1 13 0"/>
+          </svg>
+          Lista Persona
+        </a>
+      </li>
+
+      <!-- Lista Librería Cliente -->
+      <li>
+        <a routerLink="/luciweb/gestionar/negocio" (click)="collapseMenuIfSmallScreen()"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                 text-gray-800 dark:text-neutral-200
+                 rounded-lg
+                 hover:bg-gray-100 dark:hover:bg-neutral-700
+                 hover:text-pink-600 dark:hover:text-pink-400
+                 transition-colors duration-200">
+          <svg class="size-4 text-pink-500 dark:text-pink-400" xmlns="http://www.w3.org/2000/svg"
+            fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l1-5h16l1 5"/>
+            <path d="M3 9a4 4 0 0 0 8 0"/>
+            <path d="M13 9a4 4 0 0 0 8 0"/>
+            <path d="M5 21V9m14 12V9"/>
+            <path d="M9 21V12h6v9"/>
+          </svg>
+          Lista Librería
+        </a>
+      </li>
+
+      <!-- Lista Proveedor -->
+      <li>
+        <a routerLink="/luciweb/gestionar/proveedor" (click)="collapseMenuIfSmallScreen()"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                 text-gray-800 dark:text-neutral-200
+                 rounded-lg
+                 hover:bg-gray-100 dark:hover:bg-neutral-700
+                 hover:text-pink-600 dark:hover:text-pink-400
+                 transition-colors duration-200">
+          <svg class="size-4 text-pink-500 dark:text-pink-400" xmlns="http://www.w3.org/2000/svg"
+            fill="none" stroke="currentColor" stroke-width="2"
+            viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="7" r="4"/>
+            <path d="M5.5 21a7.5 7.5 0 0 1 13 0"/>
+          </svg>
+          Lista Proveedor
+        </a>
+      </li>
+
+      <!-- Submenú Reportes -->
+      <li class="hs-accordion animate__animated animate__slideInDown" id="users-accordion-sub-2">
+        <button type="button"
+          class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                 text-gray-800 dark:text-neutral-200
+                 rounded-lg
+                 hover:bg-gray-100 dark:hover:bg-neutral-700
+                 transition-colors duration-200"
+          aria-expanded="true" aria-controls="users-accordion-sub-2-collapse-1">
+          <svg class="size-4 text-pink-500 dark:text-pink-400" xmlns="http://www.w3.org/2000/svg"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16v16H4z"/>
+            <path d="M8 8h8M8 12h8M8 16h4"/>
+          </svg>
+          Reportes
+          <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400"
+            xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6"/>
+          </svg>
+          <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400"
+            xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor"
+            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+
+        <div id="users-accordion-sub-2-collapse-1"
+             class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+             role="region" aria-labelledby="users-accordion-sub-2">
+          <ul class="pt-1 ps-2 space-y-1">
+            <li>
+              <a routerLink="/luciweb/gestionar/persona/reporte" (click)="collapseMenuIfSmallScreen()"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                       text-gray-800 dark:text-neutral-200
+                       rounded-lg
+                       hover:bg-gray-100 dark:hover:bg-neutral-700
+                       hover:text-pink-600 dark:hover:text-pink-400
+                       transition-colors duration-200">
+                Reporte Persona
+              </a>
+            </li>
+            <li>
+              <a routerLink="/luciweb/gestionar/libreria/reporte" (click)="collapseMenuIfSmallScreen()"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                       text-gray-800 dark:text-neutral-200
+                       rounded-lg
+                       hover:bg-gray-100 dark:hover:bg-neutral-700
+                       hover:text-pink-600 dark:hover:text-pink-400
+                       transition-colors duration-200">
+                Reporte Librería 
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+</li>
+
+<!-- modulo categoria -->
+<li class="hs-accordion animate__animated animate__slideInDown" id="account-accordion">
+  <button type="button"
+    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm 
+           text-gray-800 dark:text-neutral-200
+           rounded-lg 
+           hover:bg-gray-100 dark:hover:bg-neutral-700
+           focus:outline-hidden focus:bg-gray-100 dark:focus:bg-neutral-700
+           transition-colors duration-200"
+    aria-expanded="true" aria-controls="account-accordion-sub-1-collapse-1">
+    
+    <svg class="size-4 text-pink-500 dark:text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="18" cy="15" r="3"/>
+      <circle cx="9" cy="7" r="4"/>
+      <path d="M3 7h4l3 3h11v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+    </svg>
+    Módulo Categoria
+
+    <!-- Ícono abrir/cerrar -->
+    <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400"
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m18 15-6-6-6 6"/>
+    </svg>
+
+    <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400"
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m6 9 6 6 6-6"/>
+    </svg>
+  </button>
+
+  <div id="account-accordion-sub-1-collapse-1"
+       class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+       role="region" aria-labelledby="account-accordion">
+    <ul class="pt-1 ps-7 space-y-1 animate__animated animate__slideInDown">
+
+      <!-- Lista Persona -->
+       <!-- Lista Categoria -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/categoria"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg 
+                 text-gray-800 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-pink-400">
+          <svg class="w-5 h-5 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M3 7h4l3 3h11v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7z" />
+          </svg>
+          Lista Categoría
+        </a>
+      </li>
+    
+     
+    </ul>
+  </div>
+</li>
+         
+<!-- Módulo almacen -->
+<li *ngIf="!esResponsableVentas()" class="animate__animated animate__slideInDown hs-accordion" id="account-accordion">
+  <button 
+    type="button" 
+    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 
+           py-2 px-2.5 text-sm rounded-lg 
+           text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 
+           dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 
+           dark:text-neutral-200">
+    
+    <!-- 📦 Ícono -->
+    <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+      stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z" />
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+      <line x1="12" y1="22.08" x2="12" y2="12" />
+    </svg>
+
+    Módulo Almacén
+
+    <!-- Flechas acordeón -->
+    <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path d="m18 15-6-6-6 6" />
+    </svg>
+    <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+
+  <!-- Submenú -->
+  <div id="account-accordion-sub-1-collapse-1"
+    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden" 
+    role="region" aria-labelledby="account-accordion">
+    
+    <ul class="pt-1 ps-7 space-y-1 animate__animated animate__slideInDown">
+
+     
+
+      <!-- Productos -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/productos"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg 
+                 text-gray-800 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-pink-400">
+          <svg class="w-5 h-5 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-5.11a2 2 0 0 0-2 0l-7 5.11A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 5.11a2 2 0 0 0 2 0l7-5.11A2 2 0 0 0 21 16z" />
+            <path d="M12 22v-10" />
+            <path d="M16 5.13l-4 2.91-4-2.91" />
+          </svg>
+          Ver Productos
+        </a>
+      </li>
+
+      <!-- Registrar Nueva Compra -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/compras/registrar_insumos"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg 
+                 text-gray-800 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-pink-400">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M3 3h18v4H3z" />
+            <path d="M16 7v13H8V7" />
+            <line x1="8" y1="11" x2="16" y2="11" />
+          </svg>
+          Registrar Nueva Compra
+        </a>
+      </li>
+
+      <!-- Ver Compras -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/compras/listar_insumos"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg 
+                 text-gray-800 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-pink-400">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round"
+            stroke-linejoin="round">
+            <path d="M3 6h18" />
+            <path d="M16 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6" />
+            <path d="M8 10h6" />
+          </svg>
+          Ver Compras
+        </a>
+      </li>
+
+      <!-- Submenú Reportes -->
+      <li class="hs-accordion" id="users-accordion-sub-2">
+        <button 
+          type="button" 
+          class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 
+                 py-2 px-2.5 text-sm rounded-lg 
+                 text-gray-800 hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100 
+                 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 
+                 dark:text-neutral-200">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none" 
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16v16H4z" />
+            <path d="M8 8h8M8 12h8M8 16h4" />
+          </svg>
+          Reportes
+          <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6"/>
+          </svg>
+          <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400" xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+            fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </button>
+
+        <div id="users-accordion-sub-2-collapse-1" 
+          class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden" 
+          role="region" aria-labelledby="users-accordion-sub-2">
+          <ul class="pt-1 ps-2 space-y-1">
+            <li>
+              <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/producto/reporte"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg 
+                       text-gray-800 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 
+                       dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-pink-400">
+                Reporte Producto
+              </a>
+            </li>
+            <li>
+              <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/compras/reporte"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm rounded-lg 
+                       text-gray-800 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 
+                       dark:text-neutral-200 dark:hover:bg-neutral-700 dark:hover:text-pink-400">
+                Reporte Compras
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+    </ul>
+  </div>
+</li>
+
+
+<!-- modulo ventas -->
+<li class="animate__animated animate__slideInDown hs-accordion" id="ventas-accordion">
+  <button type="button"
+    class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 
+           text-sm text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100
+           dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200">
+
+    <!-- 🛒 Ícono carrito de compras -->
+    <svg class="size-5 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="21" r="1.5" />
+      <circle cx="20" cy="21" r="1.5" />
+      <path d="M2 2h2l3.6 7.59a2 2 0 0 0 1.75 1.15H19a2 2 0 0 0 1.96-1.61L23 6H6" />
+    </svg>
+
+    Módulo Ventas
+
+    <!-- Flechas acordeón -->
+    <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400"
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor" stroke-width="2">
+      <path d="m18 15-6-6-6 6" />
+    </svg>
+    <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400"
+      xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor" stroke-width="2">
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  </button>
+
+  <div id="ventas-accordion-sub-1-collapse-1"
+    class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+    role="region" aria-labelledby="ventas-accordion">
+    <ul class="pt-1 ps-7 space-y-1 animate__animated animate__slideInDown">
+
+     
+
+      <!-- Lista Catalogo -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/catalogo"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg 
+                 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 active:text-inherit 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+          style="text-decoration: none;">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 4h7a2 2 0 0 1 2 2v14a2 2 0 0 0-2-2H2z" />
+            <path d="M22 4h-7a2 2 0 0 0-2 2v14a2 2 0 0 1 2-2h7z" />
+          </svg>
+          Lista Catálogo
+        </a>
+      </li>
+
+      <!-- Registrar Nuevo Pedido -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/pedido/registrar_pedido"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg 
+                 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 active:text-inherit 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+          style="text-decoration: none;">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4a2 2 0 0 0 1-1.73z" />
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+          </svg>
+          Registrar Nuevo Pedido
+        </a>
+      </li>
+
+      <!-- Lista Pedidos -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/pedido/listar_pedidos"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg 
+                 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 active:text-inherit 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+          style="text-decoration: none;">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 6h13M8 12h13M8 18h13" />
+            <polyline points="3 6 4 7 6 5" />
+            <polyline points="3 12 4 13 6 11" />
+            <polyline points="3 18 4 19 6 17" />
+          </svg>
+          Lista Pedidos
+        </a>
+      </li>
+
+      <!-- Lista Pagos -->
+<li>
+  <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/pago/listar_pago"
+    class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg 
+           hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 active:text-inherit 
+           dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+    style="text-decoration: none;">
+    <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+      viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <!-- Billete -->
+      <rect x="2" y="7" width="20" height="10" rx="2" ry="2" />
+      <!-- Línea central del billete -->
+      <line x1="2" y1="12" x2="22" y2="12" />
+      <!-- Círculo central (moneda) -->
+      <circle cx="12" cy="12" r="3" />
+    </svg>
+    Lista Pagos
+  </a>
+</li>
+
+      <!-- Lista Ventas -->
+      <li>
+        <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/lista/ventas"
+          class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg 
+                 hover:text-pink-600 hover:bg-gray-100 focus:outline-none focus:ring-0 active:text-inherit 
+                 dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+          style="text-decoration: none;">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 6h18" />
+            <path d="M16 6v12a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6" />
+            <path d="M8 10h6" />
+          </svg>
+          Lista Ventas
+        </a>
+      </li>
+
+      <!-- Submenú Reportes -->
+      <li class="hs-accordion" id="ventas-reporte-accordion">
+        <button type="button"
+          class="hs-accordion-toggle w-full text-start flex items-center gap-x-3.5 py-2 px-2.5 text-sm
+                 text-gray-800 rounded-lg hover:bg-gray-100 focus:outline-hidden focus:bg-gray-100
+                 dark:bg-neutral-800 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700 dark:text-neutral-200"
+          aria-expanded="true" aria-controls="ventas-reporte-collapse">
+          <svg class="size-4 text-pink-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16v16H4z" />
+            <path d="M8 8h8M8 12h8M8 16h4" />
+          </svg>
+          Reportes
+          <svg class="hs-accordion-active:block ms-auto hidden size-4 text-gray-600 dark:text-neutral-400"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m18 15-6-6-6 6" />
+          </svg>
+          <svg class="hs-accordion-active:hidden ms-auto block size-4 text-gray-600 dark:text-neutral-400"
+            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+
+        <div id="ventas-reporte-collapse"
+          class="hs-accordion-content w-full overflow-hidden transition-[height] duration-300 hidden"
+          role="region" aria-labelledby="ventas-reporte-accordion">
+          <ul class="pt-1 ps-2 space-y-1">
+            <li>
+              <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/catalogo/reporte"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg
+                       hover:bg-gray-100 hover:text-pink-600 focus:outline-none focus:ring-0
+                       dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                style="text-decoration: none;">
+                Reporte Catálogo
+              </a>
+            </li>
+            <li>
+              <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/pedido/reporte"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg
+                       hover:bg-gray-100 hover:text-pink-600 focus:outline-none focus:ring-0
+                       dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                style="text-decoration: none;">
+                Reporte Pedidos
+              </a>
+            </li>
+            <li>
+              <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/pago/reporte"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg
+                       hover:bg-gray-100 hover:text-pink-600 focus:outline-none focus:ring-0
+                       dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                style="text-decoration: none;">
+                Reporte de Pagos
+              </a>
+            </li>
+             <li>
+              <a (click)="collapseMenuIfSmallScreen()" routerLink="/luciweb/gestionar/ventas/reporte"
+                class="flex items-center gap-x-3.5 py-2 px-2.5 text-sm text-gray-800 rounded-lg
+                       hover:bg-gray-100 hover:text-pink-600 focus:outline-none focus:ring-0
+                       dark:text-neutral-200 dark:hover:bg-neutral-700 dark:focus:bg-neutral-700"
+                style="text-decoration: none;">
+                Reporte Ventas
+              </a>
+            </li>
+          </ul>
+        </div>
+      </li>
+
+    </ul>
+  </div>
+</li>
+
+
+          </ul>
+        </div>
+      </nav>
+
+
+
+    <!-- Pie de página -->
+    <div class="text-sm text-gray-600 dark:text-gray-300 
+            py-3 text-center 
+            border-t border-gray-200 dark:border-gray-700 
+            shrink-0 bg-white dark:bg-gray-900">
+  © 2025 LUCIWEB
+</div>
+
+  </ng-container>
+</div>
+
+
+
+<!-- Contenedor principal -->
+<div 
+  class="fixed transition-all duration-300 ease-in-out overflow-auto 
+         [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden 
+         bg-white text-gray-900 dark:bg-gray-900 dark:text-gray-100 z-10"
+  [ngStyle]="{
+    'top': '53px', 
+    'bottom': '0',
+    'left': menuCollapsed ? '2px' : '234px',
+    'width': menuCollapsed ? 'calc(100% - 2px)' : 'calc(100% - 234px)',
+    'height': 'calc(100vh - 53px)'
+  }">
+
+  <!-- Contenido sobre las burbujas -->
+  <div class="relative z-10">
+    <router-outlet></router-outlet>
+  </div>
+
+</div>
+

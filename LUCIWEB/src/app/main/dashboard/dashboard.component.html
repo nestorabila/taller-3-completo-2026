@@ -1,0 +1,751 @@
+
+<link rel="stylesheet" href="https://unpkg.com/primeicons/primeicons.css">
+
+<div class="min-h-screen bg-white dark:bg-gray-900 text-gray-900 dark:text-white p-3 text-sm font-sans">
+ <!-- Encabezado -->
+<header class="mb-6 border-b border-gray-700 pb-3 dark:bg-gray-900">
+  <div class="flex flex-col md:flex-row md:items-center md:justify-start gap-4">
+    <!-- Título -->
+    <div class="flex items-start gap-2">
+      <i class="pi pi-chart-line text-blue-400 text-xl mt-1"></i>
+      <div>
+      <h1 class="text-lg font-semibold text-gray-900 dark:text-white">Panel Principal</h1>
+        <p class="text-xs text-gray-400">Resumen general del sistema de ventas</p>
+      </div>
+    </div>
+
+    <nav class="flex flex-wrap items-center gap-3 text-gray-400 text-sm font-medium ml-6">
+      <!-- Panel Principal -->
+      <div class="flex flex-col items-center cursor-pointer transition group">
+        <div (click)="seleccionarPanel('principal')" class="flex items-center gap-2 px-3 py-1 rounded-md transition">
+          <i class="pi pi-home text-xs text-gray-400 group-hover:text-blue-400 transition"></i>
+          <span class="text-gray-400 group-hover:text-blue-400 transition">Principal</span>
+        </div>
+        <div class="h-[2px] w-full bg-blue-700 rounded-full"></div>
+      </div>
+
+      <span class="text-gray-600">›</span>
+
+      <!-- Panel Persona -->
+      <div class="flex flex-col items-center cursor-pointer transition">
+        <div (click)="seleccionarPanel('persona')" class="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-100 hover:text-orange-400 transition">
+          <i class="pi pi-users text-xs"></i>
+          <span>Panel Persona</span>
+        </div>
+        <div class="h-[2px] w-full bg-orange-700 rounded-full"></div>
+      </div>
+
+      <span class="text-gray-600">›</span>
+
+      <!-- Panel Almacén -->
+      <div class="flex flex-col items-center cursor-pointer transition">
+        <div (click)="seleccionarPanel('almacen')" class="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-100 hover:text-green-400 transition">
+          <i class="pi pi-box text-xs"></i>
+          <span>Panel Almacén</span>
+        </div>
+        <div class="h-[2px] w-full bg-green-700 rounded-full"></div>
+      </div>
+
+      <span class="text-gray-600">›</span>
+
+      <!-- Panel Ventas -->
+      <div class="flex flex-col items-center cursor-pointer transition">
+        <div (click)="seleccionarPanel('ventas')" class="flex items-center gap-2 px-3 py-1 rounded-md hover:bg-gray-100 hover:text-yellow-400 transition">
+          <i class="pi pi-shopping-cart text-xs"></i>
+          <span>Panel Ventas</span>
+        </div>
+        <div class="h-[2px] w-full bg-yellow-700 rounded-full"></div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+
+<!-- Paneles visibles según la selección -->
+<div *ngIf="panelActivo === 'principal'">
+
+  <div class="flex justify-between items-center mb-0 flex-wrap gap-4">
+    <!-- Título con ícono -->
+    <h2 class="text-xl font-semibold text-gray-700 dark:text-white flex items-center gap-2">
+      <i class="pi pi-chart-bar text-indigo-600 text-2xl"></i>
+      Seguimiento de Pedidos en Curso
+    </h2>
+
+   <div class="flex gap-6 text-sm text-gray-700 dark:text-white">
+  <!-- Tarjeta Egresos -->
+  <div class="flex items-center gap-2">
+    <i class="pi pi-arrow-down text-xl text-red-500"></i>
+    <div class="flex flex-col">
+      <span class="text-xs text-gray-400 dark:text-gray-400">Total Egresos</span>
+      <span class="text-base font-semibold text-gray-800 dark:text-white">
+       {{ totalEgresosAnimado | number:'1.0-0' }} Bs.
+      </span>
+    </div>
+  </div>
+
+  <!-- Tarjeta Ingresos -->
+  <div class="flex items-center gap-2">
+    <i class="pi pi-arrow-up text-xl text-green-500"></i>
+    <div class="flex flex-col">
+      <span class="text-xs text-gray-400 dark:text-gray-400">Total Ingresos</span>
+      <span class="text-base font-semibold text-gray-800 dark:text-white">
+        {{ totalIngresosAnimado | number:'1.0-0' }} Bs.
+      </span>
+    </div>
+  </div>
+
+  <!-- Tarjeta Ganancias -->
+  <div class="flex items-center gap-2">
+    <i class="pi pi-dollar text-xl" 
+       [ngClass]="ganancia >= 0 ? 'text-green-500' : 'text-red-500'"></i>
+    <div class="flex flex-col">
+      <span class="text-xs text-gray-400 dark:text-gray-400">Ganancias</span>
+      <span class="text-base font-semibold"
+        [ngClass]="ganancia >= 0 ? 'text-gray-800 dark:text-white' : 'text-red-500'">
+        {{ gananciaAnimada | number:'1.0-0' }} Bs.
+      </span>
+    </div>
+  </div>
+</div>
+
+  </div>
+
+  <!-- Gráfico -->
+  <canvas baseChart
+    [type]="'bar'"
+    [data]="GraficoSeguimiento"
+    [options]="opcionesGraficoSeguimiento1"
+    class="w-full max-h-[400px] border-gray-200 dark:border-gray-700 p-2 bg-white dark:bg-gray-900">
+  </canvas>
+
+  <!-- Contenedor de ambos gráficos -->
+<div class="w-full flex flex-col lg:flex-row gap-4 mt-6">
+  
+  
+  <!-- Gráfico Top 5 Catálogos -->
+<div class="w-full lg:w-[40%] mt-20">
+  <!-- Filtro arriba a la izquierda -->
+  <div class="flex justify-start mb-3">
+  <select 
+    class="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-900"
+    [(ngModel)]="filtroTiempo"
+    (change)="aplicarFiltroTopCatalogos()"
+  >
+    <option value="dia">Por día</option>
+    <option value="semana">Por semana</option>
+    <option value="mes">Por mes</option>
+    <option value="anio">Por año</option>
+  </select>
+</div>
+
+
+  <p class="text-md font-semibold mb-2">Top de 5 catálogos más vendidos</p>
+
+  <canvas baseChart
+    [data]="graficoTopCatalogosData"
+    [type]="'bar'"
+    class="max-h-48 w-full">
+  </canvas>
+
+</div>
+
+
+  <!-- Gráfico evolución ventas -->
+  <div class="w-full lg:w-[60%]">
+    <div class="flex justify-between items-center mb-2">
+      <p class="text-md font-semibold">Evolución de Ventas</p>
+      <select
+        class="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-900"
+        [(ngModel)]="agrupacionVentas"
+        (change)="cambiarAgrupacion(agrupacionVentas)"
+      >
+        <option value="dia">Por Día</option>
+        <option value="semana">Por Semana</option>
+        <option value="mes">Por Mes</option>
+        <option value="anio">Por Año</option>
+      </select>
+    </div>
+
+    <canvas baseChart
+      [data]="graficoEvolucionVentasData"
+      [type]="'line'"
+      class="w-full h-64">
+    </canvas>
+  </div>
+
+</div>
+
+
+
+</div>
+
+
+<div *ngIf="panelActivo === 'persona'" class="p-4 overflow-x-auto">
+  <!-- Contenedor scrollable solo en horizontal -->
+<div class="overflow-x-auto">
+  <!-- Línea de tarjetas -->
+  <div class="flex flex-nowrap gap-4 min-w-max">
+    
+    <!-- Tarjeta compacta vertical -->
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">total</span>
+      <i class="pi pi-users text-blue-600 text-5xl mb-1"></i>
+      <span class="text-blue-700 font-extrabold text-2xl leading-none">{{totalPersonas}}</span>
+    </div>
+    
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">nuevos</span>
+      <i class="pi pi-user-plus text-emerald-600 text-5xl mb-1"></i>
+      <span class="text-emerald-700 font-extrabold text-2xl leading-none">{{nuevosRegistros}}</span>
+    </div>
+
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">clientes</span>
+      <i class="pi pi-user text-green-600 text-5xl mb-1"></i>
+      <span class="text-green-700 font-extrabold text-2xl leading-none">{{totalClientes}}</span>
+    </div>
+
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">personal</span>
+      <i class="pi pi-briefcase text-yellow-600 text-5xl mb-1"></i>
+      <span class="text-yellow-700 font-extrabold text-2xl leading-none">{{totalPersonal}}</span>
+    </div>
+
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">proveedor</span>
+      <i class="pi pi-truck text-emerald-600 text-5xl mb-1"></i>
+      <span class="text-yellow-700 font-extrabold text-2xl leading-none">{{totalProveedores}}</span>
+    </div>
+
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">activos</span>
+      <i class="pi pi-check-circle text-teal-600 text-5xl mb-1"></i>
+      <span class="text-teal-700 font-extrabold text-2xl leading-none">{{totalActivos}}</span>
+    </div>
+
+    <div class="flex flex-col items-center justify-center min-w-[110px]">
+      <span class="text-gray-400 text-xs lowercase mb-1 select-none">bloqueados</span>
+      <i class="pi pi-ban text-red-600 text-5xl mb-1"></i>
+      <span class="text-red-700 font-extrabold text-2xl leading-none">{{totalBloqueados}}</span>
+    </div>
+  </div>
+</div>
+
+
+
+ <div class="flex flex-wrap gap-4 justify-center items-start mt-6">
+
+ <!-- Gráfico de torta -->
+<div class="w-full md:w-1/2 max-w-sm bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+  <h2 class="text-center text-gray-700 dark:text-white text-sm font-semibold mb-3 tracking-wide">
+    Distribución por Género
+  </h2>
+  <div class="relative w-full h-[130px]">
+    <canvas baseChart
+      [data]="pieChartData"
+      [type]="pieChartType"
+      [options]="pieChartOptions"
+      class="w-full h-full bg-white dark:bg-gray-900">
+    </canvas>
+  </div>
+</div>
+
+
+ <!-- Tabla de roles con soporte dark/light -->
+<div class="w-full md:w-1/2 max-w-sm bg-white dark:bg-black p-4 rounded-lg border border-gray-200 dark:border-gray-800">
+  <h2 class="text-center text-gray-900 dark:text-white text-sm font-semibold mb-3 tracking-wide">
+    Roles Disponibles para el Sistema
+  </h2>
+  <table class="w-full text-sm text-left text-gray-900 dark:text-white border border-gray-200 dark:border-gray-800">
+    <thead class="bg-gray-100 dark:bg-gray-900 uppercase text-xs">
+      <tr>
+        <th class="px-3 py-2 border-b border-gray-200 dark:border-gray-800">ID</th>
+        <th class="px-3 py-2 border-b border-gray-200 dark:border-gray-800">Nombre</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let rol of listaRol" class="hover:bg-gray-50 dark:hover:bg-gray-800">
+        <td class="px-3 py-2 border-b border-gray-200 dark:border-gray-800">{{ rol.idrol }}</td>
+        <td class="px-3 py-2 border-b border-gray-200 dark:border-gray-800">{{ rol.nombre }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+</div>
+
+<p-chart 
+  type="line" 
+  [data]="datosGraficoLinea" 
+  [options]="{ responsive: true, maintainAspectRatio: false }"
+  style="height: 180px; width: 100%;">
+</p-chart>
+
+<!-- Contenedor principal en horizontal -->
+<div class="w-full flex flex-col md:flex-row gap-6 mt-6">
+
+  <!-- Columna de tarjetas (izquierda) -->
+  <div class="w-full md:w-1/3 flex flex-col items-center gap-3">
+
+    <!-- Tarjeta: Total librerías -->
+    <div class="flex items-center space-x-2 bg-white dark:bg-gray-900 px-3 py-1.5 shadow-sm rounded-lg w-full border border-gray-200 dark:border-gray-700">
+      <i class="pi pi-book text-base text-blue-600"></i>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900 dark:text-white leading-tight">{{totalLibrerias}}</h3>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Total librerías</p>
+      </div>
+    </div>
+
+    <!-- Tarjeta: Nuevas -->
+    <div class="flex items-center space-x-2 bg-white dark:bg-gray-900 px-3 py-1.5 shadow-sm rounded-lg w-full border border-gray-200 dark:border-gray-700">
+      <i class="pi pi-plus-circle text-base text-green-600"></i>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900 dark:text-white leading-tight">{{nuevasLibrerias}}</h3>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Nuevos Registros</p>
+      </div>
+    </div>
+
+    <!-- Tarjeta: Desde móvil -->
+    <div class="flex items-center space-x-2 bg-white dark:bg-gray-900 px-3 py-1.5 shadow-sm rounded-lg w-full border border-gray-200 dark:border-gray-700">
+      <i class="pi pi-mobile text-base text-purple-600"></i>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900 dark:text-white leading-tight">{{desdeMovil}}</h3>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Desde móvil</p>
+      </div>
+    </div>
+
+    <!-- Tarjeta: Desde web -->
+    <div class="flex items-center space-x-2 bg-white dark:bg-gray-900 px-3 py-1.5 shadow-sm rounded-lg w-full border border-gray-200 dark:border-gray-700">
+      <i class="pi pi-globe text-base text-yellow-500"></i>
+      <div>
+        <h3 class="text-sm font-medium text-gray-900 dark:text-white leading-tight">{{desdeWeb}}</h3>
+        <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase tracking-wide leading-tight">Desde web</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Columna de tabla (derecha) -->
+  <div class="w-full md:w-2/3">
+    <div class="bg-white dark:bg-gray-900 shadow-sm rounded-xl border border-gray-100 dark:border-gray-700 overflow-hidden">
+      <div class="px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+        <h5 class="text-base font-semibold text-gray-700 dark:text-white">Clientes sin Credenciales</h5>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="min-w-full text-sm text-left text-gray-700 dark:text-white">
+          <thead class="bg-gray-50 dark:bg-gray-800">
+            <tr class="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+              <th class="px-4 py-2">#</th>
+              <th class="px-4 py-2">Nombre completo</th>
+              <th class="px-4 py-2">Correo</th>
+              <th class="px-4 py-2">Teléfono</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cliente of clientesSinAcceso | paginate: {itemsPerPage: 3, currentPage: pag}; let i = index"
+                class="hover:bg-gray-50 dark:hover:bg-gray-700">
+              <td class="px-4 py-2 font-medium">{{ i + 1 }}</td>
+              <td class="px-4 py-2">{{ cliente.nombre }} {{ cliente.ap_paterno }} {{ cliente.ap_materno }}</td>
+              <td class="px-4 py-2">{{ cliente.correo }}</td>
+              <td class="px-4 py-2">{{ cliente.telefono }}</td>
+            </tr>
+            <tr *ngIf="clientesSinAcceso.length === 0">
+              <td colspan="4" class="text-center text-gray-400 dark:text-gray-500 px-4 py-3">No hay clientes sin acceso</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <div class="py-3 flex justify-center">
+        <pagination-controls
+          (pageChange)="pag = $event"
+          previousLabel="Anterior"
+          nextLabel="Siguiente"
+          class="custom-pagination">
+        </pagination-controls>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class=" p-4 rounded-xl mt-4 w-full md:w-2/3 mx-auto">
+  <h4 class="text-base font-semibold text-green-700 text-center mb-4 flex items-center justify-center gap-2">
+  <i class="pi pi-chart-pie text-green-500 text-lg"></i>
+  Registro de porcentajes desde móvil y web de librerías
+</h4>
+
+
+  <div style="height: 300px;">
+    <canvas baseChart
+      [data]="libreriaChartData"
+      [type]="libreriaChartType"
+      [options]="libreriaChartOptions">
+    </canvas>
+  </div>
+</div>
+<!-- Línea decorativa con degradado -->
+<div class="w-3/4 mx-auto mt-2 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 animate-fade-in"></div>
+
+<div class="text-center text-sm md:text-base text-pink-600 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+
+  <div class="flex items-center space-x-2">
+    <i class="pi pi-star-fill text-yellow-400"></i>
+    <span>Sistema de Gestión de Personal – <span class="text-purple-600">LUCIWEB</span></span>
+  </div>
+
+  <div class="flex items-center space-x-2 text-xs text-gray-500">
+    <i class="pi pi-shield text-pink-400"></i>
+    <span>Todos los derechos reservados © 2025</span>
+  </div>
+
+  <div class="flex items-center space-x-2 text-xs text-gray-400">
+    <i class="pi pi-cog text-indigo-400"></i>
+    <span>Versión 1.0</span>
+  </div>
+
+  <!-- Frase motivacional -->
+  <div class="flex items-center space-x-2 text-xs italic text-teal-500">
+    <i class="pi pi-heart-fill text-red-400"></i>
+    <span>“Trabajamos con pasión y compromiso”</span>
+  </div>
+</div>
+
+
+
+ 
+
+
+</div>
+
+<div *ngIf="panelActivo === 'almacen'">
+<div *ngIf="topProducto && barChartData" class="w-full mx-auto">
+  <div class="w-full relative">
+
+  <!-- Info arriba a la derecha -->
+  <div class="absolute right-4 top-2 z-10 bg-white/90 dark:bg-gray-800/90 backdrop-blur-md rounded-lg shadow-md p-3 border border-gray-200 dark:border-gray-700 w-[17rem] text-sm">
+    <div class="flex items-start gap-2">
+      <i class="pi pi-chart-bar text-lg text-blue-600 mt-1"></i>
+      <div class="flex-1">
+        <p class="text-gray-500 dark:text-gray-400 mb-1">Hasta la actualidad, el insumo más comprado fue:</p>
+        <p class="flex items-center gap-1 font-semibold text-gray-800 dark:text-white">
+          <i class="pi pi-box text-blue-500 text-base"></i>
+          {{ topProducto.nombre }} <span class="text-gray-500 dark:text-gray-400 font-normal"> ({{ topProducto.cantidad }})</span>
+        </p>
+        <p class="flex items-center gap-1 text-gray-700 dark:text-gray-300 mt-1">
+          <i class="pi pi-wallet text-purple-500 text-base"></i>
+          Total: <span class="font-medium">{{ topProducto.total | currency:'Bs.' }}</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gráfico -->
+  <div class="w-full h-[25rem] bg-white dark:bg-gray-900 rounded-xl shadow-md p-4">
+    <canvas baseChart
+      [data]="barChartData"
+      [options]="barChartOptions"
+      [type]="'bar'"
+      class="bg-white dark:bg-gray-900">
+    </canvas>
+  </div>
+
+</div>
+
+
+ <!-- Mini Tarjetas Profesionales -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+  
+  <!-- Productos -->
+<div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 p-6">
+  <div class="flex items-center gap-4">
+    <div class="bg-blue-100 dark:bg-blue-900 p-3 rounded-full">
+      <i class="pi pi-box text-3xl text-blue-600"></i>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-gray-500 dark:text-gray-400 text-sm">Total productos</span>
+      <span class="text-3xl font-semibold text-gray-800 dark:text-white">{{totalProductos}}</span>
+    </div>
+  </div>
+  <div class="absolute top-0 right-0 opacity-10 text-blue-300 dark:text-blue-700 text-[5rem] -mt-4 -mr-2">
+    <i class="pi pi-database"></i>
+  </div>
+</div>
+
+<!-- Categorías -->
+<div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 p-6">
+  <div class="flex items-center gap-4">
+    <div class="bg-green-100 dark:bg-green-900 p-3 rounded-full">
+      <i class="pi pi-tags text-3xl text-green-600"></i>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-gray-500 dark:text-gray-400 text-sm">Total categorías</span>
+      <span class="text-3xl font-semibold text-gray-800 dark:text-white">{{totalCategorias}}</span>
+    </div>
+  </div>
+  <div class="absolute top-0 right-0 opacity-10 text-green-300 dark:text-green-700 text-[5rem] -mt-4 -mr-2">
+    <i class="pi pi-bookmark"></i>
+  </div>
+</div>
+
+<!-- Compras -->
+<div class="relative overflow-hidden rounded-2xl bg-white dark:bg-gray-900 shadow-xl hover:shadow-2xl transition-all duration-300 border border-gray-100 dark:border-gray-700 p-6">
+  <div class="flex items-center gap-4">
+    <div class="bg-purple-100 dark:bg-purple-900 p-3 rounded-full">
+      <i class="pi pi-shopping-cart text-3xl text-purple-600"></i>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-gray-500 dark:text-gray-400 text-sm">Total compras</span>
+      <span class="text-3xl font-semibold text-gray-800 dark:text-white">{{totalCompras}}</span>
+    </div>
+  </div>
+  <div class="absolute top-0 right-0 opacity-10 text-purple-300 dark:text-purple-700 text-[5rem] -mt-4 -mr-2">
+    <i class="pi pi-wallet"></i>
+  </div>
+</div>
+
+
+</div>
+</div>
+<!-- Línea decorativa con degradado -->
+<div class="w-3/4 mx-auto mt-10 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 animate-fade-in"></div>
+
+<div class="text-center text-sm md:text-base text-pink-600 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+
+  <div class="flex items-center space-x-2">
+    <i class="pi pi-star-fill text-yellow-400"></i>
+    <span>Sistema de Gestión de Personal – <span class="text-purple-600">LUCIWEB</span></span>
+  </div>
+
+  <div class="flex items-center space-x-2 text-xs text-gray-500">
+    <i class="pi pi-shield text-pink-400"></i>
+    <span>Todos los derechos reservados © 2025</span>
+  </div>
+
+  <div class="flex items-center space-x-2 text-xs text-gray-400">
+    <i class="pi pi-cog text-indigo-400"></i>
+    <span>Versión 1.0</span>
+  </div>
+
+  <!-- Frase motivacional -->
+  <div class="flex items-center space-x-2 text-xs italic text-teal-500">
+    <i class="pi pi-heart-fill text-red-400"></i>
+    <span>“Trabajamos con pasión y compromiso”</span>
+  </div>
+</div>
+
+
+
+</div>
+
+<div *ngIf="panelActivo === 'ventas'">
+
+<div class="flex flex-col lg:flex-row items-start gap-8 max-w-6xl mx-auto p-4">
+  <!-- Gráfico -->
+  <div class="w-full lg:w-[15rem] lg:h-[20rem]">
+    <p class="mb-2 font-semibold text-center text-sm sm:text-base">
+      Porcentaje de pedidos desde móvil y web
+    </p>
+    <canvas baseChart
+      [data]="graficoPedidosData"
+      [type]="'pie'">
+    </canvas>
+  </div>
+
+<!-- Tarjetas -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 flex-grow w-full">
+
+  <!-- Cancelados -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3 border-l-4 border-red-500">
+    <i class="pi pi-times-circle text-red-500 text-2xl sm:text-3xl"></i>
+    <div>
+      <h2 class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Cancelados</h2>
+      <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">{{totalCancelados}}</p>
+    </div>
+  </div>
+
+  <!-- Pendientes -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3 border-l-4 border-yellow-400">
+    <i class="pi pi-clock text-yellow-400 text-2xl sm:text-3xl"></i>
+    <div>
+      <h2 class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Pendientes</h2>
+      <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">{{totalPendientes}}</p>
+    </div>
+  </div>
+
+  <!-- En proceso -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3 border-l-4 border-blue-500">
+    <i class="pi pi-spinner text-blue-500 text-2xl sm:text-3xl animate-spin-slow"></i>
+    <div>
+      <h2 class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">En proceso</h2>
+      <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">{{totalEnProceso}}</p>
+    </div>
+  </div>
+
+  <!-- Completados -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3 border-l-4 border-green-600">
+    <i class="pi pi-check-circle text-green-600 text-2xl sm:text-3xl"></i>
+    <div>
+      <h2 class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Completados</h2>
+      <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">{{totalCompletados}}</p>
+    </div>
+  </div>
+
+  <!-- Entregados -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3 border-l-4 border-emerald-500">
+    <i class="pi pi-send text-emerald-500 text-2xl sm:text-3xl"></i>
+    <div>
+      <h2 class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Entregados</h2>
+      <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">{{totalEntregados}}</p>
+    </div>
+  </div>
+
+  <!-- Total pedidos -->
+  <div class="bg-white dark:bg-gray-900 rounded-2xl shadow p-3 sm:p-4 flex items-center gap-3 border-l-4 border-indigo-500">
+    <i class="pi pi-box text-indigo-500 text-2xl sm:text-3xl"></i>
+    <div>
+      <h2 class="text-xs sm:text-sm text-gray-500 dark:text-gray-400">Total pedidos</h2>
+      <p class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white">{{totalPedidos}}</p>
+    </div>
+  </div>
+
+</div>
+
+
+
+</div>
+
+
+<div class="flex flex-col lg:flex-row items-start justify-between gap-6 p-4">
+
+  <div class="bg-white dark:bg-gray-900 rounded-xl overflow-hidden divide-y divide-gray-200 dark:divide-gray-700 text-sm font-medium text-gray-700 dark:text-white w-full lg:w-[60%]">
+
+  <!-- Total Catálogos -->
+  <div class="flex items-center justify-between px-5 py-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-folder-open text-blue-500 text-lg"></i>
+      <span>Total Catálogos</span>
+    </div>
+    <span class="text-blue-600 font-bold">{{totalCatalogo}}</span>
+  </div>
+
+  <!-- Activos -->
+  <div class="flex items-center justify-between px-6 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-check-circle text-green-500 text-lg"></i>
+      <span>Activos</span>
+    </div>
+    <span class="text-green-600 font-bold">{{CatalogoActivo}}</span>
+  </div>
+
+  <!-- Inactivos -->
+  <div class="flex items-center justify-between px-6 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-times-circle text-red-500 text-lg"></i>
+      <span>Inactivos</span>
+    </div>
+    <span class="text-red-600 font-bold">{{CatalogoInactivo}}</span>
+  </div>
+
+  <!-- Destacados -->
+  <div class="flex items-center justify-between px-6 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-star text-yellow-500 text-lg"></i>
+      <span>Destacados</span>
+    </div>
+    <span class="text-yellow-600 font-bold">{{ CatalogoDestacado}}</span>
+  </div>
+
+  <!-- No Destacados -->
+  <div class="flex items-center justify-between px-6 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 transition">
+    <div class="flex items-center gap-2">
+      <i class="pi pi-ban text-gray-400 text-lg"></i>
+      <span>No Destacados</span>
+    </div>
+    <span class="text-gray-500 dark:text-gray-400 font-bold">{{ CatalogoNoDestacado}}</span>
+  </div>
+
+</div>
+
+
+  <!-- Gráfico a la derecha (sin cambios) -->
+  <!-- Gráfico Top Clientes -->
+<div class="w-full lg:w-[40%]">
+
+  <!-- Filtro arriba a la izquierda (idéntico al de catálogos) -->
+  <div class="flex justify-start mb-3">
+    <select 
+      class="border rounded px-2 py-1 text-sm bg-white dark:bg-gray-900"
+      [(ngModel)]="filtroTiempoClientes"
+      (change)="aplicarFiltroTopClientes()"
+    >
+      <option value="dia">Por día</option>
+      <option value="semana">Por semana</option>
+      <option value="mes">Por mes</option>
+      <option value="anio">Por año</option>
+    </select>
+  </div>
+
+  <p class="text-md font-semibold text-right mb-2">
+    Top de 5 clientes con mayor pedidos
+  </p>
+
+  <canvas baseChart
+    [data]="graficoTopClientesData"
+    [type]="'bar'"
+    class="max-h-48 w-full">
+  </canvas>
+</div>
+
+
+</div>
+
+
+
+
+<select class="bg-white dark:bg-gray-900" [(ngModel)]="filtroPeriodo" (change)="generarGraficoEvolucionPedidos(filtroPeriodo)">
+  <option value="dia">Por día</option>
+  <option value="semana">Por semana</option>
+  <option value="mes">Por mes</option>
+  <option value="anio">Por año</option>
+</select>
+
+<p>evolucion de pedidos por tiempo</p>
+<canvas baseChart
+  [data]="graficoPedidosEvolucionData"
+  [type]="'line'"
+  [options]="{
+    responsive: true,
+    plugins: {
+      legend: { display: true },
+      tooltip: { enabled: true }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Cantidad de pedidos'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Mes'
+        }
+      }
+    }
+  }">
+</canvas>
+
+
+</div>
+
+
+</div>
+
+
+

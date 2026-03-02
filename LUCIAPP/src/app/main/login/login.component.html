@@ -1,0 +1,85 @@
+<div class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+            
+            border border-white dark:border-gray-700 
+            shadow-md px-6 pt-8 py-4 
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Iniciar sesion
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+
+<div class="animate__animated animate__zoomIn min-h-screen  flex items-start justify-center pt-20 px-4">
+  <div class="w-full max-w-sm  p-8 relative z-10">
+    
+    <!-- Logo animado -->
+    <div class="flex justify-center mb-6">
+      <div class="w-16 h-16 bg-purple-100 text-purple-500 flex items-center justify-center rounded-full shadow-lg animate-bounce">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M5.121 17.804A13.937 13.937 0 0112 15c2.486 0 4.797.676 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+    </div>
+
+    <!-- Mensaje de respuesta -->
+    <div *ngIf="mensaje" class="text-center mb-4" [ngClass]="exito ? 'text-green-600' : 'text-red-500'">
+      {{ mensaje }}
+    </div>
+
+    <form (submit)="iniciarSesion(); $event.preventDefault()">
+      <!-- Usuario -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.usuario"
+          name="usuario"
+          id="usuario"
+          type="text"
+          placeholder="Usuario"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Contraseña -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.contrasena"
+          name="contrasena"
+          id="contrasena"
+          type="password"
+          placeholder="Contraseña"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full py-3 border-b-2 border-gray-400 dark:border-gray-600 text-gray-900 dark:text-gray-100 font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+      >
+        <!-- Texto + icono cuando NO está cargando -->
+        <span *ngIf="!cargando; else loading" class="flex items-center gap-2">
+          <i class="pi pi-sign-in text-lg"></i>
+          <span>Ingresar</span>
+        </span>
+
+        <!-- Loader -->
+        <ng-template #loading>
+          <svg class="animate-spin h-5 w-5 text-gray-900 dark:text-gray-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+            </path>
+          </svg>
+        </ng-template>
+      </button>
+    </form>
+  </div>
+</div>
+
+

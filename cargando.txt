@@ -1,0 +1,15 @@
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Cargando proveedores...</span>
+</div>
+
+<div *ngIf="!loading">
+  <!-- Aquí va tu lista y todo lo demás -->
+</div>
+
+
+
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
+loading: boolean = false;
+this.loading = true;

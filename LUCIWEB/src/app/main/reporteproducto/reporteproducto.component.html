@@ -1,0 +1,139 @@
+
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+      Módulo Almacen / Reporte / Productos
+  </span>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+<!-- Filtros -->
+<div *ngIf="mostrarFiltros" id="infoFiltros"
+  class="mb-4 grid grid-cols-12 gap-x-4 gap-y-2 animate__animated animate__fadeInUp text-sm w-full">
+
+  <!-- Categoría -->
+  <div class="col-span-3">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Categoría</label>
+    <select [(ngModel)]="tipoFiltro" (change)="modelProducto()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option *ngFor="let categoria of listaCategoria" [value]="categoria.idcategoria">{{categoria.nombre}}</option>
+    </select>
+  </div>
+
+  <!-- Buscar -->
+  <div class="col-span-4">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+    <input [(ngModel)]="nombreFiltro" (input)="modelProducto()" type="text" placeholder="Ej. Tus deseos"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Desde -->
+  <div class="col-span-2">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+    <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelProducto()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Hasta -->
+  <div class="col-span-2">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+    <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelProducto()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+</div>
+
+
+
+<!-- Contenedor horizontal para tarjetas + botones -->
+<div *ngIf="mostrarFiltros1" class="flex justify-end items-center gap-4 mb-4 animate__animated animate__fadeInUp text-sm">
+
+  <!-- Tarjeta: Productos -->
+  <div class="flex items-center space-x-2  dark:bg-blue-900 text-blue-600 dark:text-blue-300 px-3 py-1 ">
+    <i class="pi pi-box text-xs"></i>
+    <span class="text-[11px] font-semibold">Total productos: {{ totalProductos }}</span>
+  </div>
+
+  <!-- Tarjeta: Categorías -->
+  <div class="flex items-center space-x-2  dark:bg-purple-900 text-purple-600 dark:text-purple-300 px-3 py-1 ">
+    <i class="pi pi-tags text-xs"></i>
+    <span class="text-[11px] font-semibold">Total categorías: {{ totalCategorias }}</span>
+  </div>
+
+
+
+  <!-- Botón Excel -->
+
+  <button (click)="exportarExcel()"
+    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-excel text-xs"></i>
+    Excel
+  </button>
+
+  <!-- Botón PDF -->
+  <button (click)="exportarPDF()"
+    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-pdf text-xs"></i>
+    PDF
+  </button>
+
+</div>
+
+<div class="max-w-full overflow-x-auto animate__animated animate__fadeIn">
+  <table id="tablaProductos" class="min-w-full text-[12px] text-left text-gray-700 dark:text-gray-200">
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+      <ng-container *ngFor="let tipo of ListaAgrupada | keyvalue">
+        <!-- Cabecera del grupo por categoría -->
+        <tr class="bg-gray-10 text-sm font-bold">
+          <td colspan="12" class="px-3 py-2 text-center text-gray-800 dark:text-gray-100">
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+            <span class="px-4">CATEGORÍA: {{ tipo.key | uppercase }}</span>
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+          </td>
+        </tr>
+
+        <!-- Encabezado de columnas -->
+        <tr class="bg-gray-50 dark:bg-gray-800 text-[10px] uppercase tracking-wider text-gray-700 dark:text-gray-300">
+          <th class="px-3 py-2">#</th>
+          <th class="px-3 py-2">Nombre</th>
+          <th class="px-3 py-2">Descripción</th>
+          <th class="px-3 py-2">Fecha</th>
+          <th class="px-3 py-2">Hora</th>
+        </tr>
+
+        <!-- Lista de productos -->
+        <tr *ngFor="let xdat of tipo.value; let i = index" class="hover:bg-gray-50 dark:hover:bg-gray-800">
+          <td class="px-3 py-2">{{ i + 1 }}</td>
+          <td class="px-3 py-2">
+            <div class="font-medium text-gray-900 dark:text-gray-100">{{ xdat.nombre }}</div>
+          </td>
+          <td class="px-3 py-2 text-gray-700 dark:text-gray-200">{{ xdat.descripcion || 'sin descripción' }}</td>
+          <td class="px-3 py-2 text-gray-700 dark:text-gray-200">{{ xdat.fecha | date:'dd/MM/yyyy'  }}</td>
+          <td class="px-3 py-2 text-gray-700 dark:text-gray-200">{{ xdat.hora }}</td>
+        </tr>
+
+      </ng-container>
+
+    </tbody>
+  </table>
+</div>
+

@@ -1,0 +1,203 @@
+.text-pink {
+    color: #ff69b4;
+  }
+
+  .bg-pink {
+    background-color: #ff69b4 !important;
+  }
+
+  .btn-outline-light {
+    margin: 0 4px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .btn-outline-light:hover {
+    background-color: #ff69b4;
+    border-color: #ff69b4;
+    color: #000;
+    transform: scale(1.05);
+  }
+
+  .form-inline-custom {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    align-items: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .form-inline-custom .form-control,
+  .form-inline-custom .input-group {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .icon-label {
+    display: flex;
+    align-items: center;
+    color: #ff69b4;
+    font-weight: bold;
+  }
+
+  .icon-label i {
+    margin-right: 6px;
+  }
+
+  @keyframes fadeSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-slide {
+  animation: fadeSlideDown 0.10s ease forwards;
+}
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-pop-in {
+  animation: popIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+@keyframes fadeInShadow {
+  0% {
+    opacity: 0;
+    box-shadow: 0 0 0 transparent;
+  }
+  100% {
+    opacity: 1;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+}
+
+.animate-fade-shadow {
+  animation: fadeInShadow 0.8s ease forwards;
+}
+
+/* estilos para el dialgo regitrar */
+/* Estilo moderno para inputs y selects */
+.input-underline {
+  @apply w-full bg-transparent border-0 border-b border-gray-300 focus:outline-none focus:ring-0 focus:border-sky-500 transition duration-200;
+  padding: 0.5rem 0;
+  font-size: 0.95rem;
+}
+
+/* Label moderno */
+.label-modern {
+  @apply block text-sm font-medium text-gray-500 mb-1;
+}
+
+/* Select PrimeNG personalizado para eliminar bordes */
+.p-inputtext {
+  background-color: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid #d1d5db !important; /* gray-300 */
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  transition: border-color 0.3s ease;
+}
+
+.p-inputtext:focus {
+  border-bottom-color: #0ea5e9 !important; /* sky-500 */
+}
+
+::placeholder {
+  color: #9ca3af; /* text-gray-400 */
+}
+
+form {
+  animation: slideFadeIn 0.8s ease-in-out;
+}
+
+@keyframes slideFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+button {
+  transition: all 0.25s ease;
+  transform-origin: center;
+}
+
+button:hover {
+  transform: scale(1.03);
+}
+/* Esto se aplica al <p-dialog> al cerrarse */
+::ng-deep .p-dialog.cerrando-animacion {
+  animation: zoomFadeOut 0.3s ease-in-out forwards;
+}
+
+@keyframes zoomFadeOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+.tab-button {
+  position: relative;
+  padding-bottom: 6px;
+  font-weight: 500;
+  color: #333;
+  background: transparent;
+  border: none;
+  outline: none;
+  transition: all 0.2s ease-in-out;
+}
+
+.tab-button:hover,
+.tab-button:focus {
+  color: #d63384; /* color rosado */
+}
+
+.tab-button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 100%;
+  background-color: transparent;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  transform: scaleX(0);
+  transform-origin: center;
+}
+
+.tab-button:hover::after,
+.tab-button:focus::after {
+  background-color: #d63384;
+  transform: scaleX(1);
+}
+
+.active-tab {
+  color: #d63384 !important;
+  font-weight: bold;
+}
+
+.active-tab::after {
+  background-color: #d63384;
+  transform: scaleX(1);
+}

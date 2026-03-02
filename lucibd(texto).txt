@@ -1,0 +1,281 @@
+
+
+create table rol(
+ idrol serial not null,
+	 nombre varchar(30) not null,
+	 primary key(idrol)
+ );
+
+insert into rol values(1,'Administrador');
+insert into rol values(2,'Cliente');
+insert into rol values(3,'Responsable_ventas');
+insert into rol values(4,'Produccion');
+insert into rol values(5,'Proveedor');
+
+create table genero(
+   idgenero integer not null,
+    nombre varchar(12) not null,
+  primary key(idgenero)
+  );
+ insert into genero values (1, 'Masculino');
+ insert into genero values (2, 'Femenino');
+ insert into genero values (3, 'Otro');
+ create table persona(
+ idpersona serial not null,
+	 cedula varchar(15),
+	 nombre varchar(40) not null,
+	 ap_paterno varchar(40) not null,
+	 ap_materno varchar(30),
+	 direccion varchar(255),
+	 telefono varchar(20),
+	 fotografia varchar(255),
+	 fecha date not null,
+	 hora time not null,
+	 correo varchar(200),
+	 estado integer default 1 not null,
+	 idgenero integer not null, 
+	 foreign key (idgenero) references genero (idgenero),
+	  primary key(idpersona)
+ );
+insert into persona values (1,13198378, 'Norma', 'Maizares', '','mi casa',67538383,'','2025-04-22', '10:30'
+							 ,'norma@gmail.com',1, 2 );
+
+create table rol_persona(
+idpersona integer not null,
+idrol integer not null,
+FOREIGN key (idpersona) references persona (idpersona),
+foreign key (idrol) references rol (idrol),
+primary key (idrol, idpersona)
+ )
+ 
+insert into rol_persona values (1,1); 
+
+ create table credencial(
+ usuario varchar(30) not null,
+	 contrasena varchar(200) not null,
+	  primary key(usuario),
+	 idpersona integer unique not null,
+	  foreign key (idpersona) references persona (idpersona)
+ );
+ insert into credencial values ('admin', '$2b$10$DtaaRr9vkhJdcunHYOjCLupCi5./Ajq5w.wYc7NfLOM0hklFm055S',1);
+select*from credencial;
+
+--------------------------------
+
+create table departamento(
+iddep integer not null,
+	nombre varchar(20),
+	primary key(iddep)
+);
+insert into departamento values (1, 'Tarija');
+insert into departamento values (2, 'La paz');
+insert into departamento values (3, 'Santa Cruz');
+insert into departamento values (4, 'Beni');
+insert into departamento values (5, 'Pando');
+insert into departamento values (6, 'Oruro');
+insert into departamento values (7, 'Sucre');
+insert into departamento values (8, 'Potosi');
+insert into departamento values (9, 'Cochabamba');
+
+create table ciudad(
+idciudad integer not null,
+	nombre varchar(20),
+	primary key(idciudad),
+	iddep integer not null,
+	foreign key (iddep) references departamento (iddep)
+);
+ insert into ciudad values (1, 'Cercado',1);
+ insert into ciudad values (2, 'Bermejo',1);
+ insert into ciudad values (3, 'Villa Montes',1);
+ insert into ciudad values (4, 'San Lorenzo',1);
+ insert into ciudad values (5, 'Yacuiba',1);
+ insert into ciudad values (6, 'Carapari',1);
+drop table libreria;
+create table libreria(
+	  idlibreria serial not null,
+	  nit varchar(40),
+	  razon_social varchar(50) not null,
+	  direccion varchar(255) not null,
+	  telefono varchar(20),
+	  fecha date not null,
+	  hora time not null,
+          codigo VARCHAR(10) not null,
+          estado integer default 0 not null,
+	  idpersona integer not null,
+	  idciudad integer not null,
+	  foreign key (idpersona) references persona (idpersona),
+	  foreign key (idciudad) references ciudad (idciudad),
+      primary key(idlibreria)
+  );
+ 
+  create table proveedor(
+  idproveedor serial not null,
+	  razon_social varchar(50) not null,
+	  direccion varchar(100) not null,
+	  fecha date not null,
+	  hora time not null,
+      nit varchar(40),
+	  telefono varchar(20),
+	  estado integer default 1 not null,
+	  primary key(idproveedor),
+	  idpersona integer unique not null,
+	  idciudad integer not null,
+	  foreign key (idpersona) references persona (idpersona),
+	  foreign key (idciudad) references ciudad (idciudad)
+  );
+
+create table categoria(
+  idcategoria serial not null,
+	  nombre varchar(50) not null,
+	  descripcion varchar(255),
+	  fecha date not null,
+	  hora time not null,
+	  estado integer not null,
+	  primary key(idcategoria)
+  );
+  
+  create table producto(
+   idproducto serial not null,
+        nombre varchar(40) not null,
+	descripcion varchar(80),
+        fecha date not null,
+	hora time not null,
+        idcategoria integer not null,
+         primary key(idproducto),
+         foreign key (idcategoria) references categoria(idcategoria)
+);
+  create table empaque(
+  idempaque integer not null,
+	  nombre varchar(20) not null,
+	  primary key(idempaque)
+  );
+insert into empaque values (1, 'Paquete');
+insert into empaque values (2, 'Caja');
+insert into empaque values (3, 'Bolsa');
+insert into empaque values (4, 'Sobre');
+insert into empaque values (5, 'Unidad');
+
+
+create table compra(
+  idcompra serial not null,
+	  fecha date not null,
+	  hora time not null,
+	  idproveedor integer not null,
+	  primary key(idcompra),
+	  foreign key(idproveedor) references proveedor(idproveedor)
+  );
+ 
+ create table detalle_compra(
+  iddetalle_compra serial not null,
+	  precio_u float not null,
+	  precio_t float not null,
+	  cantidad_u integer not null,
+	  cantidad_e integer not null,
+	  cantidad_t integer not null,
+	  observacion varchar(80),
+	  idproducto integer not null,
+	  idempaque integer not null,
+	  idcompra integer not null,
+	  primary key(iddetalle_compra),
+	  foreign key(idproducto) references producto(idproducto),
+	  foreign key(idcompra) references compra (idcompra),
+	  foreign key(idempaque) references empaque (idempaque)
+  );
+
+
+create table catalogo(
+  idcatalogo serial not null,
+      nombre varchar(80) not null,
+      descripcion varchar(100),
+      fotografia varchar(255) not null,
+      fecha date not null,
+	  hora time not null,
+	  destacado integer default 0 not null,
+	  precio integer not null,
+	  estado integer default 1 not null,
+	  primary key(idcatalogo),
+	idcategoria integer not null,
+	 foreign key(idcategoria) references categoria(idcategoria)
+  );
+
+  create table pedido(
+  idpedido serial not null,
+	  fecha date not null,
+	  hora time not null,
+	  estado integer default 1 not null,
+	  idlibreria integer not null,
+	  idpersona integer no null
+	  primary key(idlibreria),
+	  foreign key(idlibreria) references libreria(idlibreria)
+	  foreign key(idpersona) references persona(idpersona)
+  );
+
+  create table detalle_pedido(
+  iddetalle_pedido serial not null,
+	  cantidad integer not null,
+	  precio_subtotal integer not null,
+          estado integer default 0 not null,
+	  idcatalogo integer not null,
+	  idpedido integer not null,
+	  primary key(iddetalle_pedido),
+	  foreign key(idcatalogo) references catalogo(idcatalogo),
+	  foreign key(idpedido) references pedido(idpedido)
+  );
+  
+CREATE TABLE metodo_pago (
+    idmetodo serial not null,
+    nombre varchar(50) not null,  
+    primary key(idmetodo)
+);
+insert into metodo_pago values(1, 'Efectivo');
+CREATE TABLE pago (
+  idpago serial primary key,
+  idpedido integer not null,
+  idmetodo integer not null,
+  idpersona integer not null,
+  monto integer not null,
+  fecha date not null,
+  hora time not null,
+  estado integer default 1 not null,
+  nota varchar(200),
+  FOREIGN KEY(idpedido) REFERENCES pedido(idpedido),
+  FOREIGN KEY(idpersona) REFERENCES persona(idpersona),
+  FOREIGN KEY(idmetodo) REFERENCES metodo_pago(idmetodo)
+);
+
+
+
+create table venta (
+idventa serial not null,
+fecha Date not null,
+hora time not null,
+idpedido integer not null //aqui ya biene todo el pedido mas detalle pedido
+idpersona integer not null //aqui queda la persona que registro la venta
+foreign key (idpedido) references pedido(idpedido),
+foreign key (idpersona) references persona(idpersona),
+)
+
+
+create table negocio(
+  idnegocio integer not null,
+    direccion varchar(100) not null,
+	telefono varchar(40) not null,
+	idciudad integer unique not null,
+	long decimal(10,8),
+	lat decimal(11,8),
+	foreign key (idciudad) references ciudad(idciudad),
+    primary key(idnegocio)    
+ );
+insert into sistema values (1, 'calle #2','67567823', 1, 0,0)
+
+
+create table auditoria(
+    id_aud serial primary key,
+    accion varchar(20) not null,
+    fecha date default current_date,
+    hora time default current_time,
+    datos_original jsonb,
+    datos_nuevo jsonb
+	idpersona integer not null,
+	foreign key (idciudad) references ciudad(idciudad),
+);

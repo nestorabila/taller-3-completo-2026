@@ -1,0 +1,17 @@
+/* You can add global styles to this file, and also import other style files */
+@import "primeicons/primeicons.css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+button i {
+  transform: translateZ(0);
+  display: inline-block; /* mantener comportamiento inline */
+}
+
+/* Opcional: aplicar a todos los iconos en cualquier parte */
+.pi {
+  transform: translateZ(0);
+  display: inline-block;
+}
+

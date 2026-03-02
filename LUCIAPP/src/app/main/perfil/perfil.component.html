@@ -1,0 +1,402 @@
+<div *ngIf="!mostrarLogin" class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+           
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-4 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Perfil
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+
+<div 
+  *ngIf="loadingQ"
+  class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+  
+  <div class="flex flex-col items-center gap-3">
+    <!-- Spinner -->
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600"></div>
+    
+    <!-- Texto -->
+    <p class="text-white text-lg font-semibold animate__animated animate__fadeInUp">
+      Cargando..
+    </p>
+  </div>
+</div>
+
+
+
+<div *ngIf="!mostrarLogin" class="max-w-3xl mx-auto p-2 space-y-15 text-gray-800 overflow-y-auto scrollbar-none max-h-screen">
+  <!-- 🖼️ Foto de Perfil -->
+
+   <form [formGroup]="PersonaForm" (ngSubmit)="modificarPersona()">
+  <div class="text-center space-y-4 animate__animated animate__zoomIn ">
+    <div class="w-36 h-36 mt-20 mx-auto rounded-full overflow-hidden border-4 border-pink-400 shadow-lg">
+      <img 
+  [src]="nombreImagenExistente ? 'https://servidorluci2.onrender.com/imagenPersona/' + nombreImagenExistente : 'assets/user.png'" 
+  alt="Foto de perfil" 
+  class="object-cover w-full h-full" />
+
+    </div>
+    <div class="flex justify-center space-x-4">
+      <!-- Botón Editar que activa el input file -->
+<button type="button"
+  (click)="abrirGaleria()"
+  class="flex items-center gap-2 px-4 py-2 text-sm bg-pink-500 text-white rounded-full shadow-md hover:bg-pink-600 transition">
+  <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round"
+      d="M15.232 5.232l3.536 3.536M9 13.5l6.732-6.732a2.5 2.5 0 013.536 3.536L12.5 17H9v-3.5z" />
+  </svg>
+  Editar
+</button>
+<input 
+  type="file" 
+  #fileInput 
+  (change)="onFileSelected($event)" 
+  accept="image/*" 
+  hidden />
+
+      <button type="button" (click)="eliminarImagen()" class="flex items-center gap-2 px-4 py-2 text-sm bg-red-500 text-white rounded-full shadow-md hover:bg-red-600 transition">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2"
+          viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M6 18L18 6M6 6l12 12" />
+        </svg>
+        Eliminar
+      </button>
+    </div>
+  </div>
+<div 
+  *ngIf="mensajeEmergente"
+  class="fixed bottom-30 left-1/2 transform -translate-x-1/2  text-white px-6 py-3  z-50 animate__animated animate__fadeInUp"
+>
+  {{ mensajeEmergente }}
+</div>
+ <!-- 👤 Datos Personales -->
+<div class="  p-6 space-y-6">
+  <!-- Encabezado con ícono y switch -->
+  <div class="flex items-center justify-between">
+    <h2 class="text-2xl font-semibold text-pink-600 dark:text-pink-400 flex items-center gap-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M5.121 17.804A13.937 13.937 0 0112 15c2.485 0 4.824.755 6.879 2.045M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+      </svg>
+      Datos Personales
+    </h2>
+
+    <label class="flex flex-col items-center cursor-pointer space-y-1">
+      <div class="relative">
+        <input type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full peer-checked:bg-pink-500 transition-colors"></div>
+        <div class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-5"></div>
+      </div>
+      <span class="text-sm text-gray-700 dark:text-gray-300">Editar</span>
+    </label>
+  </div>
+
+  <!-- Campos de formulario -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5 animate__animated animate__zoomIn">
+    <div class="relative">
+      <input formControlName="nombre" type="text" placeholder="Nombres"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14M12 5l7 7-7 7" />
+        </svg>
+      </span>
+      <small class="text-red-500" *ngIf="PersonaForm.get('nombre')?.touched && PersonaForm.get('nombre')?.invalid">
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['required']">nombre es obligatorio.</span>
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['maxlength']">Máximo 40 caracteres.</span>
+  <span *ngIf="PersonaForm.get('nombre')?.errors?.['pattern']">formato no valido.</span>
+</small>
+    </div>
+
+    <div class="relative">
+      <input formControlName="ap_paterno" type="text" placeholder="Apellido Paterno"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </span>
+       <small class="text-red-500" *ngIf="PersonaForm.get('ap_paterno')?.touched && PersonaForm.get('ap_paterno')?.invalid">
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['required']">apellido parterno es obligatorio.</span>
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['maxlength']">Máximo 40 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_paterno')?.errors?.['pattern']">formato no valido.</span>
+</small>
+    </div>
+
+    <div class="relative">
+      <input formControlName="ap_materno" type="text" placeholder="Apellido Materno"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </span>
+        <small class="text-red-500" *ngIf="PersonaForm.get('ap_materno')?.touched && PersonaForm.get('ap_materno')?.invalid">
+  <span *ngIf="PersonaForm.get('ap_materno')?.errors?.['minlength']">Mínimo 3 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_materno')?.errors?.['maxlength']">Máximo 30 caracteres.</span>
+  <span *ngIf="PersonaForm.get('ap_materno')?.errors?.['pattern']">formato no valido.</span>
+</small>
+    </div>
+
+    <div class="relative">
+      <input formControlName="cedula" type="text" placeholder="Cédula"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 11c0 1.104-.896 2-2 2s-2-.896-2-2m2-2c1.104 0 2-.896 2-2s-.896-2-2-2m0 12h.01" />
+        </svg>
+      </span>
+       <small class="text-red-500" *ngIf="PersonaForm.get('cedula')?.touched && PersonaForm.get('cedula')?.invalid">
+  <span *ngIf="PersonaForm.get('cedula')?.errors?.['minlength']">Mínimo 6 dígitos.</span>
+  <span *ngIf="PersonaForm.get('cedula')?.errors?.['maxlength']">Máximo 11 dígitos.</span>
+  <span *ngIf="PersonaForm.get('cedula')?.errors?.['pattern']">por fabor, ingrese cedula correcto.</span>
+</small>
+    </div>
+
+    <div class="md:col-span-2 relative">
+      <input formControlName="telefono" type="text" placeholder="Teléfono"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M3 5a2 2 0 012-2h2.28a1 1 0 01.95.68l1.11 3.32a1 1 0 01-.27 1.06l-1.62 1.62a16 16 0 006.36 6.36l1.62-1.62a1 1 0 011.06-.27l3.32 1.11a1 1 0 01.68.95V19a2 2 0 01-2 2h-1C9.94 21 3 14.06 3 5V5z" />
+        </svg>
+      </span>
+        <small class="text-red-500" *ngIf="PersonaForm.get('telefono')?.touched && PersonaForm.get('telefono')?.invalid">
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['minlength']">Deber ser Mínimo 7 dígitos.</span>
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['maxlength']">Debe ser Máximo 20 dígitos.</span>
+  <span *ngIf="PersonaForm.get('telefono')?.errors?.['pattern']">por fabor, ingrese telefono correcto.</span>
+   <span *ngIf="PersonaForm.get('telefono')?.errors?.['required']">numero de telefono es obligatorio.</span>
+</small>
+    </div>
+
+    <div class="md:col-span-2 relative">
+      <input formControlName="correo" type="text" placeholder="Correo electrónico"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 12H8m0 0l4-4m-4 4l4 4" />
+        </svg>
+      </span>
+       <small class="text-red-500" *ngIf="PersonaForm.get('correo')?.touched && PersonaForm.get('correo')?.invalid">
+  <span *ngIf="PersonaForm.get('correo')?.errors?.['email']">Correo no válido.</span>
+</small>
+    </div>
+  </div>
+
+  <!-- Botón guardar -->
+  <div class="flex justify-center">
+    <button type="submit"  [disabled]="PersonaForm.invalid"
+      class="mt-6 px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold rounded-full shadow-lg transition-all duration-300">
+      Guardar Cambios
+    </button>
+  </div>
+</div>
+</form>
+
+  <!-- 🔐 Usuario y Contraseña -->
+<div class="bg-white dark:bg-gray-900  p-6 space-y-6">
+  <!-- Título con Switch en la misma línea -->
+   <form [formGroup]="credeForm" (ngSubmit)="registrarCredencial()">
+  <div class="flex justify-between items-center">
+    <h5 class="text-xm font-semibold text-pink-600 dark:text-pink-400 flex items-center gap-2">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5s-3 1.343-3 3 1.343 3 3 3zm0 2c-2.21 0-4 1.79-4 4v1h8v-1c0-2.21-1.79-4-4-4z" />
+      </svg>
+      Cambiar contraseña
+    </h5>
+
+    <!-- Switch alineado a la derecha -->
+    <label class="flex flex-col items-center cursor-pointer space-y-1">
+      <div class="relative">
+        <input type="checkbox" class="sr-only peer" />
+        <div class="w-10 h-5 bg-gray-300 dark:bg-gray-600 rounded-full peer-checked:bg-pink-500 transition-colors"></div>
+        <div
+          class="absolute left-0.5 top-0.5 w-4 h-4 bg-white rounded-full shadow-sm transition-transform peer-checked:translate-x-5">
+        </div>
+      </div>
+      <span class="text-sm text-gray-700 dark:text-gray-300">Editar</span>
+    </label>
+  </div>
+
+  <!-- Inputs -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+    <div class="relative">
+      <input type="text"  readonly formControlName="usuario" placeholder="Usuario"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      </span>
+    </div>
+
+    <div class="relative">
+      <input type="password" formControlName="contrasena" placeholder="ingrese nueva contraseña"
+        class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+      <span class="absolute left-4 top-3.5 text-pink-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M12 15v2m0-10a4 4 0 00-4 4v4h8v-4a4 4 0 00-4-4z" />
+        </svg>
+      </span>
+      <small class="text-red-500" *ngIf="credeForm.get('contrasena')?.touched && credeForm.get('contrasena')?.invalid">
+    
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['required']">
+      La contraseña es obligatoria.
+    </span>
+
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['minlength']">
+      La contraseña debe tener al menos 8 caracteres.
+    </span>
+
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['maxlength']">
+      no debe exceder 50 caracteres.
+    </span>
+
+    <span *ngIf="credeForm.get('contrasena')?.errors?.['pattern']">
+      debe contener al menos una letra mayúscula, una minúscula y un número.
+    </span>
+
+  </small>
+    </div>
+
+    <div class="relative">
+  <input type="text" formControlName="confirmar_contrasena" placeholder="Confirmar Contraseña"
+    class="w-full pl-12 pr-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-pink-400 outline-none shadow-sm" />
+  <span class="absolute left-4 top-3.5 text-pink-500">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round"
+        d="M12 15v2m0-10a4 4 0 00-4 4v4h8v-4a4 4 0 00-4-4z" />
+    </svg>
+  </span>
+  <small class="text-red-500" *ngIf="credeForm.errors?.['passwordsNoCoinciden'] && credeForm.get('confirmar_contrasena')?.touched">
+    Las contraseñas no coinciden.
+  </small>
+</div>
+
+  </div>
+<div 
+  *ngIf="mensajeEmergente"
+  class="fixed bottom-30 left-1/2 transform -translate-x-1/2 bg-indigo-600 text-white px-6 py-3 rounded-xl shadow-lg z-50 animate__animated animate__fadeInUp"
+>
+  {{ mensajeEmergente }}
+</div>
+  <!-- Botón Guardar Cambios -->
+  <div class="flex justify-center">
+    <button [disabled]="credeForm.invalid"
+      class="mt-6 px-8 py-3 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-semibold rounded-full shadow-lg transition-all duration-300">
+      Guardar Cambios
+    </button>
+  </div>
+  </form>
+</div>
+
+
+</div>
+
+
+<!-- login -->
+ <div *ngIf="mostrarLogin" class=" rounded-bl-3xl fixed top-0 left-0 w-full z-30 
+           
+            border border-white dark:border-gray-700 
+            shadow-md px-6 py-5 pt-7
+            flex items-center justify-between">
+  <div class="text-gray-700 dark:text-white select-none w-8 h-8">
+    <i class="pi pi-arrow-left text-lg text-gray-700 dark:text-gray-300 cursor-pointer hover:text-indigo-600 transition"
+  routerLink="/main/listar/catalogos"></i>
+  </div>
+  <div class="absolute left-1/2 transform -translate-x-1/2 font-bold text-lg tracking-wide text-indigo-700 dark:text-indigo-400">
+    Iniciar sesion
+  </div>
+  <div class="w-8 h-8"></div>
+</div>
+
+<div *ngIf="mostrarLogin" class="animate__animated animate__zoomIn min-h-screen  flex items-start justify-center pt-20 px-4">
+  <div class="w-full max-w-sm  p-8 relative z-10">
+    
+    <!-- Logo animado -->
+    <div class="flex justify-center mb-6">
+      <div class="w-16 h-16 bg-purple-100 text-purple-500 flex items-center justify-center rounded-full shadow-lg animate-bounce">
+        <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M5.121 17.804A13.937 13.937 0 0112 15c2.486 0 4.797.676 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      </div>
+    </div>
+
+   
+    <!-- Mensaje de respuesta -->
+    <div *ngIf="mensaje" class="text-center mb-4" [ngClass]="exito ? 'text-green-600' : 'text-red-500'">
+      {{ mensaje }}
+    </div>
+
+    <form (submit)="iniciarSesion(); $event.preventDefault()">
+      <!-- Usuario -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.usuario"
+          name="usuario"
+          id="usuario"
+          type="text"
+          placeholder="Usuario"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Contraseña -->
+      <div class="relative mb-6">
+        <input
+          [(ngModel)]="credencial.contrasena"
+          name="contrasena"
+          id="contrasena"
+          type="password"
+          placeholder="Contraseña"
+          class="w-full border-b-2 border-gray-300 dark:border-gray-600 bg-transparent text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 py-2 focus:border-purple-500 dark:focus:border-purple-400 outline-none transition-colors duration-300"
+        />
+      </div>
+
+      <!-- Botón -->
+      <button
+        type="submit"
+        [disabled]="cargando"
+        class="w-full py-3 border-b-2 border-gray-400 dark:border-gray-600 text-gray-900 dark:text-gray-100 font-semibold flex items-center justify-center gap-2 transition-all duration-300 hover:bg-gray-50 dark:hover:bg-gray-800"
+      >
+        <!-- Texto + icono cuando NO está cargando -->
+        <span *ngIf="!cargando; else loading" class="flex items-center gap-2">
+          <i class="pi pi-sign-in text-lg"></i>
+          <span>Ingresar</span>
+        </span>
+
+        <!-- Loader -->
+        <ng-template #loading>
+          <svg class="animate-spin h-5 w-5 text-gray-900 dark:text-gray-100" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z">
+            </path>
+          </svg>
+        </ng-template>
+      </button>
+        <!-- Texto de registro -->
+<div class="mt-6 text-center">
+  <span class="text-sm text-gray-700 dark:text-gray-300">¿No tienes cuenta?</span>
+  <a routerLink="/main/registrarse" class="text-purple-600 dark:text-purple-400 font-semibold hover:underline ml-1">
+    Regístrate ahora
+  </a>
+</div>
+    </form>
+  </div>
+</div>
+

@@ -1,0 +1,447 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Cargando proveedores...</span>
+</div>
+
+<div *ngIf="!loading">
+  <div class="bg-white dark:bg-gray-900 rounded-xl p-4 mb-4 animate__animated animate__fadeIn shadow-md">
+
+  <!-- Encabezado personalizado -->
+<div class="flex items-center justify-between mb-4 border-b border-gray-200 dark:bg-gray-900 pb-2">
+
+  <!-- Avatar + título -->
+  <div class="flex items-center gap-3">
+    <p-avatar 
+      icon="pi pi-user"
+      shape="circle"
+      styleClass="bg-pink-200 text-pink-800 dark:bg-pink-700 dark:text-pink-100">
+    </p-avatar>
+    <span class="hidden md:inline text-lg font-semibold text-gray-700 dark:text-gray-200">
+      Módulo Persona / Proveedor / Lista
+    </span>
+  </div>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Buscar
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="hidden md:inline flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Generar Reporte
+    </button>
+
+    <!-- Botón Registrar Proveedor -->
+    <button (click)="showDialog()"
+      class="flex items-center gap-2 px-4 py-2 text-green-500 rounded-full font-medium text-sm
+             hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-700 transition-colors duration-200">
+      <i class="pi pi-plus text-green-500 text-lg"></i> Registrar Proveedor
+    </button>
+  </div>
+
+</div>
+
+
+    <div class="flex flex-col lg:flex-row gap-4">
+
+      <!-- Contenedor principal -->
+      <div class="flex-1">
+
+        <!-- Barra de búsqueda y botones -->
+        <div class="animate__animated animate__slideInLeft flex flex-col md:flex-row justify-between items-center gap-3 mb-4">
+
+          <!-- Campo de búsqueda -->
+          <div *ngIf="mostrarFiltros" class="flex-1 relative">
+            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-300">
+              <i class="fa fa-search"></i>
+            </span>
+            <input [(ngModel)]="filtro" (input)="buscarProveedor()"
+              type="text"
+              placeholder="Buscar por nombre del proveedor..."
+              class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-neutral-600 bg-white dark:bg-gray-900 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-pink-400 focus:border-pink-400 transition"
+            />
+          </div>
+
+          <!-- Botones de exportación -->
+          <div *ngIf="mostrarFiltros1" class="flex gap-2 mt-2 md:mt-0">
+            <button (click)="exportarExcel()"
+              class="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-md shadow-md transition">
+              <i class="pi pi-file-excel text-xs"></i> Excel
+            </button>
+            <button (click)="exportarPDF()"
+              class="flex items-center gap-1 bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md shadow-md transition">
+              <i class="pi pi-file-pdf text-xs"></i> PDF
+            </button>
+          </div>
+
+        
+        </div>
+
+        <!-- Lista de proveedores -->
+        <div class="divide-y divide-gray-200/60 dark:divide-neutral-700">
+          <div *ngFor="let xdat of listaProveedor | paginate: {itemsPerPage:2, currentPage:pag}; let pos = index"
+               class="group hover:bg-gray-50 dark:hover:bg-gray-800 px-3 py-3 flex flex-col md:flex-row md:items-center justify-between transition-all animate__animated animate__fadeInUp rounded-lg">
+
+            <!-- Info del proveedor -->
+            <div class="space-y-1 text-sm text-gray-700 dark:text-gray-200 w-full">
+              <p class="text-xs text-pink-600 font-semibold uppercase tracking-widest">#{{ pos + 1 }} - {{ xdat.razon_social }}</p>
+              <p class="flex items-center gap-2">
+                <i class="pi pi-user text-blue-500"></i>
+                <span><strong class="text-gray-800 dark:text-gray-100">Encargado:</strong> {{ xdat.persona?.nombre }} {{ xdat.persona?.ap_paterno }} {{ xdat.persona?.ap_materno }}</span>
+              </p>
+              <p class="flex items-center gap-2">
+                <i class="pi pi-phone text-green-500"></i>
+                <span><strong class="text-gray-800 dark:text-gray-100">Teléfono:</strong> {{ xdat.telefono }}</span>
+              </p>
+              <p class="flex items-center gap-2">
+                <i class="pi pi-map-marker text-rose-500"></i>
+                <span><strong class="text-gray-800 dark:text-gray-100">Dirección:</strong> {{ xdat.ciudad?.nombre }} - {{ xdat.direccion }}</span>
+              </p>
+              <p class="flex items-center gap-2">
+                <i class="pi pi-calendar text-purple-500"></i>
+                <span><strong class="text-gray-800 dark:text-gray-100">Registro:</strong> {{ xdat.fecha | date:'d \'de\' MMMM \'de\' y' : 'es' }} {{ xdat.hora }}</span>
+              </p>
+            </div>
+
+            <!-- Acciones -->
+            <div class="flex mt-3 md:mt-0 md:ml-4 items-center gap-3 shrink-0">
+              <button (click)="vistaProveedor(xdat); showDialogP()"
+                class="flex items-center gap-2 bg-blue-100 text-blue-700 hover:bg-blue-200 px-4 py-2 rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition duration-200">
+                <i class="pi pi-pencil text-base"></i> Editar
+              </button>
+              <button (click)="vistaEliminar(xdat); confirm2($event)"
+                class="flex items-center gap-2 bg-pink-100 text-pink-700 hover:bg-pink-200 px-4 py-2 rounded-xl text-sm font-medium shadow-sm hover:shadow-md transition duration-200">
+                <i class="pi pi-trash text-base"></i> Eliminar
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <div class="flex justify-center mt-4">
+          <pagination-controls
+            (pageChange)="pag = $event"
+            previousLabel="Anterior"
+            nextLabel="Siguiente"
+            class="custom-pagination">
+          </pagination-controls>
+        </div>
+
+        <!-- Línea decorativa con degradado -->
+        <div class="w-3/4 mx-auto mt-4 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 animate-fade-in"></div>
+
+        <!-- Pie de página -->
+        <div class="text-center text-sm md:text-base text-pink-600 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+          <div class="flex items-center space-x-2">
+            <i class="pi pi-star-fill text-yellow-400"></i>
+            <span>Sistema de Gestión de Personal – <span class="text-purple-600">LUCIWEB</span></span>
+          </div>
+          <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+            <i class="pi pi-shield text-pink-400"></i>
+            <span>Todos los derechos reservados © 2025</span>
+          </div>
+          <div class="flex items-center space-x-2 text-xs text-gray-400 dark:text-gray-500">
+            <i class="pi pi-cog text-indigo-400"></i>
+            <span>Versión 1.0</span>
+          </div>
+          <div class="flex items-center space-x-2 text-xs italic text-teal-500">
+            <i class="pi pi-heart-fill text-red-400"></i>
+            <span>“Trabajamos con pasión y compromiso”</span>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- Toast -->
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>
+
+<!-- ConfirmDialog -->
+<p-confirmdialog 
+  styleClass="bg-white text-gray-800 border border-gray-300 
+              dark:bg-gray-900 dark:text-white dark:border-gray-700 
+              shadow-lg rounded-lg"
+/>
+
+<!-- registrar proveedor-->
+<div class="flex justify-center items-center">
+  <p-dialog
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '28rem' }"
+    [closable]="false"
+  >
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-base font-semibold text-purple-600">
+        <i class="pi pi-pencil text-purple-500"></i>
+        <span>Registrar Nuevo Proveedor</span>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="proveForm" (ngSubmit)="registrarProveedor()" 
+      class="grid grid-cols-1 md:grid-cols-2 gap-3 px-1 py-1 text-sm text-gray-700">
+
+      <!-- Encargado -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-user mr-1"></i>Encargado</label>
+        <select formControlName="persona" 
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm">
+          <option value="" disabled>Seleccione Encargado</option>
+          <option *ngFor="let persona of listaPersona" [ngValue]="persona">
+            {{ persona.nombre }} {{ persona.ap_paterno }} {{ persona.ap_materno }}
+          </option>
+        </select>
+        <small class="text-red-500" *ngIf="proveForm.get('persona')?.touched && proveForm.get('persona')?.invalid">
+          Encargado es obligatorio.
+        </small>
+        <small class="text-red-500" *ngIf="encargadoYaUsado() && proveForm.get('persona')?.touched">
+    El encargado ya está asignado.
+  </small>
+      </div>
+
+      <!-- Razon Social -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-building mr-1"></i>Razón Social</label>
+        <input formControlName="razon_social" type="text" pInputText placeholder="Razón Social"
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm" />
+     <ng-container *ngIf="proveForm.get('razon_social')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('required')">razon social obligatorio.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('minlength')">Mínimo 3 caracteres.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('maxlength')">Máximo 50 caracteres.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('pattern')">Solo letras, números y espacios.</small>
+        </ng-container>
+        <small class="text-red-500" *ngIf="razonUsado() && proveForm.get('razon_social')?.touched">
+           nombre de razon social ya fue regisatrado.
+        </small>
+        </div>
+
+      <!-- Teléfono -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-phone mr-1"></i>Teléfono</label>
+        <input formControlName="telefono" type="text" pInputText placeholder="Teléfono"
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm" />
+      <ng-container *ngIf="proveForm.get('telefono')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('telefono')?.hasError('minlength')">Mínimo 7 dígitos.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('telefono')?.hasError('maxlength')">Máximo 20 dígitos.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('telefono')?.hasError('pattern')">Formato no valido.</small>
+           
+        </ng-container>
+        <small class="text-red-500" *ngIf="telefonoUsado() && proveForm.get('telefono')?.touched">
+           numero de telefono ya fue registrado.
+        </small>
+        </div>
+
+      <!-- Ciudad -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-map-marker mr-1"></i>Ciudad</label>
+        <select formControlName="ciudad" 
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm">
+          <option value="" disabled>Seleccione Ciudad</option>
+          <option *ngFor="let ciudad of listaCiudad" [ngValue]="ciudad">{{ ciudad.nombre }}</option>
+        </select>
+        <small class="text-red-500 text-xs" *ngIf="proveForm.get('ciudad')?.touched && proveForm.get('ciudad')?.invalid">
+          Ciudad es requerida.
+        </small>
+      </div>
+
+      <!-- NIT -->
+<div>
+  <label class="block text-purple-700 font-medium mb-0.5 text-xs">
+    <i class="pi pi-id-card mr-1"></i>NIT
+  </label>
+  <input formControlName="nit" type="text" pInputText placeholder="NIT"
+    class="w-full rounded border border-purple-300 bg-purple-50 
+           focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm" />
+              <ng-container *ngIf="proveForm.get('nit')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('nit')?.hasError('pattern')">Formato no valido.</small>
+        </ng-container>
+        <small class="text-red-500" *ngIf="nitUsado() && proveForm.get('nit')?.touched">
+           nit ya fue registrado.
+        </small>
+</div>
+
+<!-- Dirección -->
+<div>
+  <label class="block text-purple-700 font-medium mb-0.5 text-xs">
+    <i class="pi pi-home mr-1"></i>Dirección
+  </label>
+  <textarea formControlName="direccion" rows="2" placeholder="Dirección"
+    class="w-full rounded border border-purple-300 bg-purple-50 
+           focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm resize-none"></textarea>
+<ng-container *ngIf="proveForm.get('direccion')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('direccion')?.hasError('required')">Requerida.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('direccion')?.hasError('minlength')">Mínimo 3 caracteres.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('direccion')?.hasError('maxlength')">Máximo 100 caracteres.</small>
+        </ng-container>
+          </div>
+
+
+      <!-- Botones -->
+      <div class="md:col-span-2 flex justify-end gap-2 mt-2">
+        <button type="button" (click)="cancelarRegistro()"
+          class="flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1.5 rounded-md shadow-sm text-sm">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+        <button type="submit"  [disabled]="proveForm.invalid || loadingSave || encargadoYaUsado() || nitUsado() ||razonUsado()"
+          class="flex items-center gap-1 bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1.5 rounded-md shadow-sm text-sm">
+         <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Guardar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando
+  </ng-container>
+        </button>
+      </div>
+
+    </form>
+  </p-dialog>
+</div>
+
+<!-- modificar proveedor -->
+ <div class="flex justify-center items-center">
+  <p-dialog
+    [modal]="true"
+    [(visible)]="visibleP"
+    [style]="{ width: '28rem' }"
+    [closable]="false"
+  >
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-base font-semibold text-purple-600">
+        <i class="pi pi-pencil text-purple-500"></i>
+        <span>Modificar Proveedor</span>
+      </div>
+    </ng-template>
+
+    <form [formGroup]="proveForm" (ngSubmit)="modificarProveedor()" 
+      class="grid grid-cols-1 md:grid-cols-2 gap-3 px-1 py-1 text-sm text-gray-700">
+
+      <!-- Encargado -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-user mr-1"></i>Encargado</label>
+        <select formControlName="persona" 
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm">
+          <option value="" disabled>Seleccione Encargado</option>
+          <option *ngFor="let persona of listaPersona" [ngValue]="persona">
+            {{ persona.nombre }} {{ persona.ap_paterno }} {{ persona.ap_materno }}
+          </option>
+        </select>
+        <small class="text-red-500" *ngIf="proveForm.get('persona')?.touched && proveForm.get('persona')?.invalid">
+          Encargado es obligatorio.
+        </small>
+        
+      </div>
+
+      <!-- Razon Social -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-building mr-1"></i>Razón Social</label>
+        <input formControlName="razon_social" type="text" pInputText placeholder="Razón Social"
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm" />
+     <ng-container *ngIf="proveForm.get('razon_social')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('required')">razon social obligatorio.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('minlength')">Mínimo 3 caracteres.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('maxlength')">Máximo 50 caracteres.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('razon_social')?.hasError('pattern')">Solo letras, números y espacios.</small>
+        </ng-container>
+      
+        </div>
+
+      <!-- Teléfono -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-phone mr-1"></i>Teléfono</label>
+        <input formControlName="telefono" type="text" pInputText placeholder="Teléfono"
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm" />
+      <ng-container *ngIf="proveForm.get('telefono')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('telefono')?.hasError('minlength')">Mínimo 7 dígitos.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('telefono')?.hasError('maxlength')">Máximo 20 dígitos.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('telefono')?.hasError('pattern')">Formato no valido.</small>
+           
+        </ng-container>
+       
+        </div>
+
+      <!-- Ciudad -->
+      <div>
+        <label class="block text-purple-700 font-medium mb-0.5 text-xs"><i class="pi pi-map-marker mr-1"></i>Ciudad</label>
+        <select formControlName="ciudad" 
+          class="w-full rounded border border-purple-300 bg-purple-50 focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm">
+          <option disabled value="" disabled>Seleccione Ciudad</option>
+          <option disabled *ngFor="let ciudad of listaCiudad" [ngValue]="ciudad">{{ ciudad.nombre }}</option>
+        </select>
+        <small class="text-red-500 text-xs" *ngIf="proveForm.get('ciudad')?.touched && proveForm.get('ciudad')?.invalid">
+          Ciudad es requerida.
+        </small>
+      </div>
+
+      <!-- NIT -->
+<div>
+  <label class="block text-purple-700 font-medium mb-0.5 text-xs">
+    <i class="pi pi-id-card mr-1"></i>NIT
+  </label>
+  <input formControlName="nit" type="text" pInputText placeholder="NIT"
+    class="w-full rounded border border-purple-300 bg-purple-50 
+           focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm"    [disabled]="true"/>
+              <ng-container *ngIf="proveForm.get('nit')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('nit')?.hasError('pattern')">Formato no valido.</small>
+        </ng-container>
+       
+</div>
+
+<!-- Dirección -->
+<div>
+  <label class="block text-purple-700 font-medium mb-0.5 text-xs">
+    <i class="pi pi-home mr-1"></i>Dirección
+  </label>
+  <textarea formControlName="direccion" rows="2" placeholder="Dirección"
+    class="w-full rounded border border-purple-300 bg-purple-50 
+           focus:ring-purple-400 focus:border-purple-500 px-2 py-1 text-sm resize-none"></textarea>
+<ng-container *ngIf="proveForm.get('direccion')?.touched">
+          <small class="text-red-500" *ngIf="proveForm.get('direccion')?.hasError('required')">Requerida.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('direccion')?.hasError('minlength')">Mínimo 3 caracteres.</small>
+          <small class="text-red-500" *ngIf="proveForm.get('direccion')?.hasError('maxlength')">Máximo 100 caracteres.</small>
+        </ng-container>
+          </div>
+
+
+      <!-- Botones -->
+      <div class="md:col-span-2 flex justify-end gap-2 mt-2">
+        <button type="button" (click)="cancelarRegistroP()"
+          class="flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 px-3 py-1.5 rounded-md shadow-sm text-sm">
+          <i class="pi pi-times"></i> Cancelar
+        </button>
+        <button type="submit"  [disabled]="proveForm.invalid || loadingSave"
+          class="flex items-center gap-1 bg-green-100 text-green-700 hover:bg-green-200 px-3 py-1.5 rounded-md shadow-sm text-sm">
+           <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Guardar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando
+  </ng-container>
+        </button>
+      </div>
+
+    </form>
+  </p-dialog>
+</div>
+
+

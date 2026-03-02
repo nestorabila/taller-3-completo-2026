@@ -1,0 +1,156 @@
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+    Módulo Persona / Reporte / Persona
+  </span>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+
+
+<!-- Filtros -->
+<div *ngIf="mostrarFiltros"  id="infoFiltros" class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 animate__animated animate__fadeInUp text-sm">
+
+  <!-- Rol -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Rol</label>
+    <select [(ngModel)]="rolFiltro" (change)="modelPersona()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option value="2">Cliente</option>
+      <option value="5">Proveedor</option>
+      <option value="3">Responsable Ventas</option>
+      <option value="4">Producción</option>
+    </select>
+  </div>
+
+  <!-- Nombre -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+    <input [(ngModel)]="nombreFiltro" (input)="modelPersona()" type="text" placeholder="Ej. Juan Pérez"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Estado -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Estado</label>
+    <select [(ngModel)]="estadoFiltro" (change)="modelPersona()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option value="1">Activo</option>
+      <option value="0">Bloqueado</option>
+    </select>
+  </div>
+
+  <!-- Fecha desde -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+    <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelPersona()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Fecha hasta -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+    <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelPersona()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+</div>
+
+
+<!-- Botones Exportar -->
+<div *ngIf="mostrarFiltros1" class="flex justify-end gap-2 mb-4 animate__animated animate__fadeInUp text-sm">
+  <button (click)="exportarExcel()"
+    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-excel text-xs"></i>
+    Excel
+  </button>
+  <button (click)="exportarPDF()"
+    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-pdf text-xs"></i>
+    PDF
+  </button>
+</div>
+
+<div class="max-w-full overflow-x-auto animate__animated animate__fadeIn">
+  <table id="tablaPersonas" class="min-w-full text-[12px] text-left text-gray-700 dark:text-gray-200">
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+      <ng-container *ngFor="let rol of personasPorRolEstado | keyvalue">
+        <!-- Cabecera del grupo por rol -->
+        <tr class="bg-gray-10 dark:bg-gray-900 text-sm font-bold">
+          <td colspan="12" class="px-3 py-2 text-center text-gray-800 dark:text-gray-100">
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+            <span class="px-4">ROL: {{ rol.key | uppercase }}</span>
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+          </td>
+        </tr>
+
+        <ng-container *ngFor="let estado of rol.value | keyvalue">
+          <!-- Cabecera del estado -->
+          <tr
+            [ngClass]="{
+              'bg-green-100 text-green-900 dark:bg-green-900 dark:text-green-200': estado.key === 'Activo',
+              'bg-red-100 text-red-900 dark:bg-red-900 dark:text-red-200': estado.key === 'Bloqueado',
+              'bg-gray-200 dark:bg-gray-800': estado.key !== 'Activo' && estado.key !== 'Bloqueado'
+            }"
+            class="text-sm font-semibold"
+          >
+            <td colspan="12" class="px-3 py-2 dark:text-gray-100">Estado: {{ estado.key }}</td>
+          </tr>
+
+          <!-- Encabezado de columnas -->
+          <tr class="bg-gray-50 dark:bg-gray-800 text-[10px] uppercase tracking-wider text-gray-700 dark:text-gray-300">
+            <th class="px-3 py-2">#</th>
+            <th class="px-3 py-2">Cédula</th>
+            <th class="px-3 py-2">Nombre completo</th>
+            <th class="px-3 py-2">Contacto</th>
+            <th class="px-3 py-2">Usuario</th>
+            <th class="px-3 py-2">Dirección</th>
+            <th class="px-3 py-2">Género</th>
+            <th class="px-3 py-2">Fecha</th>
+            <th class="px-3 py-2">Hora</th>
+          </tr>
+
+          <!-- Lista de personas del rol + estado -->
+          <tr *ngFor="let xdat of estado.value; let i = index"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="px-3 py-2">{{ i + 1 }}</td>
+            <td class="px-3 py-2">{{ xdat.cedula }}</td>
+            <td class="px-3 py-2 text-gray-900 dark:text-gray-100">
+              {{ xdat.nombre }} {{ xdat.ap_paterno }} {{ xdat.ap_materno }}
+            </td>
+            <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ xdat.telefono }} {{ xdat.correo }}</td>
+            <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ xdat.credencial?.usuario || 'Sin usuario' }}</td>
+            <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ xdat.direccion || 'Sin direccion' }}</td>
+            <td class="px-3 py-2 text-gray-700 dark:text-gray-300">
+              {{ xdat.genero?.nombre }}
+            </td>
+            <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ xdat.fecha | date:'dd/MM/yyyy'  }}</td>
+            <td class="px-3 py-2 text-gray-700 dark:text-gray-300">{{ xdat.hora }}</td>
+          </tr>
+        </ng-container>
+      </ng-container>
+
+    </tbody>
+  </table>
+</div>
+

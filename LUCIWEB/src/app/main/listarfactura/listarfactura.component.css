@@ -1,0 +1,11 @@
+/* Dropdown elegante fuera del modal */
+.dropdown-elegante {
+  max-height: 280px;
+  overflow-y: auto;
+  border-radius: 0.75rem;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.dropdown-elegante .p-dropdown-item {
+  padding: 0.75rem 1rem;
+}

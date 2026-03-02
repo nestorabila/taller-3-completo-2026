@@ -1,0 +1,439 @@
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Cargando catalogos...</span>
+</div>
+
+<div *ngIf="!loading">
+
+<!-- Encabezado -->
+<div class="flex items-center justify-between px-4 py-3 bg-gradient-to-r animate__animated animate__fadeInLeft">
+  <!-- Título e ícono -->
+  <div class="flex items-center gap-3">
+    <p-avatar 
+      icon="pi pi-shopping-cart" 
+      shape="circle" 
+      styleClass="bg-pink-400 dark:bg-pink-700 text-white shadow-lg"
+    ></p-avatar>
+    <div class="flex flex-col">
+      <span class="hidden md:inline text-lg font-extrabold text-pink-700 dark:text-pink-300">Módulo Ventas</span>
+      <span class="text-sm flex items-center gap-1 text-pink-600 dark:text-pink-400">
+        <i class="pi pi-list text-pink-500 dark:text-pink-300"></i>
+       <span class="hidden md:inline ">Catalogo / Lista</span>
+      </span>
+    </div>
+  </div>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-2">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <!-- Botón Añadir nuevo catálogo -->
+    <p-button (click)="showDialog()" 
+      label="Añadir nuevo catálogo" 
+      icon="pi pi-plus" 
+      [style]="{ backgroundColor: 'white', color: '#0ea5e9', border: 'none' }"
+      styleClass="p-button-sm border-none flex items-center gap-2"
+    ></p-button>
+  </div>
+</div>
+
+
+  <!-- Filtros y botón -->
+  <div  *ngIf="mostrarFiltros" class="animate__animated animate__fadeInDown flex flex-col lg:flex-row gap-4 justify-between items-center p-4 bg-blue-50 dark:bg-blue-900 rounded-xl">
+   
+    <input [(ngModel)]="filtro" (input)="buscarCatalogo()" type="text" placeholder="Buscar catálogo por nombre..."
+      class="w-full lg:w-1/4 px-4 py-2 border border-blue-200 dark:border-blue-700 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-300 dark:bg-blue-800 dark:text-white text-sm"
+    />
+    <select class="w-full lg:w-1/5 px-4 py-2 border border-green-200 dark:border-green-700 rounded-xl bg-green-50 dark:bg-green-900 dark:text-white text-sm" [(ngModel)]="filtroTipo" (change)="buscarPorTipo()">
+      <option value="todos">Todas la Categorías</option>
+      <option *ngFor="let categoria of listaCategoria" [value]="categoria.idcategoria">
+        {{ categoria.nombre }}
+      </option>
+    </select>
+    <select class="w-full lg:w-1/5 px-4 py-2 border border-yellow-200 dark:border-yellow-700 rounded-xl bg-yellow-50 dark:bg-yellow-900 dark:text-white text-sm" [(ngModel)]="filtroDestacado" (change)="buscarPorDestacado()">
+      <option value="todos">Todos Estados</option>
+      <option value="1">Catálogos con novedad</option>
+      <option value="0">Catálogos sin novedad</option>
+    </select>
+  </div>
+
+  <!-- Tarjetas de catálogo -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-6">
+    <div *ngFor="let xdat of listaCatalogo.slice(0, cantidadVisible); let pos=index" 
+         class="animate__animated animate__zoomIn bg-white dark:bg-gray-900 shadow rounded-xl overflow-hidden border border-gray-100 dark:border-gray-700 transition hover:shadow-md">
+
+      <!-- Imagen -->
+      <div class="relative">
+        <div *ngIf="!xdat.imgCargada" 
+       class="absolute inset-0 flex items-center justify-center bg-gray-100 dark:bg-gray-800">
+    <i class="pi pi-spin pi-spinner text-2xl text-pink-500"></i>
+  </div>
+
+  <!-- Imagen -->
+  <img (click)="verImagen(xdat.fotografia)"
+       [src]="'http://localhost:8090/imagenes/' + xdat.fotografia"
+       alt="Imagen principal"
+       class="w-full h-36 object-cover rounded-t-xl cursor-pointer transition hover:scale-105 duration-300"
+       (load)="xdat.imgCargada = true"
+       (error)="xdat.imgCargada = true" />
+        <!-- Icono destacado -->
+        <div *ngIf="xdat.destacado === 1" 
+             class="absolute top-2 right-2 bg-pink-200 dark:bg-pink-700 text-pink-700 dark:text-pink-200 rounded-full w-7 h-7 flex items-center justify-center shadow-md">
+          <i class="pi pi-star text-sm"></i>
+        </div>
+        <div *ngIf="xdat.destacado === 0" 
+             class="absolute top-2 right-2 bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-300 rounded-full w-7 h-7 flex items-center justify-center shadow-md">
+          <i class="pi pi-star text-sm"></i>
+        </div>
+
+        <!-- Etiqueta nuevo -->
+        <div *ngIf="esNuevo(xdat.fecha, xdat.hora)" 
+             class="absolute top-0 left-0 bg-pink-600 text-white dark:bg-pink-800 text-xs font-semibold px-3 py-1 rounded-br-md rounded-bl-md shadow-md uppercase tracking-wide flex items-center gap-1 animate__animated animate__fadeIn"
+             style="border-top-left-radius: 0; border-top-right-radius: 0;">
+          <i class="pi pi-bolt"></i>
+          Nuevo
+        </div>
+      </div>
+
+      <!-- Contenido -->
+      <div class="p-3">
+        <h2 class="text-sm mb-1">
+          <span class="text-gray-500 dark:text-gray-400 font-normal">nombre: </span>
+          <span class="text-black dark:text-white font-semibold">{{ xdat.nombre}}</span>
+        </h2>
+        <p class="text-sm mb-2">
+          <span class="text-gray-500 dark:text-gray-400 font-normal">descripción: </span>
+          <span class="text-black dark:text-white font-medium">{{ xdat.descripcion | slice:0:20}}...</span>
+        </p>
+        <div class="flex items-center justify-between mb-3">
+          <p class="text-sm font-bold text-pink-500 dark:text-pink-400">Precio: Bs. {{xdat.precio}}</p>
+          <div class="flex items-center gap-2">
+            <div style="transform: scale(0.8); transform-origin: center; display: inline-block;">
+              <p-inputSwitch title="Habilitar y/o Inhabilitar" [ngModel]="xdat.estado === 1" (ngModelChange)="cambiarEstadoSwitch($event, xdat)">
+              </p-inputSwitch>
+            </div>
+            <p-button title="editar catálogo" (click)="showDialog1()" label="" (click)="vistaCatalogo(xdat)" icon="pi pi-pencil" [style]="{ backgroundColor: 'transparent', color: 'yellow', border: 'none' }" styleClass="p-button-sm border-none"/>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="flex justify-center mt-6" *ngIf="cantidadVisible < listaCatalogo.length">
+    <p-button label="Mostrar más" icon="pi pi-chevron-down" (click)="mostrarMas()" styleClass="p-button-outlined p-button-sm text-sky-600 dark:text-sky-400 border-sky-400 dark:border-sky-600 hover:bg-sky-100 dark:hover:bg-sky-700 transition rounded-full px-4 py-2"/>
+  </div>
+
+  <!-- Línea decorativa -->
+  <div class="w-3/4 mx-auto mt-2 mb-4 h-1 rounded-full bg-gradient-to-r from-pink-300 via-purple-300 to-pink-300 dark:from-pink-700 dark:via-purple-700 dark:to-pink-800 animate-fade-in"></div>
+
+  <!-- Footer -->
+  <div class="text-center text-sm md:text-base text-pink-600 dark:text-pink-400 font-semibold flex flex-col items-center space-y-2 animate-fade-in">
+    <div class="flex items-center space-x-2">
+      <i class="pi pi-star-fill text-yellow-400 dark:text-yellow-300"></i>
+      <span>Sistema de Gestión de Personal – <span class="text-purple-600 dark:text-purple-400">LUCIWEB</span></span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
+      <i class="pi pi-shield text-pink-400 dark:text-pink-300"></i>
+      <span>Todos los derechos reservados © 2025</span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs text-gray-400 dark:text-gray-300">
+      <i class="pi pi-cog text-indigo-400 dark:text-indigo-300"></i>
+      <span>Versión 1.0</span>
+    </div>
+    <div class="flex items-center space-x-2 text-xs italic text-teal-500 dark:text-teal-300">
+      <i class="pi pi-heart-fill text-red-400 dark:text-red-300"></i>
+      <span>“Trabajamos con pasión y compromiso”</span>
+    </div>
+  </div>
+
+</div>
+
+
+<!-- Toast -->
+
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>
+
+<!-- ConfirmDialog -->
+<p-confirmdialog 
+  styleClass="bg-white text-gray-800 border border-gray-300 
+              dark:bg-gray-900 dark:text-white dark:border-gray-700 
+              shadow-lg rounded-lg"
+/>
+
+<!-- reigistrar nuevo catalogo -->
+<div class=" justify-center">
+  <p-dialog [modal]="true"  [(visible)]="visible" class="dialog-posicionado" [style]="{ bottom: '40px', width: '45rem', top: 'auto' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-400 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-400"></i>
+        <span>Añadir Nuevo Catalogo</span>
+      </div>
+    </ng-template>
+
+
+<form [formGroup]="cataForm" (ngSubmit)="registrarCatalogo()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+
+    <div>
+      <label for="cantidad" class="label-modern">Nombre</label>
+      <input formControlName="nombre" id="cantidad" type="text" pInputText placeholder="Ingrese nombre catalogo" class="input-underline" />
+      <small class="text-red-500" *ngIf="cataForm.get('nombre')?.touched && cataForm.get('nombre')?.invalid">
+        <span *ngIf="cataForm.get('nombre')?.errors?.['required']">El nombre es requerido.</span>
+        <span *ngIf="cataForm.get('nombre')?.errors?.['minlength']">Debe tener al menos 5 caracteres.</span>
+        <span *ngIf="cataForm.get('nombre')?.errors?.['maxlength']">Máximo 80 caracteres.</span>
+       
+      </small>
+      <small class="text-red-500" *ngIf="nombreYaRegistrada()">
+        Nombre ya esta en uso.
+       </small>
+    </div>
+
+    <div>
+      <label for="cantidad" class="label-modern">Imagen</label>
+      <input (change)="onFileSelected($event)" id="cantidad" type="file" pInputText placeholder="Seleccione una imagen" class="input-underline" />
+      <small class="text-red-500" *ngIf="cataForm.get('fotografia')?.touched && 
+                                  cataForm.get('fotografia')?.errors?.['required'] && 
+                                  !cataForm.get('fotografia')?.errors?.['formatoInvalido']">
+  La imagen es requerida.
+</small>
+<small class="text-red-500" *ngIf="cataForm.get('fotografia')?.touched && 
+                                  cataForm.get('fotografia')?.errors?.['formatoInvalido']">
+  Formato no válido
+</small>
+
+
+    </div>
+    <div>
+  <label for="categoria" class="label-modern">Categoría</label>
+  <p-dropdown
+    id="categoria"
+    formControlName="categoria"
+    [options]="listaCategoria"
+    optionLabel="nombre"
+    placeholder="--- Seleccione ---"
+    [showClear]="true"
+    [filter]="true"
+    filterPlaceholder="Buscar categoría..."
+    styleClass="input-underline w-full"
+    [panelStyle]="{ 'max-height': '250px' }"
+    [style]="{ 'padding-top': '0.25rem', 'padding-bottom': '0.25rem', 'line-height': '1.5rem' }"
+  >
+  </p-dropdown>
+
+  <small
+    class="text-red-500"
+    *ngIf="cataForm.get('categoria')?.touched && cataForm.get('categoria')?.invalid"
+  >
+    La categoría es requerida.
+  </small>
+</div>
+
+
+
+    <div>
+      <label for="precio" class="label-modern">Precio Unitario (Bs)</label>
+      <input formControlName="precio" id="precio" type="text" pInputText placeholder="Ingrese el precio unitario" class="input-underline" />
+   <small class="text-red-500" *ngIf="cataForm.get('precio')?.touched && cataForm.get('precio')?.invalid">
+        <span *ngIf="cataForm.get('precio')?.errors?.['required']">El precio es obligatorio.</span>
+        <span *ngIf="cataForm.get('precio')?.errors?.['pattern']">Ingrese sólo números enteros entre 1 y 9999.</span>
+      </small>
+    </div>
+     
+  </div>
+
+  <div class="mb-4">
+    <label for="observacion" class="label-modern">Descripcion</label>
+    <input formControlName="descripcion" id="observacion" type="text" pInputText placeholder="Ingrese la descripcion (opcional)" class="input-underline" />
+ <small class="text-red-500" *ngIf="cataForm.get('descripcion')?.touched && cataForm.get('descripcion')?.invalid">
+      <span *ngIf="cataForm.get('descripcion')?.errors?.['minlength']">Mínimo 7 caracteres.</span>
+      <span *ngIf="cataForm.get('descripcion')?.errors?.['maxlength']">Máximo 100 caracteres.</span>
+    </small>
+  </div>
+
+  <!-- Novedad (todo en una sola línea horizontal) -->
+       <div class="form-group mt-2" style="display: flex; align-items: center; gap: 1rem;">
+       <small style="font-size: 0.75rem;">¿Desea marcar como novedad?</small>
+       <p-radioButton [value]="1" inputId="novedad-si" formControlName="destacado"></p-radioButton>
+       <label for="novedad-si" style="font-size: 0.75rem;">Sí</label>
+       <p-radioButton [value]="0" inputId="novedad-no" formControlName="destacado"></p-radioButton>
+       <label for="novedad-no" style="font-size: 0.75rem;">No</label>
+       </div>
+
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-500 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarRegistro()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button [disabled]="!cataForm.valid ||loadingSave || nombreYaRegistrada()" type="submit" class="px-4 py-2 bg-sky-300 text-white rounded hover:bg-sky-500 flex items-center gap-2 transition" >
+      <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Aceptar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando
+  </ng-container>
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+
+<!-- modificar catalogo -->
+ <div class=" justify-center">
+  <p-dialog [modal]="true" class="dialog-posicionado" [(visible)]="visible1" [style]="{ bottom: '40px', width: '45rem', top: 'auto' }" [closable]="false">
+    <ng-template pTemplate="header">
+      <div class="flex items-center gap-2 text-sky-400 text-xl font-semibold">
+        <i class="pi pi-pencil text-sky-400"></i>
+        <span>Moadificar Catalogo</span>
+      </div>
+    </ng-template>
+
+
+<form [formGroup]="cataForm" (ngSubmit)="modificarCatalogo()" class="p-2">
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-3">
+
+    <div>
+      <label for="cantidad" class="label-modern">Nombre</label>
+      <input formControlName="nombre" id="cantidad" type="text" pInputText placeholder="Ingrese nombre catalogo" class="input-underline" />
+      <small class="text-red-500" *ngIf="cataForm.get('nombre')?.touched && cataForm.get('nombre')?.invalid">
+        <span *ngIf="cataForm.get('nombre')?.errors?.['required']">El nombre es requerido.</span>
+        <span *ngIf="cataForm.get('nombre')?.errors?.['minlength']">Debe tener al menos 5 caracteres.</span>
+        <span *ngIf="cataForm.get('nombre')?.errors?.['maxlength']">Máximo 80 caracteres.</span>
+      </small>
+      
+    </div>
+
+    <div>
+      <label for="cantidad" class="label-modern">Imagen</label>
+      <input (change)="onFileSelected($event)" id="cantidad" type="file" pInputText placeholder="Seleccione una imagen" class="input-underline" />
+      <small class="text-red-500" *ngIf="cataForm.get('fotografia')?.touched && cataForm.get('fotografia')?.invalid">
+        La imagen es requerida.
+      </small>
+     
+
+    </div>
+   <div>
+  <label for="categoria" class="label-modern">Categoría</label>
+  <p-dropdown
+    id="categoria"
+    formControlName="categoria"
+    [options]="listaCategoria"
+    optionLabel="nombre"
+    placeholder="--- Seleccione ---"
+    [showClear]="true"
+    [filter]="true"
+    filterPlaceholder="Buscar categoría..."
+    styleClass="input-underline w-full"
+    [panelStyle]="{ 'max-height': '250px' }"
+  >
+  </p-dropdown>
+
+  <small
+    class="text-red-500"
+    *ngIf="cataForm.get('categoria')?.touched && cataForm.get('categoria')?.invalid"
+  >
+    La categoría es requerida.
+  </small>
+</div>
+
+
+
+    <div>
+      <label for="precio" class="label-modern">Precio Unitario (Bs)</label>
+      <input formControlName="precio" id="precio" type="text" pInputText placeholder="Ingrese el precio unitario" class="input-underline" />
+   <small class="text-red-500" *ngIf="cataForm.get('precio')?.touched && cataForm.get('precio')?.invalid">
+        <span *ngIf="cataForm.get('precio')?.errors?.['required']">El precio es obligatorio.</span>
+        <span *ngIf="cataForm.get('precio')?.errors?.['pattern']">Ingrese sólo números enteros entre 1 y 9999.</span>
+      </small>
+    </div>
+     
+  </div>
+
+  <div class="mb-4">
+    <label for="observacion" class="label-modern">Descripcion</label>
+    <input formControlName="descripcion" id="observacion" type="text" pInputText placeholder="Ingrese la descripcion (opcional)" class="input-underline" />
+ <small class="text-red-500" *ngIf="cataForm.get('descripcion')?.touched && cataForm.get('descripcion')?.invalid">
+      <span *ngIf="cataForm.get('descripcion')?.errors?.['minlength']">Mínimo 7 caracteres.</span>
+      <span *ngIf="cataForm.get('descripcion')?.errors?.['maxlength']">Máximo 100 caracteres.</span>
+    </small>
+  </div>
+
+  <!-- Novedad (todo en una sola línea horizontal) -->
+       <div class="form-group mt-2" style="display: flex; align-items: center; gap: 1rem;">
+       <small style="font-size: 0.75rem;">¿Desea marcar como novedad?</small>
+       <p-radioButton [value]="1" inputId="novedad-si" formControlName="destacado"></p-radioButton>
+       <label for="novedad-si" style="font-size: 0.75rem;">Sí</label>
+       <p-radioButton [value]="0" inputId="novedad-no" formControlName="destacado"></p-radioButton>
+       <label for="novedad-no" style="font-size: 0.75rem;">No</label>
+       </div>
+
+  <div class="flex justify-end gap-3 pt-6 border-t border-gray-200">
+    <button type="button" class="px-4 py-2 bg-red-100 text-red-500 rounded hover:bg-red-200 flex items-center gap-2 transition" (click)="cancelarMod()">
+      <i class="pi pi-times"></i> Cancelar
+    </button>
+
+    <button [disabled]="!cataForm.valid || loadingSave" type="submit" class="px-4 py-2 bg-sky-300 text-white rounded hover:bg-sky-500 flex items-center gap-2 transition">
+       <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Guardar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando
+  </ng-container>
+    </button>
+  </div>
+</form>
+
+  </p-dialog>
+</div>
+
+<!-- Modal para imagen ampliada -->
+<p-dialog 
+  [(visible)]="modalImagenVisible" 
+  [modal]="true" 
+  [closable]="false"
+  [dismissableMask]="true"
+  [style]="{ width: '70vw', maxWidth: '400px' }"
+  [contentStyle]="{ padding: '0', background: '#000', position: 'relative' }"
+  class="rounded-xl overflow-hidden no-header-dialog">
+
+  <!-- 👇 Header vacío (necesario para anular el que PrimeNG genera por defecto) -->
+  <ng-template pTemplate="header"></ng-template>
+
+  <!-- Contenedor principal -->
+  <div class="relative w-full h-[60vh] flex items-center justify-center bg-black">
+    
+    <!-- Botón de cerrar "X" -->
+    <button 
+      type="button"
+      class="absolute top-3 right-3 bg-black/70 text-white hover:bg-red-600 rounded-full p-2 transition z-10 shadow-lg"
+      (click)="modalImagenVisible = false">
+      <i class="pi pi-times text-xl"></i>
+    </button>
+
+    <!-- Imagen ampliada -->
+    <img 
+      [src]="'http://localhost:8090/imagenes/' + imagenSeleccionadaModal" 
+      alt="Imagen ampliada"
+      class="max-h-full max-w-full object-contain rounded shadow-2xl transition duration-300 ease-in-out" />
+  </div>
+
+</p-dialog>
+
+

@@ -1,0 +1,212 @@
+
+
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+    Módulo Ventas / Reporte / Catalogo
+  </span>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+
+<!-- Filtros -->
+<div *ngIf="mostrarFiltros" id="infoFiltros"
+  class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 xl:grid-cols-6 gap-x-1 gap-y-2 animate__animated animate__fadeInUp text-sm
+         bg-white dark:bg-gray-900 p-4 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm">
+
+  <!-- Categoría -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Categoría</label>
+    <select [(ngModel)]="tipoFiltro" (change)="modelCatalogo()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option *ngFor="let categoria of listaCategoria" [value]="categoria.idcategoria">{{categoria.nombre}}</option>
+    </select>
+  </div>
+
+  <!-- Buscar -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+    <input [(ngModel)]="nombreFiltro" (input)="modelCatalogo()" type="text" placeholder="Ej. Tus deseos"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 text-sm" />
+  </div>
+
+  <!-- Estado -->
+  <div class="w-34">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Estado</label>
+    <select [(ngModel)]="estadoFiltro" (change)="modelCatalogo()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option value="1">Activo</option>
+      <option value="0">Inactivo</option>
+    </select>
+  </div>
+
+  <!-- Destacado -->
+  <div class="w-34">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Destacado</label>
+    <select [(ngModel)]="destacadoFiltro" (change)="modelCatalogo()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option value="1">Sí</option>
+      <option value="0">No</option>
+    </select>
+  </div>
+
+  <!-- Desde -->
+  <div class="w-34">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+    <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelCatalogo()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Hasta -->
+  <div class="w-28">
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+    <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelCatalogo()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+</div>
+<!-- Botones Exportar -->
+<div *ngIf="mostrarFiltros1"  class="flex justify-end gap-2 mb-4 animate__animated animate__fadeInUp text-sm">
+
+  <!-- Línea de tarjetas resumen -->
+  <div class="flex flex-wrap items-center gap-4 text-[11px] font-medium">
+
+    <!-- Total categorías -->
+    <div class="flex flex-col items-center text-purple-600 dark:text-purple-300 leading-tight">
+      <i class="pi pi-tags text-sm"></i>
+      <span class="tracking-wide">Categorías</span>
+      <span class="text-base font-semibold -mt-0.5">{{ totalCategorias }}</span>
+    </div>
+
+    <!-- Total catálogos -->
+    <div class="flex flex-col items-center text-blue-600 dark:text-blue-300 leading-tight">
+      <i class="pi pi-folder-open text-sm"></i>
+      <span class="tracking-wide">Catálogos</span>
+      <span class="text-base font-semibold -mt-0.5">{{ totalCatalogos }}</span>
+    </div>
+
+    <!-- Activos -->
+    <div class="flex flex-col items-center text-green-600 dark:text-green-300 leading-tight">
+      <i class="pi pi-check-circle text-sm"></i>
+      <span class="tracking-wide">Activos</span>
+      <span class="text-base font-semibold -mt-0.5">{{ catalogosActivos }}</span>
+    </div>
+
+    <!-- Inactivos -->
+    <div class="flex flex-col items-center text-red-600 dark:text-red-300 leading-tight">
+      <i class="pi pi-times-circle text-sm"></i>
+      <span class="tracking-wide">Inactivos</span>
+      <span class="text-base font-semibold -mt-0.5">{{ catalogosInactivos }}</span>
+    </div>
+
+    <!-- Destacados -->
+    <div class="flex flex-col items-center text-yellow-600 dark:text-yellow-300 leading-tight">
+      <i class="pi pi-star text-sm"></i>
+      <span class="tracking-wide">Destacados</span>
+      <span class="text-base font-semibold -mt-0.5">{{ catalogosDestacados }}</span>
+    </div>
+
+    <!-- No destacados -->
+    <div class="flex flex-col items-center text-gray-500 dark:text-gray-300 leading-tight">
+      <i class="pi pi-star-fill text-sm"></i>
+      <span class="tracking-wide">No destacados</span>
+      <span class="text-base font-semibold -mt-0.5">{{ catalogosNoDestacados }}</span>
+    </div>
+
+  </div>
+
+  <!-- Botones Exportar (modo dark incluido) -->
+  <div class="flex justify-end gap-2 mb-4 animate__animated animate__fadeInUp text-sm mt-2">
+    <button (click)="exportarExcel()"
+      class="bg-green-600 dark:bg-green-700 hover:bg-green-700 dark:hover:bg-green-600 text-white px-3 py-[3px] rounded-md flex items-center gap-1 shadow-md text-xs">
+      <i class="pi pi-file-excel text-xs"></i>
+      Excel
+    </button>
+
+    <button (click)="exportarPDF()"
+      class="bg-red-600 dark:bg-red-700 hover:bg-red-700 dark:hover:bg-red-600 text-white px-3 py-[3px] rounded-md flex items-center gap-1 shadow-md text-xs">
+      <i class="pi pi-file-pdf text-xs"></i>
+      PDF
+    </button>
+  </div>
+
+</div>
+
+
+<div class="max-w-full overflow-x-auto animate__animated animate__fadeIn">
+  <table id="tablaPersonas" class="min-w-full text-[12px] text-left text-gray-700 dark:text-gray-200">
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+      <ng-container *ngFor="let tipo of ListaAgrupada | keyvalue">
+        <!-- Cabecera del grupo por rol -->
+        <tr class="bg-gray-100 dark:bg-gray-900 text-sm font-bold">
+          <td colspan="12" class="px-3 py-2 text-center text-gray-800 dark:text-gray-100">
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-700 align-middle"></span>
+            <span class="px-4">CATEGORIA: {{ tipo.key | uppercase }}</span>
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-700 align-middle"></span>
+          </td>
+        </tr>
+
+        <ng-container *ngFor="let estado of tipo.value | keyvalue">
+          <!-- Cabecera del estado -->
+          <tr
+            [ngClass]="{
+              'bg-green-100 text-green-900 dark:bg-green-800 dark:text-green-200': estado.key === 'Activo',
+              'bg-red-100 text-red-900 dark:bg-red-800 dark:text-red-200': estado.key === 'Bloqueado',
+              'bg-gray-200 dark:bg-gray-800 dark:text-gray-200': estado.key !== 'Activo' && estado.key !== 'Bloqueado'
+            }"
+            class="text-sm font-semibold"
+          >
+            <td colspan="12" class="px-3 py-2">Estado: {{ estado.key }}</td>
+          </tr>
+
+          <!-- Encabezado de columnas -->
+          <tr class="bg-gray-50 dark:bg-gray-700 text-[10px] uppercase tracking-wider text-gray-700 dark:text-gray-300">
+            <th class="px-3 py-2">#</th>
+            <th class="px-3 py-2">Nombre</th>
+            <th class="px-3 py-2">Descripcion</th>
+            <th class="px-3 py-2">Precio (U)</th>
+            <th class="px-3 py-2">Fecha</th>
+            <th class="px-3 py-2">Hora</th>
+          </tr>
+
+          <!-- Lista de personas del rol + estado -->
+          <tr *ngFor="let xdat of estado.value; let i = index"
+              class="hover:bg-gray-50 dark:hover:bg-gray-700">
+            <td class="px-3 py-2">{{ i + 1 }}</td>
+            <td class="px-3 py-2">
+              <div class="font-medium text-gray-900 dark:text-gray-100">{{ xdat.nombre }}</div>
+              <div *ngIf="xdat.destacado === 1" class="text-xs text-gray-500 dark:text-gray-300">::destacado::</div>
+            </td>
+            <td class="px-3 py-2">{{ xdat.descripcion || 'sin descripcion' }}</td>
+            <td class="px-3 py-2">{{xdat.precio}} Bs.</td>
+            <td class="px-3 py-2">{{ xdat.fecha | date:'dd/MM/yyyy' }}</td>
+            <td class="px-3 py-2">{{ xdat.hora }}</td>
+          </tr>
+        </ng-container>
+      </ng-container>
+    </tbody>
+  </table>
+</div>
+
+
+

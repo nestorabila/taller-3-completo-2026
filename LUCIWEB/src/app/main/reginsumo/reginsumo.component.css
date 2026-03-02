@@ -1,0 +1,4 @@
+input[type="checkbox"]:checked {
+  accent-color: #ec4899; /* color rosado equivalente a pink-500 */
+}
+

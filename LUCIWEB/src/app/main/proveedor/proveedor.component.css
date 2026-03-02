@@ -1,0 +1,6 @@
+
+
+/* Asegúrate de que ningún contenedor limite el overflow */
+.some-container {
+  overflow: visible;
+}

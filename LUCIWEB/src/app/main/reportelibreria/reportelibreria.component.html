@@ -1,0 +1,124 @@
+<div class="flex flex-col md:flex-row items-center justify-between mb-4 border-b pt-3 border-gray-200 dark:border-neutral-700 pb-5">
+
+  <!-- Título -->
+  <span class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-2 md:mb-0">
+    Módulo Persona / Reporte / Libreria
+  </span>
+
+  <!-- Botones alineados a la derecha -->
+  <div class="flex items-center gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-4 py-2 text-yellow-500 rounded-full font-medium text-sm
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-lg"></i> Filtros
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-4 py-2 text-pink-500 rounded-full font-medium text-sm
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-lg"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+
+
+<!-- Filtros -->
+<div *ngIf="mostrarFiltros" id="infoFiltros" class="mb-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 animate__animated animate__fadeInUp text-sm">
+  
+  <!-- Ciudad -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Ciudad</label>
+    <select [(ngModel)]="ciudadFiltro" (change)="modelLibreria()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm">
+      <option value="">Todos</option>
+      <option *ngFor="let ciudad of listaCiudad" [value]="ciudad.idciudad">{{ ciudad.nombre }}</option>
+    </select>
+  </div>
+
+  <!-- Nombre -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Buscar...</label>
+    <input [(ngModel)]="nombreFiltro" (input)="modelLibreria()" type="text" placeholder="Ej. Tus deseos"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Fecha desde -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Desde</label>
+    <input type="date" [(ngModel)]="fechaDesdeFiltro" (change)="modelLibreria()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+  <!-- Fecha hasta -->
+  <div>
+    <label class="block text-gray-600 dark:text-gray-300 mb-1">Hasta</label>
+    <input type="date" [(ngModel)]="fechaHastaFiltro" (change)="modelLibreria()"
+      class="w-full rounded-md border-gray-300 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100 text-sm" />
+  </div>
+
+</div>
+
+
+<!-- Botones Exportar -->
+<div *ngIf="mostrarFiltros1" class="flex justify-end gap-2 mb-4 animate__animated animate__fadeInUp text-sm">
+  <button (click)="exportarExcel()"
+    class="bg-green-600 hover:bg-green-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-excel text-xs"></i>
+    Excel
+  </button>
+  <button (click)="exportarPDF()"
+    class="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-md flex items-center gap-1 shadow-md">
+    <i class="pi pi-file-pdf text-xs"></i>
+    PDF
+  </button>
+</div>
+
+<div class="max-w-full overflow-x-auto animate__animated animate__fadeIn">
+  <table class="min-w-full text-[12px] text-left text-gray-700 dark:text-gray-200">
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+
+      <ng-container *ngFor="let grupo of libreriasPorCiudad | keyvalue">
+        <!-- Cabecera de ciudad -->
+        <tr class="text-sm font-bold">
+          <td colspan="10" class="px-3 py-2 text-center text-gray-800 dark:text-gray-200">
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+            <span class="px-4">CIUDAD: {{ grupo.key | uppercase }}</span>
+            <span class="inline-block w-full border-t border-gray-400 dark:border-gray-600 align-middle"></span>
+          </td>
+        </tr>
+
+        <!-- Encabezados -->
+        <tr class="bg-gray-50 dark:bg-gray-800 text-[11px] uppercase tracking-wider text-gray-700 dark:text-gray-300">
+          <th class="px-3 py-2">#</th>
+          <th class="px-3 py-2">NIT</th>
+          <th class="px-3 py-2">Razón Social</th>
+          <th class="px-3 py-2">Teléfono</th>
+          <th class="px-3 py-2">Dirección</th>
+          <th class="px-3 py-2">Cliente</th>
+          <th class="px-3 py-2">Fecha</th>
+          <th class="px-3 py-2">Hora</th>
+          <th class="px-3 py-2">Estado</th>
+        </tr>
+
+        <!-- Datos -->
+        <tr *ngFor="let xdat of grupo.value; let i = index" class="hover:bg-gray-50 dark:hover:bg-gray-800">    
+          <td class="px-3 py-2">{{ i + 1 }}</td>
+          <td class="px-3 py-2">{{ xdat.nit || 'S/N'}}</td>
+          <td class="px-3 py-2">{{ xdat.razon_social }}</td>
+          <td class="px-3 py-2">{{ xdat.telefono || 'Sin teléfono' }}</td>
+          <td class="px-3 py-2">{{ xdat.direccion || 'Sin dirección' }}</td>
+          <td class="px-3 py-2">{{ xdat.persona?.nombre }} {{ xdat.persona?.ap_paterno }} {{ xdat.persona?.ap_materno }}</td>
+
+          <td class="px-3 py-2">{{ xdat.fecha | date:'dd/MM/yyyy'  }}</td>
+          <td class="px-3 py-2">{{ xdat.hora }}</td>
+          <td class="px-3 py-2">{{ xdat.estado == 1 ? 'Activo' : 'Pendiente' }}</td>
+        </tr>
+      </ng-container>
+
+    </tbody>
+  </table>
+</div>
+

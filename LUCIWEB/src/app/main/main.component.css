@@ -1,0 +1,64 @@
+/* Cabecera flotante */
+.cabecera-flotante {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 20;
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.8) 0%,       /* claro por defecto */
+    rgba(255, 182, 249, 0.4) 50%,
+    rgba(255, 255, 255, 0.8) 100%
+  );
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  height: 40px;
+}
+
+/* Cabecera modo oscuro */
+.dark .cabecera-flotante {
+  background: linear-gradient(
+    to right,
+    rgba(30, 30, 30, 0.8) 0%,          /* gris oscuro semi-transparente */
+    rgba(75, 0, 75, 0.4) 50%,          /* púrpura oscuro semi-transparente */
+    rgba(30, 30, 30, 0.8) 100%
+  );
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+}
+
+/* Contenido principal */
+.main-content {
+  margin-left: 220px;
+  margin-top: 40px;
+  padding: 20px;
+  min-height: calc(100vh - 40px);
+  background-color: #fff;  /* claro por defecto */
+  overflow-y: auto;
+}
+
+/* Contenido modo oscuro */
+.dark .main-content {
+  background-color: #1f1f1f; /* gris oscuro */
+  color: #e5e7eb; /* texto claro para contrastar */
+}
+
+/* Scrollbar personalizado modo claro */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #fce7f3;
+}
+::-webkit-scrollbar-thumb {
+  background-color: #9d174d;
+  border-radius: 4px;
+}
+
+/* Scrollbar modo oscuro */
+.dark ::-webkit-scrollbar-track {
+  background: #2c2c2c;
+}
+.dark ::-webkit-scrollbar-thumb {
+  background-color: #9d174d; /* o un tono más oscuro si quieres */
+}
+

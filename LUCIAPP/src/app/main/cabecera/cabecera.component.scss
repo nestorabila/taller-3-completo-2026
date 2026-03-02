@@ -1,0 +1,26 @@
+/* Animación de burbujas elegante */
+@keyframes bubbleElegante {
+  0% {
+    transform: translateY(100vh) translateX(0) scale(0.5) rotate(0deg);
+    opacity: 0;
+  }
+  25% {
+    opacity: 0.4;
+  }
+  50% {
+    transform: translateY(50vh) translateX(20px) scale(1) rotate(45deg);
+    opacity: 0.6;
+  }
+  75% {
+    transform: translateY(20vh) translateX(-15px) scale(0.8) rotate(90deg);
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-20vh) translateX(0) scale(0.5) rotate(360deg);
+    opacity: 0;
+  }
+}
+
+.animate-bubble-elegante {
+  animation: bubbleElegante 20s ease-in-out infinite;
+}

@@ -1,0 +1,70 @@
+tunear sistema
+npx tunnelmole 4200
+
+ detalle_compra.belongsTo(subcategoria, { foreignKey: "idsubc", as: "subcategoria"});
+  subcategoria.belongsTo(categoria, {foreignKey: "idcategoria", as: "categoria" });
+
+mkdir mi-backend
+cd mi-backend
+npm init -y
+
+intalar basico  node y express y sequelize(SERVIDOR NODE)
+1 	express (npm install express), nodemon(npm install --save-dev nodemon), 
+	sequelize(npm install --save sequelize), 
+	postgres(npm install --save pg pg-hstore), 
+	morgan para ver por consola las peticiones
+	(npm install sequelize-auto)
+npm install dotenv@16.4.5
+instalar cors: npm install cors
+
+
+	configurar database.js
+	crear app.js y database.js e iniciar sequelize con:
+	 generar modelos: npx sequelize-auto -o "./src/modelos" -d bdluci -h localhost -u postgres -p 5432 -x admin -e postgres
+
+	cors para conectar bak y front en dominisos diferentes(npm install cors)
+	nodemon para actualizar cambios (npm install --save-dev nodemon)
+
+	(npm install dotenv) para leer variables de entorno
+	(npm install jsonwebtoken) para jwt
+	(npm install bcryptjs) para ebcriptar di desencriptar
+
+2 al no usar alias en las llamadas find etc se debe borrar del inits-models para que no lo espere
+3 si dic que una propiedad es ilegible o undefinida pero crea solo con el id y el resto null esta mal escrito en alguna parte
+4 
+en package.json: "scripts": {
+    "dev": "nodemon app.js"
+  },
+
+errores-------------------------
+PS C:\Users\yossemar\Documents\materias\semestre 1 2024\taller II\proyecto\backendV1> npm run dev
+
+> backendv1@1.0.0 dev
+> nodemon app.js
+
+[nodemon] 3.1.4
+[nodemon] to restart at any time, enter `rs`
+[nodemon] watching path(s): *.*
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting `node app.js`
+C:\Users\yossemar\Documents\materias\semestre 1 2024\taller II\proyecto\backendV1\node_modules\express\lib\router\index.js:469
+      throw new TypeError('Router.use() requires a middleware function but got a ' + gettype(fn))
+      ^
+
+TypeError: Router.use() requires a middleware function but got a Object
+    at Function.use (C:\Users\yossemar\Documents\materias\semestre 1 2024\taller II\proyecto\backendV1\node_modules\express\lib\router\index.js:469:13)
+    at Function.<anonymous> (C:\Users\yossemar\Documents\materias\semestre 1 2024\taller II\proyecto\backendV1\node_modules\express\lib\application.js:227:21)      
+    at Array.forEach (<anonymous>)
+    at Function.use (C:\Users\yossemar\Documents\materias\semestre 1 2024\taller II\proyecto\backendV1\node_modules\express\lib\application.js:224:7)
+    at Object.<anonymous> (C:\Users\yossemar\Documents\materias\semestre 1 2024\taller II\proyecto\backendV1\app.js:29:5)
+    at Module._compile (node:internal/modules/cjs/loader:1226:14)
+    at Module._extensions..js (node:internal/modules/cjs/loader:1280:10)
+    at Module.load (node:internal/modules/cjs/loader:1089:32)
+    at Module._load (node:internal/modules/cjs/loader:930:12)
+    at Function.executeUserEntryPoint [as runMain] (node:internal/modules/run_main:81:12)
+
+Node.js v18.14.0
+[nodemon] app crashed - waiting for file changes before starting...
+solucion: Parece que tu servidor Node está lanzando un error relacionado con Router.use(), indicando que se espera una función de middleware pero se está recibiendo un objeto. 
+Este error generalmente ocurre cuando intentas usar un módulo o archivo que no está exportando una función correctamente.
+osea que estaba usando la direccion en app y en el controlador no exportaba el router

@@ -1,0 +1,255 @@
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+<div *ngIf="loading" class="flex justify-center items-center p-4">
+  <p-progressSpinner></p-progressSpinner>
+  <span class="ml-2 text-gray-600">Por fabor espere un momento...</span>
+</div>
+
+<div *ngIf="!loading">
+  <!-- Aquí va tu lista y todo lo demás -->
+   <div class="card">
+  <p-fieldset>
+    <ng-template #header>
+      <div class="animate__animated animate__fadeInLeft flex items-center gap-2 px-2">
+        <p-avatar 
+          icon="pi pi-shopping-cart" 
+          shape="circle" 
+          styleClass="bg-pink-200 text-pink-800" 
+        />
+        <span class="font-bold">Modulo Pedidos / Registrar</span>
+      </div>
+    </ng-template>
+
+    <!-- Contenedor horizontal: Panel 1 y Panel 2 -->
+    <div class="flex flex-col lg:flex-row gap-1 mt-0">
+      
+      <!-- Panel 1 con 2 subpaneles en vertical -->
+      <div class="flex flex-col gap-1 flex-1">
+
+ <!-- Subpanel 2 -->
+<div class="p-1 border rounded-md shadow-sm bg-white dark:bg-gray-900 space-y-3 text-sm">
+  <div class="flex items-center justify-between mb-1">
+    <h4 class="font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2 text-sm">
+      <i class="pi pi-shopping-cart text-blue-500 text-base"></i>
+      Catálogo de productos
+    </h4>
+    <button 
+      (click)="togglePanel2()" 
+      class="text-gray-500 dark:text-gray-400 hover:text-blue-500 transition"
+      title="Colapsar/Expandir"
+    >
+      <i [ngClass]="mostrarContenido1 ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
+    </button>
+  </div>
+
+  <div *ngIf="mostrarContenido1" class="space-y-3">
+    <!-- Filtros y buscador -->
+    <div class="flex flex-col md:flex-row gap-2 w-full">
+      <div class="w-full md:w-1/2">
+        <input  
+          [(ngModel)]="filtro" 
+          (input)="buscarCatalogo()"
+          type="text" 
+          placeholder="Buscar catálogo..." 
+          class="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-md 
+                 focus:outline-none focus:ring-1 focus:ring-blue-300 
+                 text-sm bg-blue-50 dark:bg-gray-800 dark:text-gray-200"
+        />
+      </div>
+    </div>
+
+    <!-- Tarjetas con scroll solo aquí -->
+    <div class="max-h-[257px] overflow-y-auto pr-1">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        <div 
+          *ngFor="let xdat of listaCatalogo; let pos = index"
+          class="animate__animated animate__fadeInDown border rounded-md p-0 shadow-sm 
+                 bg-pink-50 dark:bg-gray-800 hover:shadow-md transition flex flex-col"
+        >
+          <img 
+            (click)="verImagen(xdat.fotografia)"
+            [src]="'http://localhost:8090/imagenes/' + xdat.fotografia"  
+            alt="Imagen principal"  
+            class="w-full h-16 object-cover rounded"
+          />
+          <h3 class="text-gray-800 dark:text-gray-100 text-xs font-semibold leading-none mt-1">
+            {{xdat.nombre}}
+          </h3>
+          <div class="flex items-center justify-between text-xs text-green-700 dark:text-green-400 font-medium leading-none">
+            <span>Bs. {{xdat.precio}}</span>
+            Seleccionar: 
+            <input 
+              type="checkbox" 
+              [checked]="idsProductosSeleccionados.includes(xdat.idcatalogo)"
+              (change)="toggleProductoSeleccionado($event, xdat)"
+              class="w-4 h-4 text-green-600 border-gray-300 dark:border-gray-600 
+                     rounded focus:ring-green-400 pr-1.5 mr-1.5"
+            />
+          </div>
+          <div class="mt-3"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <!-- Subpanel 1 -->
+<div class="animate__animated animate__fadeInUp p-3 border rounded-md shadow-sm bg-white dark:bg-gray-900 space-y-3 text-sm">
+  <div class="flex items-center justify-between mb-1">
+    <h4 class="font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2 text-sm">
+      <i class="pi pi-user text-blue-500 text-base"></i>
+      Datos del Cliente
+    </h4>
+    <button 
+      (click)="togglePanel1()" 
+      class="text-gray-500 dark:text-gray-400 hover:text-blue-500 transition"
+      title="Colapsar/Expandir"
+    >
+      <i [ngClass]="mostrarContenido ? 'pi pi-chevron-up' : 'pi pi-chevron-down'"></i>
+    </button>
+  </div>
+
+  <div *ngIf="mostrarContenido" class="animate__animated animate__fadeInUp space-y-3">
+    <div class="flex items-center gap-2">
+  <label class="text-gray-600 dark:text-gray-300 w-36">Seleccionar Cliente:</label>
+  <p-dropdown
+    [options]="listaNegocio"
+    [(ngModel)]="proveedorSeleccionado"
+    optionLabel="razon_social"
+    placeholder="-- Seleccione --"
+    [showClear]="true"
+    [filter]="true"
+    filterPlaceholder="Buscar cliente..."
+    (onChange)="validarCliente()"
+    styleClass="flex-1 border border-gray-300 dark:border-gray-600 rounded px-2 py-1 
+                focus:outline-none focus:ring-1 focus:ring-blue-300 text-sm 
+                bg-white dark:bg-gray-800 dark:text-gray-200"
+    [panelStyle]="{ 'max-height': '250px' }"
+    [style]="{ 'padding-top': '0.25rem', 'padding-bottom': '0.25rem', 'line-height': '1.5rem' }"
+  >
+    <ng-template let-libreria pTemplate="item">
+      razon social: {{libreria.razon_social}} - cliente: {{libreria.persona?.nombre}} {{libreria.persona?.ap_paterno}}
+    </ng-template>
+  </p-dropdown>
+</div>
+
+    <div class="flex flex-col md:flex-row md:items-center md:gap-2">
+      <label class="text-gray-600 dark:text-gray-300 w-36">¿Agregar fecha de entrega?</label>
+      <div class="flex items-center gap-2">
+        <input [(ngModel)]="fecha_entrega"
+        (change)="validarFechaEntrega()"
+               type="date" 
+               class="ml-3 border border-gray-300 dark:border-gray-600 rounded px-2 py-0.5 
+                      focus:outline-none focus:ring-1 focus:ring-green-400 text-sm 
+                      bg-white dark:bg-gray-800 dark:text-gray-200"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+
+  <!-- Panel 2 -->
+<div class="p-4 border rounded-md shadow-sm bg-white dark:bg-gray-900 flex-1">
+  <h4 class="font-semibold text-blue-500 dark:text-blue-400 flex items-center gap-2 text-sm">
+    <i class="pi pi-shopping-cart text-blue-500 dark:text-blue-400 text-base"></i>
+    Registrar Nuevo pedido
+  </h4>
+
+  <!-- empieza aqui panel 2 -->
+  <div 
+    *ngFor="let prod of productosSeleccionados; let i = index"
+    class="animate__animated animate__fadeInLeft border-b border-gray-200 dark:border-gray-700 py-2 text-sm text-gray-700 dark:text-gray-200 flex flex-col lg:flex-row items-center justify-between gap-2"
+  >
+    <!-- Nombre del producto -->
+    <div class="text-xs lg:text-sm w-full lg:w-auto text-gray-500 dark:text-gray-300">
+      nombre catálogo: <span class="text-gray-800 dark:text-gray-100 font-semibold">{{ prod.nombre }}</span>
+    </div>
+
+    <!-- Select de cantidad -->
+    <div class="flex items-center gap-2 w-full lg:w-auto">
+      <div class="flex items-center border border-gray-300 dark:border-gray-600 rounded-full px-1 bg-gray-50 dark:bg-gray-800 shadow-sm h-8">
+        <button
+          type="button"
+          class="text-gray-500 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-500 px-2 py-1 rounded-full hover:bg-red-50 dark:hover:bg-red-900 transition text-xs"
+          (click)="adjustCantidad(i, 'restar')">
+          <i class="pi pi-minus"></i>
+        </button>
+
+        <input
+          type="text"
+          class="text-center w-20 mx-1 text-xs text-gray-700 dark:text-gray-200 font-semibold bg-transparent focus:outline-none border-0"
+          [(ngModel)]="detalleCompraData[i].cantidad"
+          readonly
+        />
+
+        <button
+          type="button"
+          class="text-gray-500 dark:text-gray-300 hover:text-green-600 dark:hover:text-green-400 px-2 py-1 rounded-full hover:bg-green-50 dark:hover:bg-green-900 transition text-xs"
+          (click)="adjustCantidad(i, 'sumar')">
+          <i class="pi pi-plus"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+  <!-- termina aqui panel2 -->
+
+  <div class="flex justify-center mt-4">
+    <button (click)="verificarYRegistrar()"  [disabled]="!puedeGuardar || loadingSave"
+      class="flex items-center gap-2 border border-pink-600 text-pink-600 dark:border-pink-500 dark:text-pink-400 hover:bg-pink-50 dark:hover:bg-pink-900 text-sm font-medium px-4 py-2 rounded transition duration-300">
+      <ng-container *ngIf="!loadingSave">
+    <i class="pi pi-check"></i> Guardar
+  </ng-container>
+
+  <!-- si está cargando -->
+  <ng-container *ngIf="loadingSave">
+    <i class="pi pi-spin pi-spinner text-white"></i>
+    Procesando...
+  </ng-container>
+    </button>
+  </div>
+</div>
+
+
+<!-- termina auqi panel 2 -->
+
+    </div>
+  </p-fieldset>
+</div>
+
+</div>
+
+
+<!-- Toast -->
+<p-toast 
+  position="bottom-right"
+  styleClass="border-0 min-h-0">
+</p-toast>
+
+
+<!-- Modal para imagen ampliada -->
+<p-dialog 
+  [(visible)]="modalImagenVisible" 
+  [modal]="true" 
+  [closable]="true"
+  [dismissableMask]="true"
+  [style]="{ width: '90vw', maxWidth: '500px' }"
+  [contentStyle]="{ padding: '0', background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center' }"
+  class="rounded-xl overflow-hidden">
+
+  <ng-template pTemplate="header">
+    <div class="text-lg text-sky-600 font-semibold flex items-center gap-2">
+      <i class="pi pi-image text-sky-500"></i> Vista previa de imagen
+    </div>
+  </ng-template>
+
+  <div class="w-[50vh] h-[50vh] flex items-center justify-center bg-black">
+    <img 
+      [src]="'http://localhost:8090/imagenes/' + imagenSeleccionadaModal" 
+      alt="Imagen ampliada"
+      class="max-h-full max-w-full object-contain rounded shadow-xl transition duration-300 ease-in-out" />
+  </div>
+</p-dialog>

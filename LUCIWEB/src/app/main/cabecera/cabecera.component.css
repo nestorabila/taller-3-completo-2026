@@ -1,0 +1,46 @@
+.btn-cerrar-sesion {
+  background-color: transparent; /* fondo transparente */
+  color: white; /* texto claro */
+  border: none;
+  border-radius: 10px;
+  padding: 0px 12px;
+  font-weight: bold;
+  transition: 0.3s ease;
+  text-shadow:
+      -1px -1px 0 black,
+       1px -1px 0 black,
+      -1px  1px 0 black,
+       1px  1px 0 black;
+}
+
+/* Modo oscuro */
+.dark .btn-cerrar-sesion {
+  color: white; /* texto sigue blanco en dark */
+  text-shadow:
+      -1px -1px 0 black,
+       1px -1px 0 black,
+      -1px  1px 0 black,
+       1px  1px 0 black;
+}
+
+/* Hover normal */
+.btn-cerrar-sesion:hover {
+  background-color: rgb(179, 108, 169);
+  color: black;
+  border: 2px solid rgb(168, 79, 146);
+  text-shadow: none;
+}
+
+/* Hover modo oscuro */
+.dark .btn-cerrar-sesion:hover {
+  background-color: rgb(120, 80, 140); /* un color más oscuro para dark */
+  color: white; /* texto blanco en hover dark */
+  border: 2px solid rgb(150, 70, 130);
+  text-shadow: none;
+}
+
+@media (max-width: 810px) {
+  .saludo-visible-custom {
+    display: none !important;
+  }
+}

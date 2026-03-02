@@ -1,0 +1,221 @@
+<div class="p-6 bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-600 rounded-lg max-w-7xl mx-auto space-y-6 text-gray-800 dark:text-gray-100">
+
+<div class="flex flex-col border-b pb-4 mb-4 border-gray-300 dark:border-gray-700">
+
+  <!-- Título + mini tarjetas alineadas horizontalmente -->
+  <div class="flex justify-between items-center mb-4">
+    <!-- Título -->
+    <div class="flex items-center gap-3">
+      <i class="pi pi-file text-2xl text-gray-600 dark:text-gray-300"></i>
+      <div>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Módulo Almacén / Reporte de Compras</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Visualiza y exporta tus reportes de compras.</p>
+      </div>
+    </div>
+
+    <!-- Mini tarjetas alineadas horizontalmente -->
+    <div class="flex gap-6 text-sm">
+      <!-- Tarjeta 1 -->
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+        <i class="pi pi-calendar text-xl text-blue-500"></i>
+        <div class="flex flex-col">
+          <span class="text-xs text-gray-400 dark:text-gray-400">Gasto esta semana</span>
+          <span class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ totalSemana }} Bs.</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 2 -->
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+        <i class="pi pi-clock text-xl text-green-500"></i>
+        <div class="flex flex-col">
+          <span class="text-xs text-gray-400 dark:text-gray-400">Gasto este mes</span>
+          <span class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ totalMes }} Bs.</span>
+        </div>
+      </div>
+
+      <!-- Tarjeta 3 -->
+      <div class="flex items-center gap-2 text-gray-700 dark:text-gray-200">
+        <i class="pi pi-chart-line text-xl text-indigo-500"></i>
+        <div class="flex flex-col">
+          <span class="text-xs text-gray-400 dark:text-gray-400">Total gastado</span>
+          <span class="text-base font-semibold text-gray-800 dark:text-gray-100">{{ totalGeneral }} Bs.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Botones alineados a la derecha debajo de las tarjetas -->
+  <div class="flex justify-end gap-3">
+    <!-- Botón Filtros -->
+    <button (click)="toggleFiltros()"
+      class="flex items-center gap-2 px-3 py-1 text-yellow-500 rounded-full text-sm font-medium
+             hover:text-yellow-600 hover:bg-yellow-50 dark:hover:bg-yellow-700 transition-colors duration-200">
+      <i class="pi pi-filter text-yellow-500 text-base"></i> Filtros
+    </button>
+
+    <!-- Botón Ver gastos por compra -->
+    <button (click)="gastos()"
+      class="flex items-center gap-2 px-3 py-1 text-green-500 rounded-full text-sm font-medium
+             hover:text-green-600 hover:bg-green-50 dark:hover:bg-green-700 transition-colors duration-200">
+      <i class="pi pi-wallet text-green-500 text-base"></i> Gastos Compra
+    </button>
+
+    <!-- Botón Generar Reporte -->
+    <button (click)="generarReporte()"
+      class="flex items-center gap-2 px-3 py-1 text-pink-500 rounded-full text-sm font-medium
+             hover:text-pink-600 hover:bg-pink-50 dark:hover:bg-pink-700 transition-colors duration-200">
+      <i class="pi pi-file text-pink-500 text-base"></i> Exportar Reporte
+    </button>
+  </div>
+
+</div>
+
+
+<!-- gráfico -->
+<div *ngIf="mostrarFiltros2" class="mb-6">
+  <div class="flex items-center justify-between mb-2">
+    <h3 class="text-base font-semibold text-gray-700 dark:text-gray-200">Gráfico de Gastos por Compra</h3>
+    <!-- Botones de período como texto -->
+    <div class="flex gap-6 text-sm text-gray-700 dark:text-gray-200 border-b border-gray-200 dark:border-gray-700 pb-1">
+      <button (click)="graficarCompras('dia')" class="flex items-center gap-1 relative hover:text-blue-600">
+        <i class="pi pi-calendar"></i>
+        mostrar por día
+        <span class="absolute -bottom-1 left-0 w-full h-[1px] bg-blue-500"></span>
+      </button>
+
+      <button (click)="graficarCompras('mes')" class="flex items-center gap-1 relative hover:text-blue-600">
+        <i class="pi pi-clock"></i>
+        mostrar por mes
+        <span class="absolute -bottom-1 left-0 w-full h-[1px] bg-blue-500"></span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Gráfico más compacto -->
+  <canvas baseChart
+    [data]="lineChartData"
+    [options]="lineChartOptions"
+    [type]="lineChartType"
+    height="60">
+  </canvas>
+</div>
+
+
+<!-- Filtros -->
+<div class="flex flex-wrap items-end justify-between gap-4">
+  <div *ngIf="mostrarFiltros"  class="flex flex-wrap items-end gap-4">
+    <div class="flex flex-col">
+      <label class="text-sm mb-1 text-gray-600 dark:text-gray-300">Código</label>
+      <input [(ngModel)]="idcompraFiltro" (input)="modelCompra()" type="text" placeholder="Ej: 10029"
+        class="border border-gray-300 dark:border-gray-600 text-sm px-2 py-1 rounded-md w-40 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:bg-gray-800 dark:text-gray-100" />
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm mb-1 text-gray-600 dark:text-gray-300">Desde</label>
+      <input type="date"  [(ngModel)]="fechaDesdeFiltro" (change)="modelCompra()"
+        class="border border-gray-300 dark:border-gray-600 text-sm px-2 py-1 rounded-md w-36 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:bg-gray-800 dark:text-gray-100" />
+    </div>
+
+    <div class="flex flex-col">
+      <label class="text-sm mb-1 text-gray-600 dark:text-gray-300">Hasta</label>
+      <input type="date"  [(ngModel)]="fechaHastaFiltro" (change)="modelCompra()"
+        class="border border-gray-300 dark:border-gray-600 text-sm px-2 py-1 rounded-md w-36 focus:outline-none focus:ring-1 focus:ring-gray-400 dark:bg-gray-800 dark:text-gray-100" />
+    </div>
+
+    <!-- Radios -->
+    <div class="flex items-center gap-4 ml-2">
+      <span class="text-sm text-gray-600 dark:text-gray-300">Tipo:</span>
+      <label class="flex items-center text-sm text-gray-700 dark:text-gray-200">
+        <input type="radio" name="tipo" class="form-radio text-gray-700 dark:text-gray-200" [value]="false" [(ngModel)]="modoDetalle" (change)="modelCompra()" checked />
+        <span class="ml-1">General</span>
+      </label>
+      <label class="flex items-center text-sm text-gray-700 dark:text-gray-200">
+        <input type="radio" name="tipo" class="form-radio text-gray-700 dark:text-gray-200" [value]="true" [(ngModel)]="modoDetalle" (change)="modelCompra()" />
+        <span class="ml-1">Más Detalles</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Botones exportar -->
+  <div *ngIf="mostrarFiltros1" class="flex gap-2">
+    <button (click)="exportarPDF()" class="flex items-center gap-1 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+      <i class="pi pi-file-pdf text-red-600"></i>
+      PDF
+    </button>
+    <button (click)="exportarEXCEL()" class="flex items-center gap-1 border border-gray-300 dark:border-gray-600 px-3 py-1.5 rounded-md text-sm hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+      <i class="pi pi-file-excel text-green-600"></i>
+      Excel
+    </button>
+  </div>
+</div>
+
+
+<table class="min-w-full border border-gray-700 text-xs text-black dark:text-gray-200 dark:border-gray-600">
+  <tbody>
+    <ng-container *ngFor="let grupo of proveedoresAgrupados">
+      <!-- Título del proveedor -->
+      <tr class="font-bold text-sm">
+        <td colspan="5" class="px-4 py-2 border border-gray-700 dark:border-gray-600">
+          Proveedor: {{ grupo.proveedor }}
+        </td>
+      </tr>
+
+      <!-- Encabezado de columnas por grupo -->
+      <tr class="bg-gray-200 text-black font-semibold dark:bg-gray-800 dark:text-gray-200">
+        <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">#</th>
+        <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Cod</th>
+        <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Cantidad Total</th>
+        <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Precio Total</th>
+        <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Fecha Registro</th>
+      </tr>
+
+      <!-- Listado de compras del proveedor -->
+      <ng-container *ngFor="let xdat of grupo.compras; let i = index">
+        <tr class="bg-gray-100 dark:bg-gray-900">
+          <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ i + 1 }}</td>
+          <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">COD-{{ xdat.idcompra }}</td>
+          <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ xdat.cantidad_total! }} Uds.</td>
+          <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ xdat.precio_total! }} Bs.</td>
+          <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">
+            {{ xdat.fecha | date:'dd/MM/yyyy' }} {{ xdat.hora }}
+          </td>
+        </tr>
+
+        <!-- Fila de detalles -->
+        <tr *ngIf="modoDetalle && todosDetalles[xdat.idcompra!]">
+          <td colspan="5" class="p-0">
+            <table class="w-full text-xs text-left border-t border-gray-700 dark:border-gray-600">
+              <thead class="text-black dark:text-gray-200">
+                <tr>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Producto</th>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Empaque</th>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">C-Unitario</th>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Total Uds</th>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">P-Unitario</th>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Subtotal</th>
+                  <th class="px-4 py-2 border border-gray-700 dark:border-gray-600">Obs.</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let detalle of todosDetalles[xdat.idcompra!]">
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.producto?.nombre || '—' }}</td>
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.cantidad_e }} {{ detalle.empaque?.nombre }}</td>
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.cantidad_u }}</td>
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.cantidad_t }} uds</td>
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.precio_u }} Bs.</td>
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.precio_t }} Bs.</td>
+                  <td class="px-4 py-2 border border-gray-700 dark:border-gray-600">{{ detalle.observacion || 'sin obs' }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </td>
+        </tr>
+      </ng-container>
+    </ng-container>
+  </tbody>
+</table>
+
+
+
+</div>
+
