@@ -1,0 +1,13 @@
+control 
+CD
+DIPLOMA
+TIT POV
+CERFICADO NAC.
+
+codigo de revicion: 6800
+analizar codigo: 7031
+
+acceso al sistema
+ user: nfloresclemente
+ pasw: e111057abila
+

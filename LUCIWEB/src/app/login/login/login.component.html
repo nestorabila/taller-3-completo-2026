@@ -1,28 +1,18 @@
-<div class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 overflow-hidden">
+<!-- <div class="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-200 via-gray-300 to-gray-400 dark:from-gray-800 dark:via-gray-700 dark:to-gray-600 overflow-hidden">
   
-  <!-- Burbujas flotantes animadas -->
-  <div class="absolute w-72 h-72 bg-white/10 rounded-full animate-bubble1 top-[-50px] left-[-50px]"></div>
-  <div class="absolute w-56 h-56 bg-white/20 rounded-full animate-bubble2 bottom-[-40px] right-[-40px]"></div>
-  <div class="absolute w-96 h-96 bg-white/5 rounded-full animate-bubble3 top-[20%] right-[-60px]"></div>
   
-  <!-- Burbujas adicionales -->
-  <div class="absolute w-48 h-48 bg-white/10 rounded-full animate-bubble4 top-[10%] left-[60%]"></div>
-  <div class="absolute w-64 h-64 bg-white/15 rounded-full animate-bubble5 bottom-[20%] left-[30%]"></div>
-  <div class="absolute w-32 h-32 bg-white/20 rounded-full animate-bubble6 top-[70%] right-[20%]"></div>
-  <div class="absolute w-40 h-40 bg-white/10 rounded-full animate-bubble7 bottom-[10%] right-[50%]"></div>
+ 
+  
 
-  <!-- Contenedor principal del login con efecto vidrio -->
+
   <div class="animate__animated animate__zoomIn relative z-10 flex flex-col justify-center px-6 py-12 
               bg-white/20 dark:bg-gray-900/20 backdrop-blur-lg rounded-xl shadow-2xl w-full max-w-md 
               border border-white/30 dark:border-gray-700/30 transition-colors duration-500">
 
-    <!-- Botón alternar tema -->
-    <button class="absolute top-4 right-4 flex items-center px-3 py-2 rounded-full hover:bg-blue-100/30 dark:hover:bg-gray-700/30 text-blue-600 dark:text-blue-400 transition"
-            (click)="toggleTheme()">
-      <i [ngClass]="isDarkMode ? 'pi pi-sun text-lg' : 'pi pi-moon text-lg'"></i>
-    </button>
 
-    <!-- Logo y título -->
+ 
+
+
     <div class="sm:mx-auto sm:w-full sm:max-w-sm text-center">
       <img class="mx-auto h-12 w-auto mb-4" src="assets/logo1.png" alt="Your Company" />
       <h2 class="text-2xl font-bold text-gray-900 dark:text-gray-100 tracking-tight">
@@ -30,7 +20,7 @@
       </h2>
     </div>
 
-    <!-- Mensaje -->
+    
     <div *ngIf="mostrarMensaje"
          class="fixed top-20 left-1/2 z-50 w-auto max-w-md px-6 py-3 rounded-lg shadow-lg text-center text-base font-medium pointer-events-none transition-all duration-500 ease-out transform"
          [ngClass]="[
@@ -43,7 +33,7 @@
       {{ mensaje }}
     </div>
 
-    <!-- Formulario -->
+   
     <form class="mt-6 space-y-6" (ngSubmit)="ingresar()">
       <div>
         <label for="usuario" class="block text-sm font-medium text-gray-900 dark:text-gray-100">Nombre Usuario</label>
@@ -70,13 +60,12 @@
         [disabled]="!credenciales.usuario || !credenciales.contrasena || cargando"
         class="w-full relative rounded-lg bg-pink-700 hover:bg-pink-600 text-white py-2 px-4 font-semibold shadow-lg transition-all duration-300 focus:outline-2 focus:outline-pink-700 h-10 flex items-center justify-center">
 
-  <!-- Contenedor que mantiene el texto centrado; loader se posiciona absoluto dentro del botón -->
+ 
   <span class="relative flex items-center justify-center w-full">
-    <!-- Texto: mantenemos espacio usando opacity en vez de visibility -->
+    
     <span [class.opacity-0]="cargando">Iniciar sesión</span>
   </span>
 
-  <!-- Loader centrado sobre el botón (posicionado respecto al botón que es relative) -->
   <span *ngIf="cargando" class="absolute inset-0 flex items-center justify-center">
     <span class="loader mostrar"></span>
   </span>
@@ -90,5 +79,417 @@
       ¡Bienvenido a <span class="font-semibold text-pink-700">LUCIWEB</span>!<br>
       Tu espacio digital para organizar, crecer y avanzar.
     </p>
+  </div>
+</div> -->
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogos Públicos</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+
+ <!-- CONTENEDOR GENERAL -->
+<div class="max-w-7xl mx-auto px-4 py-8">
+
+ <!-- TITULO -->
+<header class="mb-12">
+
+  <!-- CONTENEDOR SUPERIOR -->
+  <div class="flex justify-between items-start mb-6">
+
+    <!-- TITULO -->
+    <div class="flex-1">
+      <h1 class="text-3xl md:text-4xl font-extrabold bg-gradient-to-r from-fuchsia-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent tracking-tight text-center sm:text-left">
+        Nuestros Catálogos
+      </h1>
+
+      <p class="text-gray-500 dark:text-gray-400 mt-2 text-sm md:text-base text-center sm:text-left">
+        Descubre productos seleccionados especialmente para ti
+      </p>
+    </div>
+
+    <!-- MENU DESPLEGABLE -->
+    <div class="relative group ml-4">
+
+      <!-- BOTON 3 PUNTOS -->
+      <button
+        class="flex items-center justify-center w-10 h-10 rounded-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md hover:scale-105 text-gray-700 dark:text-gray-300 transition duration-300">
+
+        <i class="pi pi-ellipsis-v text-base"></i>
+
+      </button>
+
+      <!-- CARD MENU -->
+      <div
+        class="absolute right-0 mt-3 w-52 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl rounded-2xl shadow-xl border border-gray-200 dark:border-gray-800 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition duration-300 z-50 p-3">
+
+        <!-- BOTON ACCESO -->
+        <button (click)="abrirModalLogin()"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-cyan-50 dark:hover:bg-gray-800 transition text-sm font-medium text-gray-700 dark:text-gray-300">
+
+          <i class="pi pi-sign-in text-cyan-500"></i>
+          <span>Acceso</span>
+
+        </button>
+
+        <!-- BOTON CAMBIO TEMA -->
+        <button
+          (click)="toggleTheme()"
+          class="w-full flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-yellow-50 dark:hover:bg-gray-800 transition text-sm font-medium text-gray-700 dark:text-gray-300">
+
+          <i [ngClass]="isDarkMode ? 'pi pi-sun text-yellow-500' : 'pi pi-moon text-blue-500'"></i>
+
+          <span>
+            {{ isDarkMode ? 'Modo Claro' : 'Modo Oscuro' }}
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</header>
+
+  <!-- SECCION DESTACADOS -->
+<section class="mb-14">
+
+  <!-- TITULO -->
+  <div class="flex items-center justify-between mb-5">
+    <div class="flex items-center gap-2">
+      <i class="bi bi-stars text-yellow-400 text-xl"></i>
+      <h2 class="text-xl md:text-2xl font-semibold tracking-tight">
+        Catálogos Destacados
+      </h2>
+    </div>
+
+    <div class="hidden md:flex items-center gap-2 text-sm text-gray-400">
+      <i class="bi bi-arrow-left-right"></i>
+      <span>Desliza para ver más</span>
+    </div>
+  </div>
+
+  <!-- CONTENEDOR HORIZONTAL -->
+  <div class="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent">
+
+    <!-- TARJETA DESTACADA -->
+    <div *ngFor="let xdat of listaCatalogoDestacado; let pos=index"
+      class="group relative min-w-[240px] max-w-[240px] sm:min-w-[250px] sm:max-w-[250px] flex-shrink-0 snap-start bg-white/95 dark:bg-gray-900/90 backdrop-blur-md rounded-2xl shadow-sm hover:shadow-xl border border-gray-200 dark:border-gray-800 overflow-hidden transition duration-300 hover:-translate-y-1">
+
+      <!-- ETIQUETA -->
+      <span class="absolute top-2 right-2 bg-gradient-to-r from-yellow-300 to-amber-400 text-gray-900 text-[10px] font-bold px-2.5 py-1 rounded-full shadow-sm z-10">
+        Destacado
+      </span>
+
+      <!-- IMAGEN -->
+      <div class="overflow-hidden">
+        <img [src]="'http://localhost:8090/imagenes/' + xdat.fotografia"
+          alt="Catálogo"
+          class="w-full h-32 sm:h-36 object-cover group-hover:scale-105 transition duration-500">
+      </div>
+
+      <!-- CONTENIDO -->
+      <div class="p-3">
+
+        <!-- NOMBRE -->
+        <div class="flex items-center gap-2 mb-2">
+          <i class="bi bi-gem text-pink-500 text-base"></i>
+          <h3 class="text-sm sm:text-base font-bold truncate">
+            {{xdat.nombre}}
+          </h3>
+        </div>
+
+        <!-- DESCRIPCION -->
+        <p class="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mb-3 h-8 overflow-hidden">
+          {{ xdat.descripcion | slice:0:38 }}...
+        </p>
+
+        <!-- PRECIO -->
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-lg font-extrabold text-emerald-500">
+            Bs. {{xdat.precio}}
+          </span>
+          <span class="text-[10px] text-gray-400">
+            unidad
+          </span>
+        </div>
+
+        <!-- CATEGORIA -->
+        <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 pt-2">
+          <i class="bi bi-bookmark-star-fill text-purple-500"></i>
+          <span class="truncate">
+            {{xdat.categoria?.nombre}}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+ <!-- SECCION GENERALES -->
+<section>
+  <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+
+    <!-- TITULO -->
+    <div class="flex items-center gap-2">
+      <i class="bi bi-grid text-cyan-400 text-2xl"></i>
+      <h2 class="text-2xl font-semibold tracking-tight">
+        Todos los Catálogos
+      </h2>
+    </div>
+
+    <!-- BUSCADOR MINIMALISTA -->
+    <div class="relative w-full sm:w-72">
+      <i class="bi bi-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+
+      <input [(ngModel)]="filtro" (input)="buscarCatalogo()"
+        type="text"
+        placeholder="Buscar por nombre de catálogo..."
+        class="w-full pl-9 pr-4 py-2.5 rounded-full bg-white/90 dark:bg-gray-900/80 backdrop-blur-md border border-gray-200 dark:border-gray-700 text-sm text-gray-700 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 shadow-sm focus:outline-none focus:ring-2 focus:ring-cyan-400/40 focus:border-cyan-400 transition duration-300"
+      >
+    </div>
+
+  </div>
+
+  <!-- GRID DE CATALOGOS -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+
+    <!-- SOLO MOSTRAR SEGUN LIMITE -->
+    <div *ngFor="let xdat of listaCatalogoTodos | slice:0:limiteCatalogos; let pos=index"
+      class="group bg-white/90 dark:bg-gray-900/80 backdrop-blur-md rounded-2xl shadow-sm hover:shadow-lg border border-gray-200 dark:border-gray-800 overflow-hidden transition duration-300 hover:-translate-y-1">
+
+      <!-- IMAGEN -->
+      <div class="overflow-hidden">
+        <img [src]="'http://localhost:8090/imagenes/' + xdat.fotografia"
+          alt="Catálogo"
+          class="w-full h-40 object-cover group-hover:scale-105 transition duration-500">
+      </div>
+
+      <!-- CONTENIDO -->
+      <div class="p-4">
+
+        <!-- NOMBRE -->
+        <div class="flex items-center gap-2 mb-2">
+          <i class="bi bi-bag-heart-fill text-rose-500 text-lg"></i>
+          <h3 class="text-base font-bold truncate">
+            {{xdat.nombre}}
+          </h3>
+        </div>
+
+        <!-- DESCRIPCION -->
+        <p class="text-xs text-gray-500 dark:text-gray-400 mb-3 leading-relaxed h-10 overflow-hidden">
+          {{ xdat.descripcion | slice:0:35 }}...
+        </p>
+
+        <!-- PRECIO -->
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-lg font-extrabold text-green-500">
+            Bs. {{xdat.precio}}
+          </span>
+          <span class="text-[11px] text-gray-400">
+            unidad
+          </span>
+        </div>
+
+        <!-- CATEGORIA -->
+        <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 border-t border-gray-100 dark:border-gray-800 pt-2">
+          <i class="bi bi-tags-fill text-indigo-500"></i>
+          <span class="truncate">
+            {{xdat.categoria?.nombre}}
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- BOTON VER MAS -->
+  <div class="flex justify-center mt-8"
+    *ngIf="limiteCatalogos < listaCatalogoTodos.length">
+
+    <button (click)="limiteCatalogos = limiteCatalogos + 8"
+      class="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-white dark:bg-gray-900 border border-gray-300 dark:border-gray-700 shadow-sm hover:shadow-md hover:scale-105 transition duration-300 text-sm font-semibold text-gray-700 dark:text-gray-300">
+
+      <i class="bi bi-plus-circle-fill text-cyan-500 group-hover:rotate-90 transition duration-300"></i>
+
+      Ver más
+
+    </button>
+  
+  </div>
+  <!-- INFORMACION EMPRESA (FOOTER INTERNO) -->
+<div class="mt-12 border-t border-gray-200 dark:border-gray-800 pt-10">
+
+  <!-- TITULO EMPRESA -->
+  <div class="text-center max-w-3xl mx-auto">
+
+    <h3 class="text-2xl font-extrabold bg-gradient-to-r from-pink-500 via-purple-500 to-cyan-500 bg-clip-text text-transparent">
+      Hola Somos Creaciones Lucianita
+    </h3>
+
+    <p class="text-sm text-gray-500 dark:text-gray-400 mt-3 leading-relaxed">
+      Especialistas en manualidades artesanales en goma eva, diseño creativo y personalizados únicos para toda ocasión.
+    </p>
+
+    <p class="text-xs text-gray-400 dark:text-gray-500 mt-2">
+      Calidad • Creatividad • Confianza
+    </p>
+
+  </div>
+
+  <!-- FRASE DE CONFIANZA -->
+  <div class="text-center mt-8">
+    <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+      Realiza tu pedido de forma <span class="text-cyan-500 font-semibold">segura y confiable</span> desde cualquier lugar
+    </p>
+    <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+      Atención personalizada y entregas coordinadas
+    </p>
+  </div>
+
+  <!-- INFO GRID -->
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 text-center">
+
+    <!-- UBICACION -->
+    <div class="bg-white/60 dark:bg-gray-900/40 backdrop-blur-md rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition">
+      <i class="pi pi-map-marker text-cyan-500 text-2xl"></i>
+      <h4 class="font-semibold mt-3 text-gray-800 dark:text-gray-200">Ubicación</h4>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        Bolivia – Envíos a nivel nacional
+      </p>
+    </div>
+
+    <!-- CONTACTO -->
+    <div class="bg-white/60 dark:bg-gray-900/40 backdrop-blur-md rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition">
+      <i class="pi pi-phone text-green-500 text-2xl"></i>
+      <h4 class="font-semibold mt-3 text-gray-800 dark:text-gray-200">Contacto</h4>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        +591 777 12345
+      </p>
+    </div>
+
+    <!-- CORREO -->
+    <div class="bg-white/60 dark:bg-gray-900/40 backdrop-blur-md rounded-xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm hover:shadow-md transition">
+      <i class="pi pi-envelope text-pink-500 text-2xl"></i>
+      <h4 class="font-semibold mt-3 text-gray-800 dark:text-gray-200">Correo</h4>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+        creacioneslucianitagmail.com
+      </p>
+    </div>
+
+  </div>
+
+  <!-- FRASE FINAL -->
+  <div class="text-center mt-10">
+    <p class="text-xs text-gray-400 dark:text-gray-500 italic">
+      “Cada creación está hecha con dedicación, amor y detalle artesanal”
+    </p>
+  </div>
+
+</div>
+</section>
+
+</div>
+
+<!-- MODAL LOGIN -->
+<div
+  *ngIf="mostrarModalLogin"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-md"
+>
+
+  <!-- CONTENEDOR MODAL -->
+  <div class="relative w-full max-w-md mx-4 animate__animated animate__zoomIn">
+
+    <div class="relative bg-white/10 dark:bg-gray-900/40 backdrop-blur-2xl rounded-3xl shadow-2xl border border-white/20 dark:border-gray-700/30 p-7">
+
+      <!-- BOTON X -->
+      <button
+        (click)="cerrarModalLogin()"
+        class="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white/20 dark:bg-gray-800/40 text-gray-600 dark:text-gray-300 hover:bg-red-500 hover:text-white transition">
+
+        <i class="pi pi-times text-sm"></i>
+
+      </button>
+
+      <!-- HEADER -->
+      <div class="text-center mb-6">
+        <img class="mx-auto h-12 mb-3 drop-shadow-md" src="assets/logo1.png" />
+
+        <h2 class="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
+          Inicia sesión
+        </h2>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
+          Accede a tu cuenta de forma segura
+        </p>
+      </div>
+
+      <!-- MENSAJE -->
+      <div *ngIf="mostrarMensaje"
+           class="mb-4 text-center text-sm font-medium px-3 py-2 rounded-xl shadow-sm"
+           [ngClass]="tipoMensaje === 'success'
+             ? 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300'
+             : 'bg-pink-100 text-pink-700 dark:bg-pink-900 dark:text-pink-300'">
+        {{ mensaje }}
+      </div>
+
+      <!-- FORMULARIO -->
+      <form class="space-y-5" (ngSubmit)="ingresar()">
+
+        <!-- USUARIO -->
+        <div class="relative">
+          <i class="pi pi-user absolute left-3 top-1/2 -translate-y-1/2 text-cyan-500"></i>
+          <input
+            type="text"
+            placeholder="Usuario"
+            [(ngModel)]="credenciales.usuario"
+            name="usuario"
+            class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/20 dark:bg-gray-800/30 text-gray-900 dark:text-white placeholder-gray-400 backdrop-blur-sm border border-white/10 focus:ring-2 focus:ring-cyan-400 outline-none transition"
+          />
+        </div>
+
+        <!-- PASSWORD -->
+        <div class="relative">
+          <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-pink-500"></i>
+          <input
+            type="password"
+            placeholder="Contraseña"
+            [(ngModel)]="credenciales.contrasena"
+            name="contrasena"
+            class="w-full pl-10 pr-3 py-2.5 rounded-xl bg-white/20 dark:bg-gray-800/30 text-gray-900 dark:text-white placeholder-gray-400 backdrop-blur-sm border border-white/10 focus:ring-2 focus:ring-pink-400 outline-none transition"
+          />
+        </div>
+
+        <!-- BOTON -->
+        <button
+          type="submit"
+          [disabled]="!credenciales.usuario || !credenciales.contrasena || cargando"
+          class="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl bg-gradient-to-r from-pink-600 to-fuchsia-600 hover:from-pink-500 hover:to-fuchsia-500 text-white font-semibold shadow-md transition duration-300">
+
+          <i class="pi pi-sign-in"></i>
+
+          <span *ngIf="!cargando">Iniciar sesión</span>
+          <span *ngIf="cargando">Cargando...</span>
+
+        </button>
+
+      </form>
+
+    </div>
+
   </div>
 </div>

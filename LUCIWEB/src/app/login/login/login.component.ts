@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 import { Credencial } from 'src/app/model/credencial';
 import { CredencialService } from 'src/app/servicio/credencial.service';
 import { AfterViewInit } from '@angular/core';
+import { Catalogo } from 'src/app/model/catalogo';
+import { CatalogoService } from 'src/app/servicio/catalogo.service';
 
 @Component({
     selector: 'app-login',
@@ -13,15 +15,29 @@ import { AfterViewInit } from '@angular/core';
     styleUrls: ['./login.component.css']
 })
 export class LoginComponent  {
- isDarkMode = false;
+isDarkMode = false;
+
+
+
+initTheme() {
+  const isDarkSystem = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+  this.isDarkMode = isDarkSystem;
+
+  if (this.isDarkMode) {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+}
 
 toggleTheme() {
   this.isDarkMode = !this.isDarkMode;
 
   if (this.isDarkMode) {
-    document.documentElement.classList.add('dark');  
+    document.documentElement.classList.add('dark');
   } else {
-    document.documentElement.classList.remove('dark'); 
+    document.documentElement.classList.remove('dark');
   }
 }
 
@@ -91,7 +107,7 @@ mostrarAlerta(texto: string, tipo: 'success' | 'error') {
   mensaje: string = '';
   tipoMensaje: 'success' | 'error' | '' = '';
 
-  constructor(private router: Router, private credencialService: CredencialService) { }
+  constructor(private router: Router, private credencialService: CredencialService, private serviceCatalogo: CatalogoService,) { }
 
 ingresar() {
   this.cargando = true;
@@ -145,7 +161,57 @@ ingresar() {
   });
 }
 
+// listar catalog
+  listaCatalogoTodos: Catalogo[]=[];
+  listaCatalogoDestacado: Catalogo[]=[];
+    loading: boolean = false;
+    limiteCatalogos: number = 8;
+modelCatalogodestacado() {
+  this.loading = true;
+  this.serviceCatalogo.ListarCatalogo().subscribe((fall) => {
+    this.listaCatalogoDestacado = fall
+      .filter(item => item.destacado == 1)
+      .filter(item => item.estado == 1)
+      .sort((a, b) => b.idcatalogo - a.idcatalogo);
+    this.loading = false;
+  });
+}
 
-  
+modelCatalogotodos() {
+  this.loading= true
+  this.serviceCatalogo.ListarCatalogo().subscribe((fall) => {
+    this.listaCatalogoTodos = fall
+    .sort((a, b) => b.idcatalogo - a.idcatalogo)
+    .filter(item => item.estado == 1);  
+    this.loading= false
+  });
+}
+// buscar catalogo
+  filtro: string = ''; 
+  buscarCatalogo() {
+  if (this.filtro.trim()) {
+    this.serviceCatalogo.buscarCatalogo(this.filtro).subscribe((result) => {
+      this.listaCatalogoTodos = result;
+    });
+  } else {
+    this.modelCatalogotodos(); 
+  }
+}
+verMasCatalogos() {
+  this.limiteCatalogos += 8;
+}
+ngOnInit(): void {
+   this.modelCatalogodestacado();
+   this.modelCatalogotodos();
+   this.initTheme();
+}
+mostrarModalLogin: boolean = false;
 
+abrirModalLogin() {
+  this.mostrarModalLogin = true;
+}
+
+cerrarModalLogin() {
+  this.mostrarModalLogin = false;
+}
 }
